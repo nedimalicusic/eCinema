@@ -26,7 +26,6 @@ namespace eCinema.Infrastructure
         public readonly IShowsRepository ShowsRepository;
         public readonly IUsersRepository UsersRepository;
 
-
         public UnitOfWork(
             DatabaseContext databaseContext,
             IActorsRepository actorsRepository,
@@ -68,6 +67,7 @@ namespace eCinema.Infrastructure
             ShowsRepository= showsRepository;
             UsersRepository= usersRepository;
         }
+
 
         public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
         {
