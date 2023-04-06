@@ -13,5 +13,6 @@
         public Movie Movie { get; set; } = null!;
 
         public ICollection<Reservation> Reservations { get; set; } = null!;
+        public ICollection<ShowSeat> ShowSeats { get; set; } = null!;
     }
 }

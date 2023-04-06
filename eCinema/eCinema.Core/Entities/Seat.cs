@@ -6,5 +6,7 @@
         public int Column { get; set; }
 
         public ICollection<Reservation> Reservations { get; set; } = null!;
+        public ICollection<ShowSeat> ShowSeats { get; set; } = null!;
+
     }
 }

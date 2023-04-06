@@ -19,8 +19,8 @@
         public int PhotoId { get; set; }
         public Photo Photo { get; set; } = null!;
 
-        public ICollection<MovieGenre> Genres { get; set; } = null!;
-        public ICollection<Actors> Actors { get; set; } = null!;
+        public ICollection<MovieGenre> MovieGenres { get; set; } = null!;
+        public ICollection<MovieActors> MovieActors { get; set; } = null!;
         public ICollection<Show> Shows { get; set; } = null!;
     }
 }

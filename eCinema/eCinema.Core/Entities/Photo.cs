@@ -7,5 +7,6 @@
 
         public ICollection<User> Users { get; set; } = null!;
         public ICollection<Movie> Movies { get; set; } = null!;
+        public ICollection<Employee> Employees { get; set; } = null!;
     }
 }

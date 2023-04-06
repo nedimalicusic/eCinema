@@ -7,5 +7,7 @@
         public bool IsActive { get; set; }
 
         public ICollection<City> Cities { get; set; } = null!;
+        public ICollection<Production> Productions { get; set; } = null!;
+
     }
 }
