@@ -7,8 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\eCinema.Core\eCinema.Core.csproj" />
-    <ProjectReference Include="..\eCinema.Infrastructure.Interfaces\eCinema.Infrastructure.Interfaces.csproj" />
+    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>
