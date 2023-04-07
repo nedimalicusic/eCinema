@@ -7,7 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Services\" />
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="FluentValidation" Version="11.5.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\eCinema.Application.Interfaces\eCinema.Application.Interfaces.csproj" />
+    <ProjectReference Include="..\eCinema.Common.Service\eCinema.Common.Service.csproj" />
+    <ProjectReference Include="..\eCinema.Core\eCinema.Core.csproj" />
+    <ProjectReference Include="..\eCinema.Infrastructure\eCinema.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
