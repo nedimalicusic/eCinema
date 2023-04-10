@@ -16,10 +16,7 @@
         public bool IsActive { get; set; }
 
         public int? ProfilePhotoId { get; set; }
-        public Photo? ProfilePhoto { get; set; } = null!;
-
-        public int CityId { get; set; }
-        public City City { get; set; } = null!;
+        public Photo? ProfilePhoto { get; set; }
 
         public ICollection<Reservation> Reservations { get; set; } = null!;
         public ICollection<Notification> Notifications { get; set; } = null!;

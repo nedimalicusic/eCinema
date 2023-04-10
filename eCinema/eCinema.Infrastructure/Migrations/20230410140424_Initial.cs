@@ -166,6 +166,39 @@ namespace eCinema.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Gender = table.Column<int>(type: "int", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PasswordSalt = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Role = table.Column<int>(type: "int", nullable: false),
+                    LastSignInAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsVerified = table.Column<bool>(type: "bit", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    ProfilePhotoId = table.Column<int>(type: "int", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Users_Photos_ProfilePhotoId",
+                        column: x => x.ProfilePhotoId,
+                        principalTable: "Photos",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Cinemas",
                 columns: table => new
                 {
@@ -191,46 +224,6 @@ namespace eCinema.Infrastructure.Migrations
                         principalTable: "Cities",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Users",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Gender = table.Column<int>(type: "int", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PasswordSalt = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Role = table.Column<int>(type: "int", nullable: false),
-                    LastSignInAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsVerified = table.Column<bool>(type: "bit", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    ProfilePhotoId = table.Column<int>(type: "int", nullable: true),
-                    CityId = table.Column<int>(type: "int", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Users", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Users_Cities_CityId",
-                        column: x => x.CityId,
-                        principalTable: "Cities",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Users_Photos_ProfilePhotoId",
-                        column: x => x.ProfilePhotoId,
-                        principalTable: "Photos",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -277,6 +270,33 @@ namespace eCinema.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Notifications",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SendOnDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DateRead = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Seen = table.Column<bool>(type: "bit", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notifications", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Notifications_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Employees",
                 columns: table => new
                 {
@@ -308,33 +328,6 @@ namespace eCinema.Infrastructure.Migrations
                         column: x => x.ProfilePhotoId,
                         principalTable: "Photos",
                         principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Notifications",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SendOnDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DateRead = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Seen = table.Column<bool>(type: "bit", nullable: true),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Notifications", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Notifications_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -526,6 +519,11 @@ namespace eCinema.Infrastructure.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "BirthDate", "CreatedAt", "Email", "FirstName", "Gender", "IsActive", "IsVerified", "LastName", "LastSignInAt", "ModifiedAt", "PasswordHash", "PasswordSalt", "PhoneNumber", "ProfilePhotoId", "Role" },
+                values: new object[] { 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), "admin@eCinema.com", "Nedim", 0, true, true, "Admin", null, null, "b4I5yA4Mp+0Pg1C3EsKU17sS13eDExGtBjjI07Vh/JM=", "1wQEjdSFeZttx6dlvEDjOg==", "38761123456", null, 0 });
+
+            migrationBuilder.InsertData(
                 table: "Cities",
                 columns: new[] { "Id", "CountryId", "CreatedAt", "IsActive", "ModifiedAt", "Name", "ZipCode" },
                 values: new object[,]
@@ -640,11 +638,6 @@ namespace eCinema.Infrastructure.Migrations
                 name: "IX_ShowSeats_ShowId",
                 table: "ShowSeats",
                 column: "ShowId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_CityId",
-                table: "Users",
-                column: "CityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_ProfilePhotoId",

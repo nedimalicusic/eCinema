@@ -12,7 +12,7 @@ using eCinema.Infrastructure;
 namespace eCinema.Infrastructure.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20230410110531_Initial")]
+    [Migration("20230410140424_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -864,9 +864,6 @@ namespace eCinema.Infrastructure.Migrations
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CityId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -922,11 +919,28 @@ namespace eCinema.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CityId");
-
                     b.HasIndex("ProfilePhotoId");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BirthDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            Email = "admin@eCinema.com",
+                            FirstName = "Nedim",
+                            Gender = 0,
+                            IsActive = true,
+                            IsDeleted = false,
+                            IsVerified = true,
+                            LastName = "Admin",
+                            PasswordHash = "b4I5yA4Mp+0Pg1C3EsKU17sS13eDExGtBjjI07Vh/JM=",
+                            PasswordSalt = "1wQEjdSFeZttx6dlvEDjOg==",
+                            PhoneNumber = "38761123456",
+                            Role = 0
+                        });
                 });
 
             modelBuilder.Entity("eCinema.Core.Cinema", b =>
@@ -1122,17 +1136,9 @@ namespace eCinema.Infrastructure.Migrations
 
             modelBuilder.Entity("eCinema.Core.User", b =>
                 {
-                    b.HasOne("eCinema.Core.City", "City")
-                        .WithMany("Users")
-                        .HasForeignKey("CityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("eCinema.Core.Photo", "ProfilePhoto")
                         .WithMany("Users")
                         .HasForeignKey("ProfilePhotoId");
-
-                    b.Navigation("City");
 
                     b.Navigation("ProfilePhoto");
                 });
@@ -1152,8 +1158,6 @@ namespace eCinema.Infrastructure.Migrations
             modelBuilder.Entity("eCinema.Core.City", b =>
                 {
                     b.Navigation("Cinemas");
-
-                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("eCinema.Core.Country", b =>

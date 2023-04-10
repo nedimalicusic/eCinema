@@ -10,7 +10,9 @@ namespace eCinema.Application
 
             CreateMap<User, UserSensitiveDto>();
 
-            CreateMap<UserUpserDto, User>()
+            CreateMap<UserDto, UserUpsertDto>();
+
+            CreateMap<UserUpsertDto, User>()
                 .ForMember(u => u.ProfilePhoto, o => o.Ignore())
                 .ForMember(u => u.IsVerified, o => o.MapFrom(_ => true))
                 .ForMember(u => u.IsActive, o => o.MapFrom(_ => true)); 

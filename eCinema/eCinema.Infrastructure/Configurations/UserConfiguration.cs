@@ -50,10 +50,6 @@ namespace eCinema.Infrastructure
                    .HasForeignKey(e => e.ProfilePhotoId)
                    .IsRequired(false);
 
-            builder.HasOne(e => e.City)
-                  .WithMany(e => e.Users)
-                  .HasForeignKey(e => e.CityId)
-                  .IsRequired();
         }
     }
 }

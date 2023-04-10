@@ -1,4 +1,5 @@
 ﻿using eCinema.Core;
+using Microsoft.AspNetCore.Http;
 
 namespace eCinema.Application
 {
@@ -9,6 +10,10 @@ namespace eCinema.Application
             CreateMap<PhotoDto, Photo>().ReverseMap();
 
             CreateMap<PhotoUpsertDto, Photo>();
+
+            CreateMap<IFormFile, Photo>().ReverseMap();
+
+            CreateMap<IFormFile, PhotoUpsertDto>().ReverseMap();
         }
     }
 }

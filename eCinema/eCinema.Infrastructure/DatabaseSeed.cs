@@ -12,6 +12,7 @@ namespace eCinema.Infrastructure
             SeedCountries(modelBuilder);
             SeedCities(modelBuilder);
             SeedLanguages(modelBuilder);
+            SeedUsers(modelBuilder);
         }
 
 
@@ -156,6 +157,26 @@ namespace eCinema.Infrastructure
                 {
                     Id = 3,
                     Name = "Bosnian",
+                    CreatedAt = _dateTime,
+                    ModifiedAt = null
+                });
+        }
+        private void SeedUsers(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>().HasData(
+                new User
+                {
+                    Id = 1,
+                    FirstName = "Nedim",
+                    LastName = "Admin",
+                    Email = "admin@eCinema.com",
+                    Role = Role.Administrator,
+                    Gender = Gender.Male,
+                    PasswordHash = "b4I5yA4Mp+0Pg1C3EsKU17sS13eDExGtBjjI07Vh/JM=", //Plain text: test
+                    PasswordSalt = "1wQEjdSFeZttx6dlvEDjOg==",
+                    PhoneNumber = "38761123456",
+                    IsVerified = true,
+                    IsActive = true,
                     CreatedAt = _dateTime,
                     ModifiedAt = null
                 });

@@ -51,7 +51,7 @@ namespace eCinema.Api.Controllers
         }
 
         [HttpPost]
-        public virtual async Task<IActionResult> Post([FromBody] TUpsertDto upsertDto, CancellationToken cancellationToken = default)
+        public virtual async Task<IActionResult> Post([FromForm] TUpsertDto upsertDto, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -66,7 +66,7 @@ namespace eCinema.Api.Controllers
         }
 
         [HttpPut]
-        public virtual async Task<IActionResult> Put([FromBody] TUpsertDto upsertDto, CancellationToken cancellationToken = default)
+        public virtual async Task<IActionResult> Put([FromForm] TUpsertDto upsertDto, CancellationToken cancellationToken = default)
         {
             try
             {

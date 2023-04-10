@@ -49,7 +49,7 @@ namespace eCinema.Api
 
         public async Task SignUpAsync(AccessSignUpModel model, CancellationToken cancellationToken = default)
         {
-            var upsertDto = _mapper.Map<UserUpserDto>(model);
+            var upsertDto = _mapper.Map<UserUpsertDto>(model);
             if (model.ProfilePhoto != null)
             {
                 await using var memoryStream = new MemoryStream();

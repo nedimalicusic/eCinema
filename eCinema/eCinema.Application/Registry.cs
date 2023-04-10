@@ -50,7 +50,7 @@ namespace eCinema.Application
             services.AddScoped<IValidator<SeatUpsertDto>, SeatValidator>();
             services.AddScoped<IValidator<ShowSeatUpsertDto>, ShowSeatValidator>();
             services.AddScoped<IValidator<ShowUpsertDto>, ShowValidator>();
-            services.AddScoped<IValidator<UserUpserDto>, UserValidator>();
+            services.AddScoped<IValidator<UserUpsertDto>, UserValidator>();
         }
     }
 }
