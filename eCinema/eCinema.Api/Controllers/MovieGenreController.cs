@@ -1,0 +1,13 @@
+﻿using eCinema.Application.Interfaces;
+using eCinema.Core;
+using eCinema.Infrastructure.Interfaces;
+
+namespace eCinema.Api.Controllers
+{
+    public class MovieGenreController : BaseCrudController<MovieGenreDto, MovieGenreUpsertDto, BaseSearchObject, IMovieGenresService>
+    {
+        public MovieGenreController(IMovieGenresService service, ILogger<BaseController> logger) : base(service, logger)
+        {
+        }
+    }
+}
