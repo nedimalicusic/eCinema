@@ -9,11 +9,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eCinema.Infrastructure.Inte
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eCinema.Infrastructure", "eCinema.Infrastructure\eCinema.Infrastructure.csproj", "{93DE33F6-D1E9-4DFD-A670-4422D88DF494}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eCinema.Common.Service", "eCinema.Common.Service\eCinema.Common.Service.csproj", "{A4EA9D8F-B027-4352-A64E-45FF04D65BBA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eCinema.Common.Service", "eCinema.Common.Service\eCinema.Common.Service.csproj", "{A4EA9D8F-B027-4352-A64E-45FF04D65BBA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eCinema.Application.Interfaces", "eCinema.Application.Interfaces\eCinema.Application.Interfaces.csproj", "{A77BCD2E-B499-49A2-87B5-263AF7EE7F58}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eCinema.Application.Interfaces", "eCinema.Application.Interfaces\eCinema.Application.Interfaces.csproj", "{A77BCD2E-B499-49A2-87B5-263AF7EE7F58}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eCinema.Application", "eCinema.Application\eCinema.Application.csproj", "{8957B20E-5531-41F2-90B2-56915C51F629}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eCinema.Application", "eCinema.Application\eCinema.Application.csproj", "{8957B20E-5531-41F2-90B2-56915C51F629}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eCinema.Api", "eCinema.Api\eCinema.Api.csproj", "{4B6CB2E1-B0F9-41DB-BE75-2AE99CAFA1E0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{8957B20E-5531-41F2-90B2-56915C51F629}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8957B20E-5531-41F2-90B2-56915C51F629}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8957B20E-5531-41F2-90B2-56915C51F629}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B6CB2E1-B0F9-41DB-BE75-2AE99CAFA1E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B6CB2E1-B0F9-41DB-BE75-2AE99CAFA1E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B6CB2E1-B0F9-41DB-BE75-2AE99CAFA1E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B6CB2E1-B0F9-41DB-BE75-2AE99CAFA1E0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
