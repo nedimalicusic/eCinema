@@ -14,7 +14,7 @@
         public bool IsVerified { get; set; }
         public bool IsActive { get; set; }
 
-        public int? ProfilePhotoId { get; set; }
+        public PhotoUpsertDto? ProfilePhoto { get; set; }
         public int CityId { get; set; }
     }
 }

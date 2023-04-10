@@ -1,4 +1,5 @@
 ﻿using eCinema.Core;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace eCinema.Infrastructure
@@ -20,12 +21,13 @@ namespace eCinema.Infrastructure
 
             builder.HasOne(e => e.Cinema)
                .WithMany(e => e.Shows)
-               .HasForeignKey(e => e.CinemaId)
+               .OnDelete(DeleteBehavior.NoAction)
                .IsRequired();
 
             builder.HasOne(e => e.Movie)
                .WithMany(e => e.Shows)
                .HasForeignKey(e => e.MovieId)
+               .OnDelete(DeleteBehavior.NoAction)
                .IsRequired();
         }
     }

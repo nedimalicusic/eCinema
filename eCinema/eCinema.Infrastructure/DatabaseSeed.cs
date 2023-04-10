@@ -11,6 +11,7 @@ namespace eCinema.Infrastructure
         {
             SeedCountries(modelBuilder);
             SeedCities(modelBuilder);
+            SeedLanguages(modelBuilder);
         }
 
 
@@ -65,6 +66,24 @@ namespace eCinema.Infrastructure
               new()
               {
                   Id = 6,
+                  Name = "United States",
+                  Abbreviation = "USA",
+                  IsActive = true,
+                  CreatedAt = _dateTime,
+                  ModifiedAt = null
+              },
+              new()
+              {
+                  Id = 7,
+                  Name = "German",
+                  Abbreviation = "GER",
+                  IsActive = true,
+                  CreatedAt = _dateTime,
+                  ModifiedAt = null
+              },
+              new()
+              {
+                  Id = 8,
                   Name = "Austria",
                   Abbreviation = "AT",
                   IsActive = true,
@@ -97,7 +116,7 @@ namespace eCinema.Infrastructure
                 },
                  new()
                  {
-                     Id = 2,
+                     Id = 3,
                      Name = "Tuzla",
                      ZipCode = "75000",
                      CountryId = 1,
@@ -107,11 +126,36 @@ namespace eCinema.Infrastructure
                  },
                 new()
                 {
-                    Id = 3,
+                    Id = 4,
                     Name = "Zenica",
                     ZipCode = "72000",
                     CountryId = 1,
                     IsActive = true,
+                    CreatedAt = _dateTime,
+                    ModifiedAt = null
+                });
+        }
+        private void SeedLanguages(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Language>().HasData(
+                new()
+                {
+                    Id = 1,
+                    Name = "English",
+                    CreatedAt = _dateTime,
+                    ModifiedAt = null
+                },
+                new()
+                {
+                    Id = 2,
+                    Name = "German",
+                    CreatedAt = _dateTime,
+                    ModifiedAt = null
+                },
+                new()
+                {
+                    Id = 3,
+                    Name = "Bosnian",
                     CreatedAt = _dateTime,
                     ModifiedAt = null
                 });

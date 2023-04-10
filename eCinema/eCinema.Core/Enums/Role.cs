@@ -3,6 +3,6 @@
     public enum Role
     {
         Administrator,
-        Korisnik
+        User
     }
 }

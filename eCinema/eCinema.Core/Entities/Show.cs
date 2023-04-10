@@ -2,8 +2,8 @@
 {
     public class Show : BaseEntity
     {
-        public DateOnly Date { get; set; }
-        public TimeOnly StartTime { get; set; }
+        public DateTime Date { get; set; }
+        public DateTime StartTime { get; set; }
         public string Format { get; set; } = null!;
 
         public int CinemaId { get; set; }
