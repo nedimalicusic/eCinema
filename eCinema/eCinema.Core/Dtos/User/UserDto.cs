@@ -8,8 +8,6 @@
         public string PhoneNumber { get; set; } = null!;
         public DateTime BirthDate { get; set; }
         public Gender Gender { get; set; }
-        public string PasswordHash { get; set; } = null!;
-        public string PasswordSalt { get; set; } = null!;
         public Role Role { get; set; }
         public DateTime? LastSignInAt { get; set; }
         public bool IsVerified { get; set; }

@@ -13,5 +13,11 @@ namespace eCinema.Application
         public UseresService(IMapper mapper, IUnitOfWork unitOfWork, IValidator<UserUpserDto> validator) : base(mapper, unitOfWork, validator)
         {
         }
+
+        public async Task<UserSensitiveDto?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
+        {
+            var user = await CurrentRepository.GetByEmailAsync(email, cancellationToken);
+            return Mapper.Map<UserSensitiveDto>(user);
+        }
     }
 }

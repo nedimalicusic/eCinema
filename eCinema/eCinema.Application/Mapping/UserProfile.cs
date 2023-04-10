@@ -8,7 +8,12 @@ namespace eCinema.Application
         {
             CreateMap<UserDto, User>().ReverseMap();
 
-            CreateMap<UserUpserDto, User>();
+            CreateMap<User, UserSensitiveDto>();
+
+            CreateMap<UserUpserDto, User>()
+                .ForMember(u => u.ProfilePhoto, o => o.Ignore())
+                .ForMember(u => u.IsVerified, o => o.MapFrom(_ => true))
+                .ForMember(u => u.IsActive, o => o.MapFrom(_ => true)); 
         }
     }
 }
