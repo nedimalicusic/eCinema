@@ -7,10 +7,10 @@ namespace eCinema.Application
     {
         public ReservationValidator()
         {
-            RuleFor(c => c.isActive).NotNull();
-            RuleFor(c => c.IsClosed).NotNull();
-            RuleFor(c => c.ShowSeatId).NotNull();
-            RuleFor(c => c.UserId).NotNull();
+            RuleFor(c => c.isActive).NotNull().WithErrorCode(ErrorCodes.NotNull);
+            RuleFor(c => c.IsClosed).NotNull().WithErrorCode(ErrorCodes.NotNull);
+            RuleFor(c => c.ShowSeatId).NotNull().WithErrorCode(ErrorCodes.NotNull);
+            RuleFor(c => c.UserId).NotNull().WithErrorCode(ErrorCodes.NotNull);
         }
     }
 }

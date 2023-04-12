@@ -7,11 +7,11 @@ namespace eCinema.Application
     {
         public ActorsValidator()
         {
-            RuleFor(c => c.FirstName).NotEmpty().NotNull();
-            RuleFor(c => c.LastName).NotEmpty().NotNull();
-            RuleFor(c => c.Email).NotEmpty().NotNull();
-            RuleFor(c => c.BirthDate).NotNull();
-            RuleFor(c => c.Gender).NotNull();
+            RuleFor(c => c.FirstName).NotEmpty().WithErrorCode(ErrorCodes.NotEmpty);
+            RuleFor(c => c.LastName).NotEmpty().WithErrorCode(ErrorCodes.NotEmpty);
+            RuleFor(c => c.Email).NotEmpty().WithErrorCode(ErrorCodes.NotEmpty);
+            RuleFor(c => c.BirthDate).NotNull().WithErrorCode(ErrorCodes.NotNull);
+            RuleFor(c => c.Gender).NotNull().WithErrorCode(ErrorCodes.NotNull);
         }
     }
 }

@@ -7,11 +7,11 @@ namespace eCinema.Application
     {
         public ShowValidator()
         {
-            RuleFor(c => c.Format).NotNull().NotEmpty();
-            RuleFor(c => c.Date).NotNull();
-            RuleFor(c => c.StartTime).NotNull();
-            RuleFor(c => c.CinemaId).NotNull();
-            RuleFor(c => c.MovieId).NotNull();
+            RuleFor(c => c.Format).NotNull().WithErrorCode(ErrorCodes.NotEmpty);
+            RuleFor(c => c.Date).NotNull().WithErrorCode(ErrorCodes.NotNull);
+            RuleFor(c => c.StartTime).NotNull().WithErrorCode(ErrorCodes.NotNull);
+            RuleFor(c => c.CinemaId).NotNull().WithErrorCode(ErrorCodes.NotNull);
+            RuleFor(c => c.MovieId).NotNull().WithErrorCode(ErrorCodes.NotNull);
         }
     }
 }

@@ -7,16 +7,16 @@ namespace eCinema.Application
     {
         public MovieValidator()
         {
-            RuleFor(c => c.Title).NotEmpty().NotNull();
-            RuleFor(c => c.Description).NotEmpty().NotNull();
-            RuleFor(c => c.Author).NotEmpty().NotNull();
-            RuleFor(c => c.ReleaseYear).NotNull();
-            RuleFor(c => c.Length).NotNull();
-            RuleFor(c => c.Duration).NotNull();
-            RuleFor(c => c.NumberOfViews).NotNull();
-            RuleFor(c => c.LanguageId).NotNull();
-            RuleFor(c => c.ProductionId).NotNull();
-            RuleFor(c => c.PhotoId).NotNull();
+            RuleFor(c => c.Title).NotEmpty().WithErrorCode(ErrorCodes.NotEmpty);
+            RuleFor(c => c.Description).NotEmpty().WithErrorCode(ErrorCodes.NotEmpty);
+            RuleFor(c => c.Author).NotEmpty().WithErrorCode(ErrorCodes.NotEmpty);
+            RuleFor(c => c.ReleaseYear).NotNull().WithErrorCode(ErrorCodes.NotNull);
+            RuleFor(c => c.Length).NotNull().WithErrorCode(ErrorCodes.NotNull);
+            RuleFor(c => c.Duration).NotNull().WithErrorCode(ErrorCodes.NotNull);
+            RuleFor(c => c.NumberOfViews).NotNull().WithErrorCode(ErrorCodes.NotNull);
+            RuleFor(c => c.LanguageId).NotNull().WithErrorCode(ErrorCodes.NotNull);
+            RuleFor(c => c.ProductionId).NotNull().WithErrorCode(ErrorCodes.NotNull);
+            RuleFor(c => c.PhotoId).NotNull().WithErrorCode(ErrorCodes.NotNull);
         }
     }
 }

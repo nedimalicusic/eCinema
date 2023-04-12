@@ -7,8 +7,8 @@ namespace eCinema.Application
     {
         public MovieGenreValidator()
         {
-            RuleFor(c => c.MovieId).NotNull();
-            RuleFor(c => c.GenreId).NotNull();
+            RuleFor(c => c.MovieId).NotNull().WithErrorCode(ErrorCodes.NotNull);
+            RuleFor(c => c.GenreId).NotNull().WithErrorCode(ErrorCodes.NotNull);
         }
     }
 }

@@ -7,8 +7,8 @@ namespace eCinema.Application
     {
         public ProductionValidator()
         {
-            RuleFor(c => c.Name).NotEmpty().NotNull();
-            RuleFor(c => c.CountryId).NotNull();
+            RuleFor(c => c.Name).NotEmpty().WithErrorCode(ErrorCodes.NotEmpty);
+            RuleFor(c => c.CountryId).NotNull().WithErrorCode(ErrorCodes.NotNull);
         }
     }
 }

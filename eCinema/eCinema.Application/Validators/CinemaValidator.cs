@@ -7,13 +7,13 @@ namespace eCinema.Application
     {
         public CinemaValidator()
         {
-            RuleFor(c => c.Name).NotEmpty().NotNull();
-            RuleFor(c => c.Description).NotEmpty().NotNull();
-            RuleFor(c => c.Address).NotEmpty().NotNull();
-            RuleFor(c => c.Email).NotEmpty().NotNull();
-            RuleFor(c => c.PhoneNumber).NotNull();
-            RuleFor(c => c.NumberOfSeats).NotNull();
-            RuleFor(c => c.CityId).NotNull();
+            RuleFor(c => c.Name).NotEmpty().WithErrorCode(ErrorCodes.NotEmpty);
+            RuleFor(c => c.Description).NotEmpty().WithErrorCode(ErrorCodes.NotEmpty);
+            RuleFor(c => c.Address).NotEmpty().WithErrorCode(ErrorCodes.NotEmpty);
+            RuleFor(c => c.Email).NotEmpty().WithErrorCode(ErrorCodes.NotEmpty);
+            RuleFor(c => c.PhoneNumber).NotNull().WithErrorCode(ErrorCodes.NotNull);
+            RuleFor(c => c.NumberOfSeats).NotNull().WithErrorCode(ErrorCodes.NotNull);
+            RuleFor(c => c.CityId).NotNull().WithErrorCode(ErrorCodes.NotNull);
         }
     }
 }

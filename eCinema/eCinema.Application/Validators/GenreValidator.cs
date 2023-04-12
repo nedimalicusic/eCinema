@@ -7,7 +7,7 @@ namespace eCinema.Application
     {
         public GenreValidator()
         {
-            RuleFor(c => c.Name).NotEmpty().NotNull();
+            RuleFor(c => c.Name).NotEmpty().WithErrorCode(ErrorCodes.NotEmpty);
         }
     }
 }

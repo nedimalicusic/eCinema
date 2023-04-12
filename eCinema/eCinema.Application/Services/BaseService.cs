@@ -105,7 +105,7 @@ namespace eCinema.Application
             var validationResult = await Validator.ValidateAsync(dto, cancellationToken);
             if (validationResult.IsValid == false)
             {
-                throw new Exception(validationResult.Errors.ToString());
+                throw new Core.ValidationException(Mapper.Map<List<ValidationError>>(validationResult.Errors));
             }
 
         }

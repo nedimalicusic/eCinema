@@ -7,9 +7,9 @@ namespace eCinema.Application
     {
         public CountryValidator()
         {
-            RuleFor(c => c.Name).NotEmpty().NotNull();
-            RuleFor(c => c.Abbreviation).NotEmpty().NotNull();
-            RuleFor(c => c.IsActive).NotNull();
+            RuleFor(c => c.Name).NotEmpty().WithErrorCode(ErrorCodes.NotEmpty);
+            RuleFor(c => c.Abbreviation).NotEmpty().WithErrorCode(ErrorCodes.NotEmpty);
+            RuleFor(c => c.IsActive).NotNull().WithErrorCode(ErrorCodes.NotNull);
         }
     }
 }

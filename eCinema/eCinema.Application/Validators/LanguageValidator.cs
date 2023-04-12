@@ -7,7 +7,7 @@ namespace eCinema.Application
     {
         public LanguageValidator()
         {
-            RuleFor(c => c.Name).NotEmpty().NotNull();
+            RuleFor(c => c.Name).NotEmpty().WithErrorCode(ErrorCodes.NotEmpty);
         }
     }
 }

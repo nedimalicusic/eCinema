@@ -60,5 +60,6 @@ namespace eCinema.Application
 
             return Mapper.Map<UserDto>(user);
         }
+
     }
 }

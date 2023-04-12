@@ -7,8 +7,8 @@ namespace eCinema.Application
     {
         public SeatValidator()
         {
-            RuleFor(c => c.Row).NotNull().NotEmpty();
-            RuleFor(c => c.Column).NotNull();
+            RuleFor(c => c.Row).NotEmpty().WithErrorCode(ErrorCodes.NotEmpty);
+            RuleFor(c => c.Column).NotNull().WithErrorCode(ErrorCodes.NotNull);
         }
     }
 }

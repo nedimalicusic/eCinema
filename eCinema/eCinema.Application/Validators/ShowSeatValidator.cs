@@ -7,11 +7,11 @@ namespace eCinema.Application
     {
         public ShowSeatValidator()
         {
-            RuleFor(c => c.isReserved).NotNull();
-            RuleFor(c => c.isSelected).NotNull();
-            RuleFor(c => c.isAvailable).NotNull();
-            RuleFor(c => c.ShowId).NotNull();
-            RuleFor(c => c.SeatId).NotNull();
+            RuleFor(c => c.isReserved).NotNull().WithErrorCode(ErrorCodes.NotNull);
+            RuleFor(c => c.isSelected).NotNull().WithErrorCode(ErrorCodes.NotNull);
+            RuleFor(c => c.isAvailable).NotNull().WithErrorCode(ErrorCodes.NotNull);
+            RuleFor(c => c.ShowId).NotNull().WithErrorCode(ErrorCodes.NotNull);
+            RuleFor(c => c.SeatId).NotNull().WithErrorCode(ErrorCodes.NotNull);
         }
     }
 }

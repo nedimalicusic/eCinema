@@ -7,10 +7,10 @@ namespace eCinema.Application
     {
         public UserValidator()
         {
-            RuleFor(c => c.FirstName).NotNull().NotEmpty();
-            RuleFor(c => c.LastName).NotNull().NotEmpty();
-            RuleFor(c => c.Email).NotNull().NotEmpty();
-            RuleFor(c => c.PhoneNumber).NotNull().NotEmpty();
+            RuleFor(c => c.FirstName).NotEmpty().WithErrorCode(ErrorCodes.NotEmpty);
+            RuleFor(c => c.LastName).NotEmpty().WithErrorCode(ErrorCodes.NotEmpty);
+            RuleFor(c => c.Email).NotEmpty().WithErrorCode(ErrorCodes.NotEmpty);
+            RuleFor(c => c.PhoneNumber).NotEmpty().WithErrorCode(ErrorCodes.NotEmpty);
 
             RuleFor(c => c.Password)
                 .NotNull()
@@ -19,13 +19,13 @@ namespace eCinema.Application
                 .Matches(@"[A-Z]+")
                 .Matches(@"[a-z]+")
                 .Matches(@"[0-9]+")
+                .WithErrorCode(ErrorCodes.InvalidValue)
                 .When(u => u.Id == null || u.Password != null);
 
-            RuleFor(c => c.Gender).NotNull();
-            RuleFor(c => c.BirthDate).NotNull();
-            RuleFor(c => c.Role).NotNull();
-            RuleFor(c => c.IsActive).NotNull();
-            RuleFor(c => c.IsVerified).NotNull();
+            RuleFor(c => c.Gender).IsInEnum().WithErrorCode(ErrorCodes.NotNull);
+            RuleFor(c => c.BirthDate).NotNull().WithErrorCode(ErrorCodes.NotNull);
+            RuleFor(c => c.IsActive).NotNull().WithErrorCode(ErrorCodes.NotNull);
+            RuleFor(c => c.IsVerified).NotNull().WithErrorCode(ErrorCodes.NotNull);
 
             RuleFor(u => u.ProfilePhoto)
               .MustAsync(async (profilePhoto, cancellationToken) => await ValidatePhotoSizeAsync(profilePhoto, cancellationToken))

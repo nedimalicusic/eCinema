@@ -7,7 +7,7 @@ namespace eCinema.Application
     {
         public PhotoValidator()
         {
-            RuleFor(c => c.Data).NotEmpty().NotNull();
+            RuleFor(c => c.Data).NotEmpty().WithErrorCode(ErrorCodes.NotEmpty);
         }
     }
 }

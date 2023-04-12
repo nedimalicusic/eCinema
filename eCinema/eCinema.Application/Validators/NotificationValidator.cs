@@ -7,9 +7,9 @@ namespace eCinema.Application
     {
         public NotificationValidator()
         {
-            RuleFor(c => c.Title).NotEmpty().NotNull();
-            RuleFor(c => c.Description).NotEmpty().NotNull();
-            RuleFor(c => c.UserId).NotNull();
+            RuleFor(c => c.Title).NotEmpty().WithErrorCode(ErrorCodes.NotEmpty);
+            RuleFor(c => c.Description).NotEmpty().WithErrorCode(ErrorCodes.NotEmpty);
+            RuleFor(c => c.UserId).NotNull().WithErrorCode(ErrorCodes.NotNull);
         }
     }
 }

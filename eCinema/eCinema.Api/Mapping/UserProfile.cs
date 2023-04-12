@@ -8,7 +8,8 @@ namespace eCinema.Api.Mapping
         public UserProfile()
         {
             CreateMap<AccessSignUpModel, UserUpsertDto>()
-                .ForMember(a => a.ProfilePhoto, o => o.Ignore())
+                .ForMember(a => a.IsActive, o => o.MapFrom(s => true))
+                .ForMember(a => a.IsVerified, o => o.MapFrom(s => true))
                 .ForMember(a => a.Role, o => o.MapFrom(s => Role.User));
 
             CreateMap<UserUpsertModel, UserUpsertDto>()
