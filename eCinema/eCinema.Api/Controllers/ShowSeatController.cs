@@ -6,7 +6,7 @@ namespace eCinema.Api.Controllers
 {
     public class ShowSeatController : BaseCrudController<ShowSeatDto, ShowSeatUpsertDto, BaseSearchObject, IShowSeatsService>
     {
-        public ShowSeatController(IShowSeatsService service, ILogger<BaseController> logger) : base(service, logger)
+        public ShowSeatController(IShowSeatsService service, ILogger<ShowSeatController> logger) : base(service, logger)
         {
         }
     }

@@ -10,7 +10,7 @@ namespace eCinema.Api.Controllers
     {
 
         private readonly IMapper _mapper;
-        public UserController(IMapper mapper,IUsersService service, ILogger<BaseController> logger) : base(service, logger)
+        public UserController(IMapper mapper,IUsersService service, ILogger<UserController> logger) : base(service, logger)
         {
             _mapper = mapper;
         }

@@ -6,7 +6,7 @@ namespace eCinema.Api.Controllers
 {
     public class PhotoController : BaseCrudController<PhotoDto, PhotoUpsertDto, BaseSearchObject, IPhotosService>
     {
-        public PhotoController(IPhotosService service, ILogger<BaseController> logger) : base(service, logger)
+        public PhotoController(IPhotosService service, ILogger<PhotoController> logger) : base(service, logger)
         {
         }
     }

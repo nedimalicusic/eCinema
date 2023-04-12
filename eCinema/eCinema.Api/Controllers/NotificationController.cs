@@ -6,7 +6,7 @@ namespace eCinema.Api.Controllers
 {
     public class NotificationController : BaseCrudController<NotificationDto, NotificationUpsertDto, BaseSearchObject, INotificationsService>
     {
-        public NotificationController(INotificationsService service, ILogger<BaseController> logger) : base(service, logger)
+        public NotificationController(INotificationsService service, ILogger<NotificationController> logger) : base(service, logger)
         {
         }
     }

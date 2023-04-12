@@ -6,7 +6,7 @@ namespace eCinema.Api.Controllers
 {
     public class LanguageController : BaseCrudController<LanguageDto, LanguageUpsertDto, BaseSearchObject, ILanguagesService>
     {
-        public LanguageController(ILanguagesService service, ILogger<BaseController> logger) : base(service, logger)
+        public LanguageController(ILanguagesService service, ILogger<LanguageController> logger) : base(service, logger)
         {
         }
     }

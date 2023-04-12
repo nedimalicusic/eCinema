@@ -6,7 +6,7 @@ namespace eCinema.Api.Controllers
 {
     public class CinemaController : BaseCrudController<CinemaDto, CinemaUpsertDto, BaseSearchObject, ICinemasService>
     {
-        public CinemaController(ICinemasService service, ILogger<BaseController> logger) : base(service, logger)
+        public CinemaController(ICinemasService service, ILogger<CinemaController> logger) : base(service, logger)
         {
         }
     }

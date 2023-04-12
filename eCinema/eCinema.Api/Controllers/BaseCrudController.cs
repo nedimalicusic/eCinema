@@ -51,12 +51,17 @@ namespace eCinema.Api.Controllers
         }
 
         [HttpPost]
-        public virtual async Task<IActionResult> Post([FromForm] TUpsertDto upsertDto, CancellationToken cancellationToken = default)
+        public virtual async Task<IActionResult> Post([FromBody] TUpsertDto upsertDto, CancellationToken cancellationToken = default)
         {
             try
             {
                 var dto = await Service.AddAsync(upsertDto, cancellationToken);
                 return Ok(dto);
+            }
+            catch (ValidationException e)
+            {
+                Logger.LogError(e, "Problem when posting resource");
+                return ValidationResult(e.Errors);
             }
             catch (Exception e)
             {
@@ -66,12 +71,17 @@ namespace eCinema.Api.Controllers
         }
 
         [HttpPut]
-        public virtual async Task<IActionResult> Put([FromForm] TUpsertDto upsertDto, CancellationToken cancellationToken = default)
+        public virtual async Task<IActionResult> Put([FromBody] TUpsertDto upsertDto, CancellationToken cancellationToken = default)
         {
             try
             {
                 var dto = await Service.UpdateAsync(upsertDto, cancellationToken);
                 return Ok(dto);
+            }
+            catch (ValidationException e)
+            {
+                Logger.LogError(e, "Problem when updating resource");
+                return ValidationResult(e.Errors);
             }
             catch (Exception e)
             {
@@ -94,6 +104,29 @@ namespace eCinema.Api.Controllers
                 return BadRequest(e.Message);
             }
         }
-      
+
+
+        private IActionResult ValidationResult(List<ValidationError> errors)
+        {
+            var dictionary = new Dictionary<string, List<string>>();
+
+            foreach (var error in errors)
+            {
+                if (!dictionary.ContainsKey(error.PropertyName))
+                    dictionary.Add(error.PropertyName, new List<string>());
+
+                dictionary[error.PropertyName].Add(error.ErrorCode);
+            }
+
+            return BadRequest(new
+            {
+                Errors = dictionary.Select(i => new
+                {
+                    PropertyName = i.Key,
+                    ErrorCodes = i.Value
+                })
+            });
+        }
+
     }
 }

@@ -6,7 +6,7 @@ namespace eCinema.Api.Controllers
 {
     public class MovieActorsController : BaseCrudController<MovieActorsDto, MovieActorsUpsertDto, BaseSearchObject, IMovieActorsService>
     {
-        public MovieActorsController(IMovieActorsService service, ILogger<BaseController> logger) : base(service, logger)
+        public MovieActorsController(IMovieActorsService service, ILogger<MovieActorsController> logger) : base(service, logger)
         {
         }
     }

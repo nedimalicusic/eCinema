@@ -6,7 +6,7 @@ namespace eCinema.Api.Controllers
 {
     public class EmployeeController : BaseCrudController<EmployeeDto, EmployeeUpsertDto, BaseSearchObject, IEmployeesService>
     {
-        public EmployeeController(IEmployeesService service, ILogger<BaseController> logger) : base(service, logger)
+        public EmployeeController(IEmployeesService service, ILogger<EmployeeController> logger) : base(service, logger)
         {
         }
     }

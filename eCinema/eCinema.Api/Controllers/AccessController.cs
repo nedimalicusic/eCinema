@@ -6,7 +6,7 @@ namespace eCinema.Api.Controllers
     {
         private readonly IAccessManager _accessManager;
 
-        public AccessController(IAccessManager accessManager,ILogger<BaseController> logger) : base(logger)
+        public AccessController(IAccessManager accessManager,ILogger<AccessController> logger) : base(logger)
         {
             _accessManager = accessManager;
         }

@@ -6,7 +6,7 @@ namespace eCinema.Api.Controllers
 {
     public class ProductionController : BaseCrudController<ProductionDto, ProductionUpsertDto, BaseSearchObject, IProductionsService>
     {
-        public ProductionController(IProductionsService service, ILogger<BaseController> logger) : base(service, logger)
+        public ProductionController(IProductionsService service, ILogger<ProductionController> logger) : base(service, logger)
         {
         }
     }

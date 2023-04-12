@@ -6,7 +6,7 @@ namespace eCinema.Api.Controllers
 {
     public class ReservationController : BaseCrudController<ReservationDto, ReservationUpsertDto, BaseSearchObject, IReservationsService>
     {
-        public ReservationController(IReservationsService service, ILogger<BaseController> logger) : base(service, logger)
+        public ReservationController(IReservationsService service, ILogger<ReservationController> logger) : base(service, logger)
         {
         }
     }

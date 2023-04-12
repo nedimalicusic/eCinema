@@ -6,7 +6,7 @@ namespace eCinema.Api.Controllers
 {
     public class MovieController : BaseCrudController<MovieDto, MovieUpsertDto, BaseSearchObject, IMoviesService>
     {
-        public MovieController(IMoviesService service, ILogger<BaseController> logger) : base(service, logger)
+        public MovieController(IMoviesService service, ILogger<MovieController> logger) : base(service, logger)
         {
         }
     }
