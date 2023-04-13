@@ -509,6 +509,19 @@ namespace eCinema.Infrastructure.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Genres",
+                columns: new[] { "Id", "CreatedAt", "ModifiedAt", "Name" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "Action" },
+                    { 2, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "Comedy" },
+                    { 3, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "Horror" },
+                    { 4, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "Romance" },
+                    { 5, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "Western" },
+                    { 6, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "Thriller" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Languages",
                 columns: new[] { "Id", "CreatedAt", "ModifiedAt", "Name" },
                 values: new object[,]
@@ -532,6 +545,26 @@ namespace eCinema.Infrastructure.Migrations
                     { 2, 1, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), true, null, "Sarajevo", "77000" },
                     { 3, 1, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), true, null, "Tuzla", "75000" },
                     { 4, 1, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), true, null, "Zenica", "72000" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Productions",
+                columns: new[] { "Id", "CountryId", "CreatedAt", "ModifiedAt", "Name" },
+                values: new object[,]
+                {
+                    { 1, 6, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "Warner Bros" },
+                    { 2, 6, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "Universal Pictures" },
+                    { 3, 3, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "Režim" },
+                    { 4, 6, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "Volcano Films" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Cinemas",
+                columns: new[] { "Id", "Address", "CityId", "CreatedAt", "Description", "Email", "ModifiedAt", "Name", "NumberOfSeats", "PhoneNumber" },
+                values: new object[,]
+                {
+                    { 1, "Bisce Polje bb", 1, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), "Opis1", "plazamostar@gmail.com", null, "Cineplexx Plaza Mostar", 30, 60100100 },
+                    { 2, "Dzemala Bijedica St", 2, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), "Opis1", "srajevocinestar@gmail.com", null, "CineStar Sarajevo", 40, 60200200 }
                 });
 
             migrationBuilder.CreateIndex(

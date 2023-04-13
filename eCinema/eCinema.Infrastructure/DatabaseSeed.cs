@@ -13,6 +13,9 @@ namespace eCinema.Infrastructure
             SeedCities(modelBuilder);
             SeedLanguages(modelBuilder);
             SeedUsers(modelBuilder);
+            SeedProduction(modelBuilder);
+            SeedCinema(modelBuilder);
+            SeedGenre(modelBuilder);
         }
 
 
@@ -180,6 +183,118 @@ namespace eCinema.Infrastructure
                     CreatedAt = _dateTime,
                     ModifiedAt = null
                 });
+        }
+        private void SeedProduction(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Production>().HasData(
+               new()
+               {
+                   Id = 1,
+                   Name = "Warner Bros",
+                   CountryId = 6,
+                   CreatedAt = _dateTime,
+                   ModifiedAt = null
+               },
+               new()
+               {
+                   Id = 2,
+                   Name = "Universal Pictures",
+                   CountryId = 6,
+                   CreatedAt = _dateTime,
+                   ModifiedAt = null
+               },
+                new()
+                {
+                    Id = 3,
+                    Name = "Režim",
+                    CountryId = 3,
+                    CreatedAt = _dateTime,
+                    ModifiedAt = null
+                },
+               new()
+               {
+                   Id = 4,
+                   Name = "Volcano Films",
+                   CountryId = 6,
+                   CreatedAt = _dateTime,
+                   ModifiedAt = null
+               });
+        }
+        private void SeedCinema(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Cinema>().HasData(
+             new()
+             {
+                 Id = 1,
+                 Name = "Cineplexx Plaza Mostar",
+                 Address = "Bisce Polje bb",
+                 Description = "Opis1",
+                 Email = "plazamostar@gmail.com",
+                 PhoneNumber = 060100100,
+                 NumberOfSeats = 30,
+                 CityId = 1,
+                 CreatedAt = _dateTime,
+                 ModifiedAt = null
+             },
+             new()
+             {
+                 Id = 2,
+                 Name = "CineStar Sarajevo",
+                 Address = "Dzemala Bijedica St",
+                 Description = "Opis1",
+                 Email = "srajevocinestar@gmail.com",
+                 PhoneNumber = 060200200,
+                 NumberOfSeats = 40,
+                 CityId = 2,
+                 CreatedAt = _dateTime,
+                 ModifiedAt = null
+             });
+        }
+        private void SeedGenre(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Genre>().HasData(
+              new()
+              {
+                  Id = 1,
+                  Name = "Action",
+                  CreatedAt = _dateTime,
+                  ModifiedAt = null
+              },
+              new()
+              {
+                  Id = 2,
+                  Name = "Comedy",
+                  CreatedAt = _dateTime,
+                  ModifiedAt = null
+              },
+               new()
+               {
+                   Id = 3,
+                   Name = "Horror",
+                   CreatedAt = _dateTime,
+                   ModifiedAt = null
+               },
+               new()
+               {
+                   Id = 4,
+                   Name = "Romance",
+                   CreatedAt = _dateTime,
+                   ModifiedAt = null
+               },
+               new()
+               {
+                   Id = 5,
+                   Name = "Western",
+                   CreatedAt = _dateTime,
+                   ModifiedAt = null
+               },
+               new()
+               {
+                   Id = 6,
+                   Name = "Thriller",
+                   CreatedAt = _dateTime,
+                   ModifiedAt = null
+               });
         }
     }
 }

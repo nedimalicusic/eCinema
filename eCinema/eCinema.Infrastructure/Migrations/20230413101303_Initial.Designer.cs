@@ -12,7 +12,7 @@ using eCinema.Infrastructure;
 namespace eCinema.Infrastructure.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20230410140424_Initial")]
+    [Migration("20230413101303_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -116,6 +116,34 @@ namespace eCinema.Infrastructure.Migrations
                     b.HasIndex("CityId");
 
                     b.ToTable("Cinemas");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Address = "Bisce Polje bb",
+                            CityId = 1,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            Description = "Opis1",
+                            Email = "plazamostar@gmail.com",
+                            IsDeleted = false,
+                            Name = "Cineplexx Plaza Mostar",
+                            NumberOfSeats = 30,
+                            PhoneNumber = 60100100
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Address = "Dzemala Bijedica St",
+                            CityId = 2,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            Description = "Opis1",
+                            Email = "srajevocinestar@gmail.com",
+                            IsDeleted = false,
+                            Name = "CineStar Sarajevo",
+                            NumberOfSeats = 40,
+                            PhoneNumber = 60200200
+                        });
                 });
 
             modelBuilder.Entity("eCinema.Core.City", b =>
@@ -390,6 +418,50 @@ namespace eCinema.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Genres");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Name = "Action"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Name = "Comedy"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Name = "Horror"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Name = "Romance"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Name = "Western"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Name = "Thriller"
+                        });
                 });
 
             modelBuilder.Entity("eCinema.Core.Language", b =>
@@ -683,6 +755,40 @@ namespace eCinema.Infrastructure.Migrations
                     b.HasIndex("CountryId");
 
                     b.ToTable("Productions");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CountryId = 6,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Name = "Warner Bros"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CountryId = 6,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Name = "Universal Pictures"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CountryId = 3,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Name = "Režim"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CountryId = 6,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Name = "Volcano Films"
+                        });
                 });
 
             modelBuilder.Entity("eCinema.Core.Reservation", b =>
