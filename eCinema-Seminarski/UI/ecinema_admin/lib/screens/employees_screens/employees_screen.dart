@@ -68,15 +68,15 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
         EmployeeSearchObject(
             name: _searchController.text,
             cinemaId: selectedCinema?.id,
-            PageSize: pageSize,
-            PageNumber: currentPage),
+            pageSize: pageSize,
+            pageNumber: currentPage),
         _selectedIsActive);
 
     _searchController.addListener(() {
       final searchQuery = _searchController.text;
       loadEmployee(
           EmployeeSearchObject(
-              name: searchQuery, PageNumber: currentPage, PageSize: pageSize),
+              name: searchQuery, pageNumber: currentPage, pageSize: pageSize),
           _selectedIsActive);
     });
   }
@@ -155,8 +155,8 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
             gender: null,
             isActive: null,
             cinemaId: null,
-            PageNumber: currentPage,
-            PageSize: pageSize,
+            pageNumber: currentPage,
+            pageSize: pageSize,
           ),
           _selectedIsActive,
         );
@@ -199,8 +199,8 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
             gender: null,
             isActive: null,
             cinemaId: null,
-            PageNumber: currentPage,
-            PageSize: pageSize,
+            pageNumber: currentPage,
+            pageSize: pageSize,
           ),
           _selectedIsActive,
         );
@@ -223,8 +223,8 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
             name: _searchController.text,
             gender: null,
             isActive: null,
-            PageNumber: currentPage,
-            PageSize: pageSize,
+            pageNumber: currentPage,
+            pageSize: pageSize,
           ),
           _selectedIsActive,
         );
@@ -350,8 +350,8 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                         EmployeeSearchObject(
                           cinemaId: null,
                           name: _searchController.text,
-                          PageNumber: currentPage,
-                          PageSize: pageSize,
+                          pageNumber: currentPage,
+                          pageSize: pageSize,
                         ),
                         _selectedIsActive,
                       );
@@ -360,8 +360,8 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                         EmployeeSearchObject(
                           cinemaId: selectedCinema!.id,
                           name: _searchController.text,
-                          PageNumber: currentPage,
-                          PageSize: pageSize,
+                          pageNumber: currentPage,
+                          pageSize: pageSize,
                         ),
                         _selectedIsActive,
                       );
@@ -409,8 +409,8 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                         EmployeeSearchObject(
                             gender: selectedGender,
                             name: _searchController.text,
-                            PageNumber: currentPage,
-                            PageSize: pageSize),
+                            pageNumber: currentPage,
+                            pageSize: pageSize),
                         _selectedIsActive,
                       );
                     });
@@ -460,8 +460,8 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                                     ? false
                                     : null,
                             name: _searchController.text,
-                            PageNumber: currentPage,
-                            PageSize: pageSize),
+                            pageNumber: currentPage,
+                            pageSize: pageSize),
                         _selectedIsActive);
                   },
                   underline: const Text(""),
@@ -743,10 +743,10 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
 
   Widget AddEmployeeForm({bool isEditing = false, Employee? employeeToEdit}) {
     if (employeeToEdit != null) {
-      _firstNameController.text = employeeToEdit.firstName ?? '';
-      _lastNameController.text = employeeToEdit.lastName ?? '';
-      _emailController.text = employeeToEdit.email ?? '';
-      _birthDateController.text = employeeToEdit.birthDate ?? '';
+      _firstNameController.text = employeeToEdit.firstName;
+      _lastNameController.text = employeeToEdit.lastName;
+      _emailController.text = employeeToEdit.email;
+      _birthDateController.text = employeeToEdit.birthDate;
       selectedCinemaId = employeeToEdit.cinemaId;
       selectedGender = employeeToEdit.gender;
       _isActive = employeeToEdit.isActive;
@@ -1046,9 +1046,9 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                           onChanged: (bool? value) {
                             setState(() {
                               isAllSelected = value ?? false;
-                              employees.forEach((employeeItem) {
+                              for (var employeeItem in employees) {
                                 employeeItem.isSelected = isAllSelected;
-                              });
+                              }
                               if (!isAllSelected) {
                                 selectedEmployee.clear();
                               } else {
@@ -1073,119 +1073,112 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                   ),
                 ],
                 rows: employees
-                        .map((Employee employeeItem) => DataRow(cells: [
-                              DataCell(
-                                Checkbox(
-                                  value: employeeItem.isSelected,
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      employeeItem.isSelected = value ?? false;
-                                      if (employeeItem.isSelected == true) {
-                                        selectedEmployee.add(employeeItem);
+                    .map((Employee employeeItem) => DataRow(cells: [
+                          DataCell(
+                            Checkbox(
+                              value: employeeItem.isSelected,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  employeeItem.isSelected = value ?? false;
+                                  if (employeeItem.isSelected == true) {
+                                    selectedEmployee.add(employeeItem);
+                                  } else {
+                                    selectedEmployee.remove(employeeItem);
+                                  }
+                                  isAllSelected =
+                                      employees.every((u) => u.isSelected);
+                                });
+                              },
+                            ),
+                          ),
+                          DataCell(Text(
+                              ("${employeeItem.firstName.toString()} ${employeeItem.lastName.toString()}"))),
+                          DataCell(
+                            Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: FutureBuilder<String>(
+                                    future: loadPhoto(
+                                        employeeItem.profilePhoto?.guidId ??
+                                            ''),
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot<String> snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return const CircularProgressIndicator();
+                                      } else if (snapshot.hasError) {
+                                        return Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 8.0),
+                                          child: Image.asset(
+                                            'assets/images/user2.png',
+                                            width: 80,
+                                            height: 105,
+                                            fit: BoxFit.fill,
+                                          ),
+                                        );
                                       } else {
-                                        selectedEmployee.remove(employeeItem);
-                                      }
-                                      isAllSelected =
-                                          employees.every((u) => u.isSelected);
-                                    });
-                                  },
-                                ),
-                              ),
-                              DataCell(Text(
-                                  ("${employeeItem.firstName.toString()} ${employeeItem.lastName.toString()}"))),
-                              DataCell(
-                                Row(
-                                  children: [
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.only(right: 8.0),
-                                      child: FutureBuilder<String>(
-                                        future: loadPhoto(
-                                            employeeItem.profilePhoto?.guidId ??
-                                                ''),
-                                        builder: (BuildContext context,
-                                            AsyncSnapshot<String> snapshot) {
-                                          if (snapshot.connectionState ==
-                                              ConnectionState.waiting) {
-                                            return const CircularProgressIndicator();
-                                          } else if (snapshot.hasError) {
-                                            return Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 8.0),
-                                              child: Image.asset(
-                                                'assets/images/user2.png',
-                                                width: 80,
-                                                height: 105,
-                                                fit: BoxFit.fill,
-                                              ),
-                                            );
-                                          } else {
-                                            final imageUrl = snapshot.data;
+                                        final imageUrl = snapshot.data;
 
-                                            if (imageUrl != null &&
-                                                imageUrl.isNotEmpty) {
-                                              return Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 8.0),
-                                                child: FadeInImage(
-                                                  image: NetworkImage(
-                                                    imageUrl,
-                                                    headers: Authorization
-                                                        .createHeaders(),
-                                                  ),
-                                                  placeholder: MemoryImage(
-                                                      kTransparentImage),
-                                                  fadeInDuration:
-                                                      const Duration(
-                                                          milliseconds: 300),
-                                                  width: 80,
-                                                  height: 105,
-                                                  fit: BoxFit.fill,
-                                                ),
-                                              );
-                                            } else {
-                                              return Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 8.0),
-                                                child: Image.asset(
-                                                  'assets/images/user2.png',
-                                                  width: 80,
-                                                  height: 80,
-                                                  fit: BoxFit.fill,
-                                                ),
-                                              );
-                                            }
-                                          }
-                                        },
-                                      ),
-                                    ),
-                                  ],
+                                        if (imageUrl != null &&
+                                            imageUrl.isNotEmpty) {
+                                          return Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 8.0),
+                                            child: FadeInImage(
+                                              image: NetworkImage(
+                                                imageUrl,
+                                                headers: Authorization
+                                                    .createHeaders(),
+                                              ),
+                                              placeholder: MemoryImage(
+                                                  kTransparentImage),
+                                              fadeInDuration: const Duration(
+                                                  milliseconds: 300),
+                                              width: 80,
+                                              height: 105,
+                                              fit: BoxFit.fill,
+                                            ),
+                                          );
+                                        } else {
+                                          return Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 8.0),
+                                            child: Image.asset(
+                                              'assets/images/user2.png',
+                                              width: 80,
+                                              height: 80,
+                                              fit: BoxFit.fill,
+                                            ),
+                                          );
+                                        }
+                                      }
+                                    },
+                                  ),
                                 ),
-                              ),
-                              DataCell(Text(employeeItem.email.toString())),
-                              DataCell(Text(employeeItem.gender == 0
-                                  ? "Muško"
-                                  : "Žensko")),
-                              DataCell(Container(
-                                alignment: Alignment.center,
-                                child: employeeItem.isActive == true
-                                    ? const Icon(
-                                        Icons.check_circle_outline,
-                                        color: green,
-                                        size: 30,
-                                      )
-                                    : const Icon(
-                                        Icons.close_outlined,
-                                        color: Colors.red,
-                                        size: 30,
-                                      ),
-                              )),
-                            ]))
-                        .toList() ??
-                    []),
+                              ],
+                            ),
+                          ),
+                          DataCell(Text(employeeItem.email.toString())),
+                          DataCell(Text(
+                              employeeItem.gender == 0 ? "Muško" : "Žensko")),
+                          DataCell(Container(
+                            alignment: Alignment.center,
+                            child: employeeItem.isActive == true
+                                ? const Icon(
+                                    Icons.check_circle_outline,
+                                    color: green,
+                                    size: 30,
+                                  )
+                                : const Icon(
+                                    Icons.close_outlined,
+                                    color: Colors.red,
+                                    size: 30,
+                                  ),
+                          )),
+                        ]))
+                    .toList()),
           ),
         ),
       ),
@@ -1205,8 +1198,8 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
               });
               loadEmployee(
                   EmployeeSearchObject(
-                    PageNumber: currentPage,
-                    PageSize: pageSize,
+                    pageNumber: currentPage,
+                    pageSize: pageSize,
                   ),
                   _selectedIsActive);
             }
@@ -1228,8 +1221,8 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
             if (hasNextPage == pageSize) {
               loadEmployee(
                   EmployeeSearchObject(
-                      PageNumber: currentPage,
-                      PageSize: pageSize,
+                      pageNumber: currentPage,
+                      pageSize: pageSize,
                       name: _searchController.text),
                   _selectedIsActive);
             }

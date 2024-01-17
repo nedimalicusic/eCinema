@@ -66,8 +66,8 @@ class _UsersScreenState extends State<UsersScreen> {
     loadUsers(
       UserSearchObject(
           name: _searchController.text,
-          PageSize: pageSize,
-          PageNumber: currentPage),
+          pageSize: pageSize,
+          pageNumber: currentPage),
       _selectedIsActive,
       _selectedIsVerified,
     );
@@ -76,7 +76,7 @@ class _UsersScreenState extends State<UsersScreen> {
       final searchQuery = _searchController.text;
       loadUsers(
           UserSearchObject(
-              name: searchQuery, PageNumber: currentPage, PageSize: pageSize),
+              name: searchQuery, pageNumber: currentPage, pageSize: pageSize),
           _selectedIsActive,
           _selectedIsVerified);
     });
@@ -177,8 +177,8 @@ class _UsersScreenState extends State<UsersScreen> {
             gender: null,
             isActive: null,
             isVerified: null,
-            PageNumber: currentPage,
-            PageSize: pageSize,
+            pageNumber: currentPage,
+            pageSize: pageSize,
           ),
           _selectedIsActive,
           _selectedIsVerified,
@@ -228,8 +228,8 @@ class _UsersScreenState extends State<UsersScreen> {
             gender: null,
             isActive: null,
             isVerified: null,
-            PageNumber: currentPage,
-            PageSize: pageSize,
+            pageNumber: currentPage,
+            pageSize: pageSize,
           ),
           _selectedIsActive,
           _selectedIsVerified,
@@ -363,8 +363,8 @@ class _UsersScreenState extends State<UsersScreen> {
                           UserSearchObject(
                               gender: selectedGender,
                               name: _searchController.text,
-                              PageNumber: currentPage,
-                              PageSize: pageSize),
+                              pageNumber: currentPage,
+                              pageSize: pageSize),
                           _selectedIsActive,
                           _selectedIsVerified);
                     });
@@ -414,8 +414,8 @@ class _UsersScreenState extends State<UsersScreen> {
                                     ? false
                                     : null,
                             name: _searchController.text,
-                            PageNumber: currentPage,
-                            PageSize: pageSize),
+                            pageNumber: currentPage,
+                            pageSize: pageSize),
                         _selectedIsActive,
                         _selectedIsVerified);
                   },
@@ -463,8 +463,8 @@ class _UsersScreenState extends State<UsersScreen> {
                                     ? false
                                     : null,
                             name: _searchController.text,
-                            PageNumber: currentPage,
-                            PageSize: pageSize),
+                            pageNumber: currentPage,
+                            pageSize: pageSize),
                         _selectedIsActive,
                         _selectedIsVerified);
                   },
@@ -808,127 +808,120 @@ class _UsersScreenState extends State<UsersScreen> {
                   ),
                 ],
                 rows: users
-                        .map((User userItem) => DataRow(cells: [
-                              DataCell(
-                                Checkbox(
-                                  value: userItem.isSelected,
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      userItem.isSelected = value ?? false;
-                                      if (userItem.isSelected == true) {
-                                        selectedUsers.add(userItem);
+                    .map((User userItem) => DataRow(cells: [
+                          DataCell(
+                            Checkbox(
+                              value: userItem.isSelected,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  userItem.isSelected = value ?? false;
+                                  if (userItem.isSelected == true) {
+                                    selectedUsers.add(userItem);
+                                  } else {
+                                    selectedUsers.remove(userItem);
+                                  }
+                                  isAllSelected =
+                                      users.every((u) => u.isSelected);
+                                });
+                              },
+                            ),
+                          ),
+                          DataCell(Text(
+                              ("${userItem.firstName.toString()} ${userItem.lastName.toString()}"))),
+                          DataCell(
+                            Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: FutureBuilder<String>(
+                                    future: loadPhoto(
+                                        userItem.profilePhoto?.guidId ?? ''),
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot<String> snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return const CircularProgressIndicator();
+                                      } else if (snapshot.hasError) {
+                                        return const Text(
+                                            'Greška prilikom učitavanja slike');
                                       } else {
-                                        selectedUsers.remove(userItem);
-                                      }
-                                      isAllSelected =
-                                          users.every((u) => u.isSelected);
-                                    });
-                                  },
-                                ),
-                              ),
-                              DataCell(Text(
-                                  ("${userItem.firstName.toString()} ${userItem.lastName.toString()}"))),
-                              DataCell(
-                                Row(
-                                  children: [
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.only(right: 8.0),
-                                      child: FutureBuilder<String>(
-                                        future: loadPhoto(
-                                            userItem.profilePhoto?.guidId ??
-                                                ''),
-                                        builder: (BuildContext context,
-                                            AsyncSnapshot<String> snapshot) {
-                                          if (snapshot.connectionState ==
-                                              ConnectionState.waiting) {
-                                            return const CircularProgressIndicator();
-                                          } else if (snapshot.hasError) {
-                                            return const Text(
-                                                'Greška prilikom učitavanja slike');
-                                          } else {
-                                            final imageUrl = snapshot.data;
+                                        final imageUrl = snapshot.data;
 
-                                            if (imageUrl != null &&
-                                                imageUrl.isNotEmpty) {
-                                              return Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 8.0),
-                                                child: FadeInImage(
-                                                  image: NetworkImage(
-                                                    imageUrl,
-                                                    headers: Authorization
-                                                        .createHeaders(),
-                                                  ),
-                                                  placeholder: MemoryImage(
-                                                      kTransparentImage),
-                                                  fadeInDuration:
-                                                      const Duration(
-                                                          milliseconds: 300),
-                                                  fit: BoxFit.fill,
-                                                  width: 80,
-                                                  height: 105,
-                                                ),
-                                              );
-                                            } else {
-                                              return Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 8.0),
-                                                child: Image.asset(
-                                                  'assets/images/user2.png',
-                                                  width: 80,
-                                                  height: 105,
-                                                  fit: BoxFit.fill,
-                                                ),
-                                              );
-                                            }
-                                          }
-                                        },
-                                      ),
-                                    ),
-                                  ],
+                                        if (imageUrl != null &&
+                                            imageUrl.isNotEmpty) {
+                                          return Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 8.0),
+                                            child: FadeInImage(
+                                              image: NetworkImage(
+                                                imageUrl,
+                                                headers: Authorization
+                                                    .createHeaders(),
+                                              ),
+                                              placeholder: MemoryImage(
+                                                  kTransparentImage),
+                                              fadeInDuration: const Duration(
+                                                  milliseconds: 300),
+                                              fit: BoxFit.fill,
+                                              width: 80,
+                                              height: 105,
+                                            ),
+                                          );
+                                        } else {
+                                          return Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 8.0),
+                                            child: Image.asset(
+                                              'assets/images/user2.png',
+                                              width: 80,
+                                              height: 105,
+                                              fit: BoxFit.fill,
+                                            ),
+                                          );
+                                        }
+                                      }
+                                    },
+                                  ),
                                 ),
-                              ),
-                              DataCell(Center(
-                                child: Text(
-                                    userItem.phoneNumber?.toString() ?? ""),
-                              )),
-                              DataCell(Text(userItem.email.toString())),
-                              DataCell(Text(
-                                  userItem.gender == 0 ? "Male" : "Female")),
-                              DataCell(Container(
-                                alignment: Alignment.center,
-                                child: userItem.isActive == true
-                                    ? const Icon(
-                                        Icons.check_circle_outline,
-                                        color: green,
-                                        size: 30,
-                                      )
-                                    : const Icon(
-                                        Icons.close_outlined,
-                                        color: Colors.red,
-                                        size: 30,
-                                      ),
-                              )),
-                              DataCell(Container(
-                                alignment: Alignment.center,
-                                child: userItem.isVerified == true
-                                    ? const Icon(
-                                        Icons.check_circle_outline,
-                                        color: green,
-                                        size: 30,
-                                      )
-                                    : const Icon(
-                                        Icons.close_outlined,
-                                        color: Colors.red,
-                                        size: 30,
-                                      ),
-                              )),
-                            ]))
-                        .toList() ??
-                    []),
+                              ],
+                            ),
+                          ),
+                          DataCell(Center(
+                            child: Text(userItem.phoneNumber?.toString() ?? ""),
+                          )),
+                          DataCell(Text(userItem.email.toString())),
+                          DataCell(
+                              Text(userItem.gender == 0 ? "Male" : "Female")),
+                          DataCell(Container(
+                            alignment: Alignment.center,
+                            child: userItem.isActive == true
+                                ? const Icon(
+                                    Icons.check_circle_outline,
+                                    color: green,
+                                    size: 30,
+                                  )
+                                : const Icon(
+                                    Icons.close_outlined,
+                                    color: Colors.red,
+                                    size: 30,
+                                  ),
+                          )),
+                          DataCell(Container(
+                            alignment: Alignment.center,
+                            child: userItem.isVerified == true
+                                ? const Icon(
+                                    Icons.check_circle_outline,
+                                    color: green,
+                                    size: 30,
+                                  )
+                                : const Icon(
+                                    Icons.close_outlined,
+                                    color: Colors.red,
+                                    size: 30,
+                                  ),
+                          )),
+                        ]))
+                    .toList()),
           ),
         ),
       ),
@@ -941,7 +934,7 @@ class _UsersScreenState extends State<UsersScreen> {
       _lastNameController.text = userToEdit.lastName;
       _emailController.text = userToEdit.email;
       _phoneNumberController.text = userToEdit.phoneNumber ?? '';
-      _birthDateController.text = userToEdit.birthDate ?? '';
+      _birthDateController.text = userToEdit.birthDate;
       selectedGender = userToEdit.gender;
       _isActive = userToEdit.isActive;
       _isVerified = userToEdit.isVerified;
@@ -1248,8 +1241,8 @@ class _UsersScreenState extends State<UsersScreen> {
               });
               loadUsers(
                   UserSearchObject(
-                    PageNumber: currentPage,
-                    PageSize: pageSize,
+                    pageNumber: currentPage,
+                    pageSize: pageSize,
                   ),
                   _selectedIsActive,
                   _selectedIsVerified);
@@ -1272,8 +1265,8 @@ class _UsersScreenState extends State<UsersScreen> {
             if (hasNextPage == pageSize) {
               loadUsers(
                   UserSearchObject(
-                      PageNumber: currentPage,
-                      PageSize: pageSize,
+                      pageNumber: currentPage,
+                      pageSize: pageSize,
                       name: _searchController.text),
                   _selectedIsActive,
                   _selectedIsVerified);

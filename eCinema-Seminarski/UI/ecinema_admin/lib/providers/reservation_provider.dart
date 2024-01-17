@@ -23,7 +23,7 @@ class ReservationProvider extends BaseProvider<Reservation> {
   }
 
   Future<dynamic> delete(int id) async {
-    var uri = Uri.parse('$apiUrl/Reservation/${id}');
+    var uri = Uri.parse('$apiUrl/Reservation/$id');
     Map<String, String> headers = Authorization.createHeaders();
 
     var response = await http.delete(uri, headers: headers);

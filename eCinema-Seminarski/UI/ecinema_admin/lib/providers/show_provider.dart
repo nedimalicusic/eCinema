@@ -21,11 +21,11 @@ class ShowProvider extends BaseProvider<Shows> {
       if (searchObject.cinemaId != null) {
         queryParameters['cinemaId'] = searchObject.cinemaId.toString();
       }
-      if (searchObject.PageNumber != null) {
-        queryParameters['pageNumber'] = searchObject.PageNumber.toString();
+      if (searchObject.pageNumber != null) {
+        queryParameters['pageNumber'] = searchObject.pageNumber.toString();
       }
-      if (searchObject.PageSize != null) {
-        queryParameters['pageSize'] = searchObject.PageSize.toString();
+      if (searchObject.pageSize != null) {
+        queryParameters['pageSize'] = searchObject.pageSize.toString();
       }
     }
 
@@ -70,7 +70,7 @@ class ShowProvider extends BaseProvider<Shows> {
   }
 
   Future<dynamic> delete(int id) async {
-    var uri = Uri.parse('$apiUrl/Show/${id}');
+    var uri = Uri.parse('$apiUrl/Show/$id');
     Map<String, String> headers = Authorization.createHeaders();
 
     var response = await http.delete(uri, headers: headers);

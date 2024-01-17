@@ -58,70 +58,70 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        child: Column(
-          children: [
-            SizedBox(
-              height: 30,
-            ),
-            Container(
-              width: 500,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 136, top: 8, right: 8),
-                child: DropdownButtonFormField<int>(
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white70,
-                    hintText: 'Izaberite kino',
-                  ),
-                  value: selectedCinema,
-                  items: cinemaList.map((Cinema cinema) {
-                    return DropdownMenuItem<int>(
-                      value: cinema.id,
-                      child: Text(cinema.name),
-                    );
-                  }).toList(),
-                  onChanged: (int? newValue) {
-                    setState(() {
-                      selectedCinema = newValue;
-                    });
-                    loadDashboardInformation(selectedCinema!);
-                  },
+      appBar: AppBar(
+        title: const Text("Dashboard"),
+      ),
+      body: Column(
+        children: [
+          const SizedBox(
+            height: 30,
+          ),
+          SizedBox(
+            width: 500,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 136, top: 8, right: 8),
+              child: DropdownButtonFormField<int>(
+                decoration: const InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white70,
+                  hintText: 'Izaberite kino',
                 ),
+                value: selectedCinema,
+                items: cinemaList.map((Cinema cinema) {
+                  return DropdownMenuItem<int>(
+                    value: cinema.id,
+                    child: Text(cinema.name),
+                  );
+                }).toList(),
+                onChanged: (int? newValue) {
+                  setState(() {
+                    selectedCinema = newValue;
+                  });
+                  loadDashboardInformation(selectedCinema!);
+                },
               ),
             ),
-            SizedBox(
-              height: 100,
+          ),
+          const SizedBox(
+            height: 100,
+          ),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildInfoContainer("Broj korisnika", dashboard.countUsers),
+                    _buildInfoContainer(
+                        "Aktivni korisnici", dashboard.countUsersActive),
+                    _buildInfoContainer(
+                        "Neaktivni korisnici", dashboard.countUsersInActive),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildInfoContainer(
+                        "Rezervacije", dashboard.countOfReservation),
+                    _buildInfoContainer(
+                        "Broj zaposlenika", dashboard.countEmployees),
+                  ],
+                ),
+              ],
             ),
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildInfoContainer(
-                          "Broj korisnika", dashboard.countUsers),
-                      _buildInfoContainer(
-                          "Aktivni korisnici", dashboard.countUsersActive),
-                      _buildInfoContainer(
-                          "Neaktivni korisnici", dashboard.countUsersInActive),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildInfoContainer(
-                          "Rezervacije", dashboard.countOfReservation),
-                      _buildInfoContainer(
-                          "Broj zaposlenika", dashboard.countEmployees),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -134,19 +134,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
         color: Colors.teal,
         borderRadius: BorderRadius.circular(10),
       ),
-      margin: EdgeInsets.all(10),
+      margin: const EdgeInsets.all(10),
       alignment: Alignment.center,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
             value.toString(),
-            style: TextStyle(
+            style: const TextStyle(
                 color: Colors.white, fontSize: 50, fontWeight: FontWeight.bold),
           ),
           Text(
             label,
-            style: TextStyle(color: Colors.white, fontSize: 16),
+            style: const TextStyle(color: Colors.white, fontSize: 16),
           ),
         ],
       ),

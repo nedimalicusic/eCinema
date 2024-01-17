@@ -8,7 +8,7 @@ class MovieProvider extends BaseProvider<Movie> {
   MovieProvider() : super('Movie/GetPaged');
 
   Future<dynamic> delete(int id) async {
-    var uri = Uri.parse('$apiUrl/Movie/${id}');
+    var uri = Uri.parse('$apiUrl/Movie/$id');
     Map<String, String> headers = Authorization.createHeaders();
 
     var response = await http.delete(uri, headers: headers);

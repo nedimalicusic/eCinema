@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, use_build_context_synchronously
+// ignore_for_file: non_constant_identifier_names, use_build_context_synchronously, prefer_typing_uninitialized_variables
 
 import 'package:ecinema_admin/models/reservation.dart';
 import 'package:flutter/material.dart';
@@ -143,7 +143,7 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
           "${reservationToEdit.user.firstName} ${reservationToEdit.user.lastName}";
       selectedUserId = reservationToEdit.userId;
       selectedSeat =
-          '${reservationToEdit.seat.row?.toString() ?? ""}${reservationToEdit.seat.column?.toString() ?? ""}';
+          '${reservationToEdit.seat.row.toString()}${reservationToEdit.seat.column.toString()}';
       _isActiveNotifier.value = reservationToEdit.isActive;
       _isConfirmNotifier.value = reservationToEdit.isConfirm;
     }
@@ -287,94 +287,90 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
                 )),
               ],
               rows: reservations
-                      .map((Reservation e) => DataRow(cells: [
-                            DataCell(Text(e.id?.toString() ?? "")),
-                            DataCell(
-                                Text(e.show.cinema.name?.toString() ?? "")),
-                            DataCell(
-                                Text(e.show.movie.title?.toString() ?? "")),
-                            DataCell(Text(
-                                '${e.seat.row?.toString() ?? ""}${e.seat.column?.toString() ?? ""}')),
-                            DataCell(Text(e.isActive?.toString() ?? "")),
-                            DataCell(Text(e.isConfirm?.toString() ?? "")),
-                            DataCell(
-                              ElevatedButton(
-                                onPressed: () {
-                                  setState(() {
-                                    isEditing = true;
-                                  });
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: Text(isEditing
-                                            ? 'Uredi rezervaciju'
-                                            : 'Dodaj rezervaciju'),
-                                        content: SingleChildScrollView(
-                                          child: EditReservationForm(
-                                              isEditing: isEditing,
-                                              reservationToEdit: e),
-                                        ),
-                                        actions: <Widget>[
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: const Text('Zatvori'),
-                                          ),
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              if (_formKey.currentState!
-                                                  .validate()) {
-                                                EditReservation(e.id);
-                                              }
-                                            },
-                                            child: const Text('Spremi'),
-                                          ),
-                                        ],
-                                      );
-                                    },
+                  .map((Reservation e) => DataRow(cells: [
+                        DataCell(Text(e.id.toString())),
+                        DataCell(Text(e.show.cinema.name.toString())),
+                        DataCell(Text(e.show.movie.title.toString())),
+                        DataCell(Text(
+                            '${e.seat.row.toString()}${e.seat.column.toString()}')),
+                        DataCell(Text(e.isActive.toString())),
+                        DataCell(Text(e.isConfirm.toString())),
+                        DataCell(
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                isEditing = true;
+                              });
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text(isEditing
+                                        ? 'Uredi rezervaciju'
+                                        : 'Dodaj rezervaciju'),
+                                    content: SingleChildScrollView(
+                                      child: EditReservationForm(
+                                          isEditing: isEditing,
+                                          reservationToEdit: e),
+                                    ),
+                                    actions: <Widget>[
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text('Zatvori'),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          if (_formKey.currentState!
+                                              .validate()) {
+                                            EditReservation(e.id);
+                                          }
+                                        },
+                                        child: const Text('Spremi'),
+                                      ),
+                                    ],
                                   );
                                 },
-                                child: const Text("Edit"),
-                              ),
-                            ),
-                            DataCell(
-                              ElevatedButton(
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title:
-                                            const Text("Izbrisi rezervaciju"),
-                                        content: const SingleChildScrollView(
-                                            child: Text(
-                                                "Da li ste sigurni da zelite obisati rezervaciju?")),
-                                        actions: <Widget>[
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: const Text('Odustani'),
-                                          ),
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              DeleteReservation(e.id);
-                                            },
-                                            child: const Text('Izbrisi'),
-                                          ),
-                                        ],
-                                      );
-                                    },
+                              );
+                            },
+                            child: const Text("Edit"),
+                          ),
+                        ),
+                        DataCell(
+                          ElevatedButton(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text("Izbrisi rezervaciju"),
+                                    content: const SingleChildScrollView(
+                                        child: Text(
+                                            "Da li ste sigurni da zelite obisati rezervaciju?")),
+                                    actions: <Widget>[
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text('Odustani'),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          DeleteReservation(e.id);
+                                        },
+                                        child: const Text('Izbrisi'),
+                                      ),
+                                    ],
                                   );
                                 },
-                                child: const Text("Delete"),
-                              ),
-                            ),
-                          ]))
-                      .toList() ??
-                  [])),
+                              );
+                            },
+                            child: const Text("Delete"),
+                          ),
+                        ),
+                      ]))
+                  .toList())),
     );
   }
 }

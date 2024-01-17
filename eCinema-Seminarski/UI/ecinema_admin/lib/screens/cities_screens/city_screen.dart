@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, use_build_context_synchronously
+// ignore_for_file: non_constant_identifier_names, use_build_context_synchronously, prefer_typing_uninitialized_variables
 
 import 'package:ecinema_admin/models/city.dart';
 import 'package:ecinema_admin/models/country.dart';
@@ -199,8 +199,8 @@ class _CityScreenState extends State<CityScreen> {
 
   Widget AddCityForm({bool isEditing = false, City? cityToEdit}) {
     if (cityToEdit != null) {
-      _nameController.text = cityToEdit.name ?? '';
-      _zipCodeController.text = cityToEdit.zipCode ?? '';
+      _nameController.text = cityToEdit.name;
+      _zipCodeController.text = cityToEdit.zipCode;
       _selectedCountryId = cityToEdit.countryId;
       _isActiveNotifier.value = cityToEdit.isActive;
     } else {
@@ -349,91 +349,88 @@ class _CityScreenState extends State<CityScreen> {
                 )),
               ],
               rows: cities
-                      .map((City e) => DataRow(cells: [
-                            DataCell(Text(e.id?.toString() ?? "")),
-                            DataCell(Text(e.name?.toString() ?? "")),
-                            DataCell(Text(e.zipCode?.toString() ?? "")),
-                            DataCell(Text(e.isActive?.toString() ?? "")),
-                            DataCell(
-                                Text(e.country.abbreviation?.toString() ?? "")),
-                            DataCell(
-                              ElevatedButton(
-                                onPressed: () {
-                                  setState(() {
-                                    isEditing = true;
-                                  });
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: Text(isEditing
-                                            ? 'Uredi grad'
-                                            : 'Dodaj grad'),
-                                        content: SingleChildScrollView(
-                                          child: AddCityForm(
-                                              isEditing: isEditing,
-                                              cityToEdit: e),
-                                        ),
-                                        actions: <Widget>[
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: const Text('Zatvori'),
-                                          ),
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              if (_formKey.currentState!
-                                                  .validate()) {
-                                                EditCity(e.id);
-                                              }
-                                            },
-                                            child: const Text('Spremi'),
-                                          ),
-                                        ],
-                                      );
-                                    },
+                  .map((City e) => DataRow(cells: [
+                        DataCell(Text(e.id.toString())),
+                        DataCell(Text(e.name.toString())),
+                        DataCell(Text(e.zipCode.toString())),
+                        DataCell(Text(e.isActive.toString())),
+                        DataCell(Text(e.country.abbreviation.toString())),
+                        DataCell(
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                isEditing = true;
+                              });
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text(isEditing
+                                        ? 'Uredi grad'
+                                        : 'Dodaj grad'),
+                                    content: SingleChildScrollView(
+                                      child: AddCityForm(
+                                          isEditing: isEditing, cityToEdit: e),
+                                    ),
+                                    actions: <Widget>[
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text('Zatvori'),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          if (_formKey.currentState!
+                                              .validate()) {
+                                            EditCity(e.id);
+                                          }
+                                        },
+                                        child: const Text('Spremi'),
+                                      ),
+                                    ],
                                   );
                                 },
-                                child: const Text("Edit"),
-                              ),
-                            ),
-                            DataCell(
-                              ElevatedButton(
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: const Text("Izbrisi grad"),
-                                        content: const SingleChildScrollView(
-                                            child: Text(
-                                                "Da li ste sigurni da zelite obisati grad?")),
-                                        actions: <Widget>[
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.of(context)
-                                                  .pop(); // Zatvorite modal
-                                            },
-                                            child: const Text('Odustani'),
-                                          ),
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              DeleteCity(e.id);
-                                            },
-                                            child: const Text('Izbrisi'),
-                                          ),
-                                        ],
-                                      );
-                                    },
+                              );
+                            },
+                            child: const Text("Edit"),
+                          ),
+                        ),
+                        DataCell(
+                          ElevatedButton(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text("Izbrisi grad"),
+                                    content: const SingleChildScrollView(
+                                        child: Text(
+                                            "Da li ste sigurni da zelite obisati grad?")),
+                                    actions: <Widget>[
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.of(context)
+                                              .pop(); // Zatvorite modal
+                                        },
+                                        child: const Text('Odustani'),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          DeleteCity(e.id);
+                                        },
+                                        child: const Text('Izbrisi'),
+                                      ),
+                                    ],
                                   );
                                 },
-                                child: const Text("Delete"),
-                              ),
-                            ),
-                          ]))
-                      .toList() ??
-                  [])),
+                              );
+                            },
+                            child: const Text("Delete"),
+                          ),
+                        ),
+                      ]))
+                  .toList())),
     );
   }
 }

@@ -38,7 +38,7 @@ class ProductionProvider extends BaseProvider<Production> {
   }
 
   Future<dynamic> delete(int id) async {
-    var uri = Uri.parse('$apiUrl/Production/${id}');
+    var uri = Uri.parse('$apiUrl/Production/$id');
     Map<String, String> headers = Authorization.createHeaders();
 
     var response = await http.delete(uri, headers: headers);

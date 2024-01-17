@@ -1,25 +1,25 @@
 class CinemaSearchObject {
   String? name;
-  int? PageNumber;
-  int? PageSize;
+  int? pageNumber;
+  int? pageSize;
 
   CinemaSearchObject({
     this.name,
-    this.PageNumber,
-    this.PageSize,
+    this.pageNumber,
+    this.pageSize,
   });
 
   CinemaSearchObject.fromJson(Map<String, dynamic> json) {
     name = json['name'];
-    PageNumber = json['pageNumber'];
-    PageSize = json['pageSize'];
+    pageNumber = json['pageNumber'];
+    pageSize = json['pageSize'];
   }
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
-    data['name']= name;
-    data['PageNumber']= PageNumber;
-    data['PageSize']= PageSize;
+    data['name'] = name;
+    data['pageNumber'] = pageNumber;
+    data['pageSize'] = pageSize;
     return data;
   }
 }

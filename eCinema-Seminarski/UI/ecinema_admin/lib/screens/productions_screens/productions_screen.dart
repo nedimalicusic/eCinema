@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, use_build_context_synchronously
+// ignore_for_file: non_constant_identifier_names, use_build_context_synchronously, prefer_typing_uninitialized_variables
 
 import 'package:ecinema_admin/models/production.dart';
 import 'package:ecinema_admin/providers/production_provider.dart';
@@ -195,7 +195,7 @@ class _ProductionScreenState extends State<ProductionScreen> {
   Widget AddProductionForm(
       {bool isEditing = false, Production? productionToEdit}) {
     if (productionToEdit != null) {
-      _nameController.text = productionToEdit.name ?? '';
+      _nameController.text = productionToEdit.name;
       _selectedCountryId = productionToEdit.countryId;
     } else {
       _nameController.text = '';
@@ -295,87 +295,86 @@ class _ProductionScreenState extends State<ProductionScreen> {
                 )),
               ],
               rows: productions
-                      .map((Production e) => DataRow(cells: [
-                            DataCell(Text(e.id?.toString() ?? "")),
-                            DataCell(Text(e.name?.toString() ?? "")),
-                            DataCell(Text(e.country.name?.toString() ?? "")),
-                            DataCell(
-                              ElevatedButton(
-                                onPressed: () {
-                                  setState(() {
-                                    isEditing = true;
-                                  });
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: Text(isEditing
-                                            ? 'Uredi produkciju'
-                                            : 'Dodaj produkciju'),
-                                        content: SingleChildScrollView(
-                                          child: AddProductionForm(
-                                              isEditing: isEditing,
-                                              productionToEdit: e),
-                                        ),
-                                        actions: <Widget>[
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: const Text('Zatvori'),
-                                          ),
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              if (_formKey.currentState!
-                                                  .validate()) {
-                                                EditProduction(e.id);
-                                              }
-                                            },
-                                            child: const Text('Spremi'),
-                                          ),
-                                        ],
-                                      );
-                                    },
+                  .map((Production e) => DataRow(cells: [
+                        DataCell(Text(e.id.toString())),
+                        DataCell(Text(e.name.toString())),
+                        DataCell(Text(e.country.name.toString())),
+                        DataCell(
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                isEditing = true;
+                              });
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text(isEditing
+                                        ? 'Uredi produkciju'
+                                        : 'Dodaj produkciju'),
+                                    content: SingleChildScrollView(
+                                      child: AddProductionForm(
+                                          isEditing: isEditing,
+                                          productionToEdit: e),
+                                    ),
+                                    actions: <Widget>[
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text('Zatvori'),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          if (_formKey.currentState!
+                                              .validate()) {
+                                            EditProduction(e.id);
+                                          }
+                                        },
+                                        child: const Text('Spremi'),
+                                      ),
+                                    ],
                                   );
                                 },
-                                child: const Text("Edit"),
-                              ),
-                            ),
-                            DataCell(
-                              ElevatedButton(
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: const Text("Izbrisi produkciju"),
-                                        content: const SingleChildScrollView(
-                                            child: Text(
-                                                "Da li ste sigurni da zelite obisati produkciju?")),
-                                        actions: <Widget>[
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: const Text('Odustani'),
-                                          ),
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              DeleteProduction(e.id);
-                                            },
-                                            child: const Text('Izbrisi'),
-                                          ),
-                                        ],
-                                      );
-                                    },
+                              );
+                            },
+                            child: const Text("Edit"),
+                          ),
+                        ),
+                        DataCell(
+                          ElevatedButton(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text("Izbrisi produkciju"),
+                                    content: const SingleChildScrollView(
+                                        child: Text(
+                                            "Da li ste sigurni da zelite obisati produkciju?")),
+                                    actions: <Widget>[
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text('Odustani'),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          DeleteProduction(e.id);
+                                        },
+                                        child: const Text('Izbrisi'),
+                                      ),
+                                    ],
                                   );
                                 },
-                                child: const Text("Delete"),
-                              ),
-                            ),
-                          ]))
-                      .toList() ??
-                  [])),
+                              );
+                            },
+                            child: const Text("Delete"),
+                          ),
+                        ),
+                      ]))
+                  .toList())),
     );
   }
 }

@@ -39,7 +39,7 @@ class GenreProvider extends BaseProvider<Genre> {
   }
 
   Future<dynamic> delete(int id) async {
-    var uri = Uri.parse('$apiUrl/Genre/${id}');
+    var uri = Uri.parse('$apiUrl/Genre/$id');
     Map<String, String> headers = Authorization.createHeaders();
 
     var response = await http.delete(uri, headers: headers);

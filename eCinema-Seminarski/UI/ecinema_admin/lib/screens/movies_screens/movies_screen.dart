@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, non_constant_identifier_names
+// ignore_for_file: use_build_context_synchronously, non_constant_identifier_names, prefer_typing_uninitialized_variables
 
 import 'dart:io';
 
@@ -302,8 +302,8 @@ class _MoviesScreenState extends State<MoviesScreen> {
       _titleController.text = movieToEdit.title;
       _descriptionController.text = movieToEdit.description;
       _authorController.text = movieToEdit.author;
-      _relaseYearController.text = movieToEdit.releaseYear.toString() ?? '';
-      _durationController.text = movieToEdit.duration.toString() ?? '';
+      _relaseYearController.text = movieToEdit.releaseYear.toString();
+      _durationController.text = movieToEdit.duration.toString();
       _pickedFile = null;
     } else {
       _titleController.text = '';
@@ -633,150 +633,146 @@ class _MoviesScreenState extends State<MoviesScreen> {
                 )),
               ],
               rows: movies
-                      .map((Movie e) => DataRow(cells: [
-                            DataCell(Text(e.id?.toString() ?? "")),
-                            DataCell(
-                              Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 8.0),
-                                    child: FutureBuilder<String>(
-                                      future: loadPhoto(e.photo?.guidId ?? ''),
-                                      builder: (BuildContext context,
-                                          AsyncSnapshot<String> snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.waiting) {
-                                          return const CircularProgressIndicator();
-                                        } else if (snapshot.hasError) {
-                                          return const Text(
-                                              'Greška prilikom učitavanja slike');
-                                        } else {
-                                          final imageUrl = snapshot.data;
+                  .map((Movie e) => DataRow(cells: [
+                        DataCell(Text(e.id.toString())),
+                        DataCell(
+                          Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: FutureBuilder<String>(
+                                  future: loadPhoto(e.photo?.guidId ?? ''),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<String> snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const CircularProgressIndicator();
+                                    } else if (snapshot.hasError) {
+                                      return const Text(
+                                          'Greška prilikom učitavanja slike');
+                                    } else {
+                                      final imageUrl = snapshot.data;
 
-                                          if (imageUrl != null &&
-                                              imageUrl.isNotEmpty) {
-                                            return Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 8.0),
-                                              child: FadeInImage(
-                                                image: NetworkImage(
-                                                  imageUrl,
-                                                  headers: Authorization
-                                                      .createHeaders(),
-                                                ),
-                                                placeholder: MemoryImage(
-                                                    kTransparentImage),
-                                                fadeInDuration: const Duration(
-                                                    milliseconds: 300),
-                                                fit: BoxFit.fill,
-                                                width: 50,
-                                                height: 100,
-                                              ),
-                                            );
-                                          } else {
-                                            null;
-                                            return Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 8.0),
-                                              child: Image.asset(
-                                                'assets/images/user1.jpg',
-                                                width: 80,
-                                                height: 105,
-                                                fit: BoxFit.fill,
-                                              ),
-                                            );
-                                          }
-                                        }
-                                      },
+                                      if (imageUrl != null &&
+                                          imageUrl.isNotEmpty) {
+                                        return Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 8.0),
+                                          child: FadeInImage(
+                                            image: NetworkImage(
+                                              imageUrl,
+                                              headers:
+                                                  Authorization.createHeaders(),
+                                            ),
+                                            placeholder:
+                                                MemoryImage(kTransparentImage),
+                                            fadeInDuration: const Duration(
+                                                milliseconds: 300),
+                                            fit: BoxFit.fill,
+                                            width: 50,
+                                            height: 100,
+                                          ),
+                                        );
+                                      } else {
+                                        null;
+                                        return Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 8.0),
+                                          child: Image.asset(
+                                            'assets/images/user1.jpg',
+                                            width: 80,
+                                            height: 105,
+                                            fit: BoxFit.fill,
+                                          ),
+                                        );
+                                      }
+                                    }
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        DataCell(Text(e.title.toString())),
+                        DataCell(Text(e.author.toString())),
+                        DataCell(Text(e.releaseYear.toString())),
+                        DataCell(Text(e.duration.toString())),
+                        DataCell(Text(e.production.name.toString())),
+                        DataCell(
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                isEditing = true;
+                              });
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text(isEditing
+                                        ? 'Uredi film'
+                                        : 'Dodaj film'),
+                                    content: SingleChildScrollView(
+                                      child: AddMovieForm(
+                                          isEditing: isEditing, movieToEdit: e),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            DataCell(Text(e.title?.toString() ?? "")),
-                            DataCell(Text(e.author?.toString() ?? "")),
-                            DataCell(Text(e.releaseYear?.toString() ?? "")),
-                            DataCell(Text(e.duration?.toString() ?? "")),
-                            DataCell(Text(e.production.name?.toString() ?? "")),
-                            DataCell(
-                              ElevatedButton(
-                                onPressed: () {
-                                  setState(() {
-                                    isEditing = true;
-                                  });
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: Text(isEditing
-                                            ? 'Uredi film'
-                                            : 'Dodaj film'),
-                                        content: SingleChildScrollView(
-                                          child: AddMovieForm(
-                                              isEditing: isEditing,
-                                              movieToEdit: e),
-                                        ),
-                                        actions: <Widget>[
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: const Text('Zatvori'),
-                                          ),
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              if (_formKey.currentState!
-                                                  .validate()) {
-                                                editMovie(e.id);
-                                              }
-                                            },
-                                            child: const Text('Spremi'),
-                                          ),
-                                        ],
-                                      );
-                                    },
+                                    actions: <Widget>[
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text('Zatvori'),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          if (_formKey.currentState!
+                                              .validate()) {
+                                            editMovie(e.id);
+                                          }
+                                        },
+                                        child: const Text('Spremi'),
+                                      ),
+                                    ],
                                   );
                                 },
-                                child: const Text("Edit"),
-                              ),
-                            ),
-                            DataCell(
-                              ElevatedButton(
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: const Text("Izbrisi film"),
-                                        content: const SingleChildScrollView(
-                                            child: Text(
-                                                "Da li ste sigurni da zelite obisati film?")),
-                                        actions: <Widget>[
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: const Text('Odustani'),
-                                          ),
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              DeleteMovie(e.id);
-                                            },
-                                            child: const Text('Izbrisi'),
-                                          ),
-                                        ],
-                                      );
-                                    },
+                              );
+                            },
+                            child: const Text("Edit"),
+                          ),
+                        ),
+                        DataCell(
+                          ElevatedButton(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text("Izbrisi film"),
+                                    content: const SingleChildScrollView(
+                                        child: Text(
+                                            "Da li ste sigurni da zelite obisati film?")),
+                                    actions: <Widget>[
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text('Odustani'),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          DeleteMovie(e.id);
+                                        },
+                                        child: const Text('Izbrisi'),
+                                      ),
+                                    ],
                                   );
                                 },
-                                child: const Text("Delete"),
-                              ),
-                            ),
-                          ]))
-                      .toList() ??
-                  [])),
+                              );
+                            },
+                            child: const Text("Delete"),
+                          ),
+                        ),
+                      ]))
+                  .toList())),
     );
   }
 }

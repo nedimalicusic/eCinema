@@ -38,7 +38,7 @@ class LanguageProvider extends BaseProvider<Language> {
   }
 
   Future<dynamic> delete(int id) async {
-    var uri = Uri.parse('$apiUrl/Language/${id}');
+    var uri = Uri.parse('$apiUrl/Language/$id');
     Map<String, String> headers = Authorization.createHeaders();
 
     var response = await http.delete(uri, headers: headers);

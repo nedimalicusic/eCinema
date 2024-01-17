@@ -181,10 +181,10 @@ class _ActorsScreenState extends State<ActorsScreen> {
 
   Widget AddActorForm({bool isEditing = false, Actor? actorToEdit}) {
     if (actorToEdit != null) {
-      _firstNameController.text = actorToEdit.firstName ?? '';
-      _lastNameController.text = actorToEdit.lastName ?? '';
-      _emailController.text = actorToEdit.email ?? '';
-      _birthDateController.text = actorToEdit.birthDate ?? '';
+      _firstNameController.text = actorToEdit.firstName;
+      _lastNameController.text = actorToEdit.lastName;
+      _emailController.text = actorToEdit.email;
+      _birthDateController.text = actorToEdit.birthDate;
       selectedGender = actorToEdit.gender;
     } else {
       _firstNameController.text = '';
@@ -374,92 +374,90 @@ class _ActorsScreenState extends State<ActorsScreen> {
                 )),
               ],
               rows: actors
-                      .map((Actor e) => DataRow(cells: [
-                            DataCell(Text(e.id?.toString() ?? "")),
-                            DataCell(Text(e.firstName?.toString() ?? "")),
-                            DataCell(Text(e.lastName?.toString() ?? "")),
-                            DataCell(Text(e.email?.toString() ?? "")),
-                            DataCell(Text(DateFormat('dd.MM.yyyy')
-                                .format(DateTime.parse(e.birthDate))
-                                .toString())),
-                            DataCell(Text(e.gender == 0 ? "Male" : "Female")),
-                            DataCell(
-                              ElevatedButton(
-                                onPressed: () {
-                                  setState(() {
-                                    isEditing = true;
-                                  });
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: Text(isEditing
-                                            ? 'Uredi glumaca'
-                                            : 'Dodaj glumca'),
-                                        content: SingleChildScrollView(
-                                          child: AddActorForm(
-                                              isEditing: isEditing,
-                                              actorToEdit: e),
-                                        ),
-                                        actions: <Widget>[
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: const Text('Zatvori'),
-                                          ),
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              if (_formKey.currentState!
-                                                  .validate()) {
-                                                EditActor(e.id);
-                                              }
-                                            },
-                                            child: const Text('Spremi'),
-                                          ),
-                                        ],
-                                      );
-                                    },
+                  .map((Actor e) => DataRow(cells: [
+                        DataCell(Text(e.id.toString())),
+                        DataCell(Text(e.firstName.toString())),
+                        DataCell(Text(e.lastName.toString())),
+                        DataCell(Text(e.email.toString())),
+                        DataCell(Text(DateFormat('dd.MM.yyyy')
+                            .format(DateTime.parse(e.birthDate))
+                            .toString())),
+                        DataCell(Text(e.gender == 0 ? "Male" : "Female")),
+                        DataCell(
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                isEditing = true;
+                              });
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text(isEditing
+                                        ? 'Uredi glumaca'
+                                        : 'Dodaj glumca'),
+                                    content: SingleChildScrollView(
+                                      child: AddActorForm(
+                                          isEditing: isEditing, actorToEdit: e),
+                                    ),
+                                    actions: <Widget>[
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text('Zatvori'),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          if (_formKey.currentState!
+                                              .validate()) {
+                                            EditActor(e.id);
+                                          }
+                                        },
+                                        child: const Text('Spremi'),
+                                      ),
+                                    ],
                                   );
                                 },
-                                child: const Text("Edit"),
-                              ),
-                            ),
-                            DataCell(
-                              ElevatedButton(
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: const Text("Izbrisi glumca"),
-                                        content: const SingleChildScrollView(
-                                            child: Text(
-                                                "Da li ste sigurni da zelite obisati glumca?")),
-                                        actions: <Widget>[
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: const Text('Odustani'),
-                                          ),
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              DeleteActor(e.id);
-                                            },
-                                            child: const Text('Izbrisi'),
-                                          ),
-                                        ],
-                                      );
-                                    },
+                              );
+                            },
+                            child: const Text("Edit"),
+                          ),
+                        ),
+                        DataCell(
+                          ElevatedButton(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text("Izbrisi glumca"),
+                                    content: const SingleChildScrollView(
+                                        child: Text(
+                                            "Da li ste sigurni da zelite obisati glumca?")),
+                                    actions: <Widget>[
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text('Odustani'),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          DeleteActor(e.id);
+                                        },
+                                        child: const Text('Izbrisi'),
+                                      ),
+                                    ],
                                   );
                                 },
-                                child: const Text("Delete"),
-                              ),
-                            ),
-                          ]))
-                      .toList() ??
-                  [])),
+                              );
+                            },
+                            child: const Text("Delete"),
+                          ),
+                        ),
+                      ]))
+                  .toList())),
     );
   }
 }

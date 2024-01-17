@@ -110,8 +110,8 @@ class _ShowsScreenState extends State<ShowsScreen> {
           ShowSearchObject(
             name: _searchController.text,
             cinemaId: null,
-            PageNumber: currentPage,
-            PageSize: pageSize,
+            pageNumber: currentPage,
+            pageSize: pageSize,
           ),
         );
       }
@@ -138,8 +138,8 @@ class _ShowsScreenState extends State<ShowsScreen> {
           ShowSearchObject(
             name: _searchController.text,
             cinemaId: null,
-            PageNumber: currentPage,
-            PageSize: pageSize,
+            pageNumber: currentPage,
+            pageSize: pageSize,
           ),
         );
       }
@@ -157,8 +157,8 @@ class _ShowsScreenState extends State<ShowsScreen> {
           ShowSearchObject(
             name: _searchController.text,
             cinemaId: null,
-            PageNumber: currentPage,
-            PageSize: pageSize,
+            pageNumber: currentPage,
+            pageSize: pageSize,
           ),
         );
       }
@@ -280,8 +280,8 @@ class _ShowsScreenState extends State<ShowsScreen> {
                         ShowSearchObject(
                           cinemaId: null,
                           name: _searchController.text,
-                          PageNumber: currentPage,
-                          PageSize: pageSize,
+                          pageNumber: currentPage,
+                          pageSize: pageSize,
                         ),
                       );
                     } else {
@@ -289,8 +289,8 @@ class _ShowsScreenState extends State<ShowsScreen> {
                         ShowSearchObject(
                           cinemaId: selectedCinema!.id,
                           name: _searchController.text,
-                          PageNumber: currentPage,
-                          PageSize: pageSize,
+                          pageNumber: currentPage,
+                          pageSize: pageSize,
                         ),
                       );
                     }
@@ -564,12 +564,11 @@ class _ShowsScreenState extends State<ShowsScreen> {
 
   Widget AddShowForm({bool isEditing = false, Shows? showToEdit}) {
     if (showToEdit != null) {
-      _priceController.text = showToEdit.price.toString() ?? '';
+      _priceController.text = showToEdit.price.toString();
       _dateController.text =
-          DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(showToEdit.date) ?? '';
+          DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(showToEdit.date);
       _timeController.text =
-          DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(showToEdit.startTime) ??
-              '';
+          DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(showToEdit.startTime);
       selectedCinemaId = showToEdit.cinemaId;
       selectedMovieId = showToEdit.movieId;
       selectedFormat = showToEdit.format;
@@ -781,32 +780,31 @@ class _ShowsScreenState extends State<ShowsScreen> {
                   ),
                 ],
                 rows: shows
-                        .map((Shows showItem) => DataRow(cells: [
-                              DataCell(
-                                Checkbox(
-                                  value: showItem.isSelected,
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      showItem.isSelected = value ?? false;
-                                      if (showItem.isSelected == true) {
-                                        selectedShow.add(showItem);
-                                      } else {
-                                        selectedShow.remove(showItem);
-                                      }
-                                      isAllSelected =
-                                          shows.every((u) => u.isSelected);
-                                    });
-                                  },
-                                ),
-                              ),
-                              DataCell(Text(showItem.date.toString())),
-                              DataCell(Text(showItem.startTime.toString())),
-                              DataCell(Text(showItem.movie.toString())),
-                              DataCell(Text(showItem.format.toString())),
-                              DataCell(Text(showItem.price.toString())),
-                            ]))
-                        .toList() ??
-                    []),
+                    .map((Shows showItem) => DataRow(cells: [
+                          DataCell(
+                            Checkbox(
+                              value: showItem.isSelected,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  showItem.isSelected = value ?? false;
+                                  if (showItem.isSelected == true) {
+                                    selectedShow.add(showItem);
+                                  } else {
+                                    selectedShow.remove(showItem);
+                                  }
+                                  isAllSelected =
+                                      shows.every((u) => u.isSelected);
+                                });
+                              },
+                            ),
+                          ),
+                          DataCell(Text(showItem.date.toString())),
+                          DataCell(Text(showItem.startTime.toString())),
+                          DataCell(Text(showItem.movie.toString())),
+                          DataCell(Text(showItem.format.toString())),
+                          DataCell(Text(showItem.price.toString())),
+                        ]))
+                    .toList()),
           ),
         ),
       ),
@@ -825,8 +823,8 @@ class _ShowsScreenState extends State<ShowsScreen> {
                 currentPage--;
               });
               loadShows(ShowSearchObject(
-                PageNumber: currentPage,
-                PageSize: pageSize,
+                pageNumber: currentPage,
+                pageSize: pageSize,
               ));
             }
           },
@@ -846,8 +844,8 @@ class _ShowsScreenState extends State<ShowsScreen> {
             });
             if (hasNextPage == pageSize) {
               loadShows(ShowSearchObject(
-                  PageNumber: currentPage,
-                  PageSize: pageSize,
+                  pageNumber: currentPage,
+                  pageSize: pageSize,
                   name: _searchController.text));
             }
           },

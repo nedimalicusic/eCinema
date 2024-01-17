@@ -55,10 +55,10 @@ class _SideMenuState extends State<SideMenu> {
                   margin: const EdgeInsets.only(top: 20),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.slow_motion_video_rounded,
+                    children: const [
+                      Icon(Icons.slow_motion_video_rounded,
                           color: Colors.white, size: 24),
-                      const SizedBox(
+                      SizedBox(
                         width: 8,
                       ),
                       Text(

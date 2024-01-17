@@ -49,13 +49,13 @@ class _CinemasScreenState extends State<CinemasScreen> {
     loadCities();
     loadCinema(CinemaSearchObject(
         name: _searchController.text,
-        PageSize: pageSize,
-        PageNumber: currentPage));
+        pageSize: pageSize,
+        pageNumber: currentPage));
 
     _searchController.addListener(() {
       final searchQuery = _searchController.text;
       loadCinema(CinemaSearchObject(
-          name: searchQuery, PageNumber: currentPage, PageSize: pageSize));
+          name: searchQuery, pageNumber: currentPage, pageSize: pageSize));
     });
   }
 
@@ -100,8 +100,8 @@ class _CinemasScreenState extends State<CinemasScreen> {
         loadCinema(
           CinemaSearchObject(
             name: _searchController.text,
-            PageNumber: currentPage,
-            PageSize: pageSize,
+            pageNumber: currentPage,
+            pageSize: pageSize,
           ),
         );
       }
@@ -128,8 +128,8 @@ class _CinemasScreenState extends State<CinemasScreen> {
         loadCinema(
           CinemaSearchObject(
             name: _searchController.text,
-            PageNumber: currentPage,
-            PageSize: pageSize,
+            pageNumber: currentPage,
+            pageSize: pageSize,
           ),
         );
       }
@@ -146,8 +146,8 @@ class _CinemasScreenState extends State<CinemasScreen> {
         loadCinema(
           CinemaSearchObject(
             name: _searchController.text,
-            PageNumber: currentPage,
-            PageSize: pageSize,
+            pageNumber: currentPage,
+            pageSize: pageSize,
           ),
         );
       }
@@ -481,13 +481,12 @@ class _CinemasScreenState extends State<CinemasScreen> {
 
   Widget AddCinemaForm({bool isEditing = false, Cinema? cinemaToEdit}) {
     if (cinemaToEdit != null) {
-      _nameController.text = cinemaToEdit.name ?? '';
-      _addressController.text = cinemaToEdit.address ?? '';
-      _descriptionController.text = cinemaToEdit.description ?? '';
-      _emailController.text = cinemaToEdit.email ?? '';
-      _phoneNumberController.text = cinemaToEdit.phoneNumber.toString() ?? '';
-      _numberOfSeatsController.text =
-          cinemaToEdit.numberOfSeats.toString() ?? '';
+      _nameController.text = cinemaToEdit.name;
+      _addressController.text = cinemaToEdit.address;
+      _descriptionController.text = cinemaToEdit.description;
+      _emailController.text = cinemaToEdit.email;
+      _phoneNumberController.text = cinemaToEdit.phoneNumber.toString();
+      _numberOfSeatsController.text = cinemaToEdit.numberOfSeats.toString();
       selectedCity = cinemaToEdit.cityId;
     } else {
       _nameController.text = '';
@@ -648,33 +647,31 @@ class _CinemasScreenState extends State<CinemasScreen> {
                   ),
                 ],
                 rows: cinemas
-                        .map((Cinema cinemaItem) => DataRow(cells: [
-                              DataCell(
-                                Checkbox(
-                                  value: cinemaItem.isSelected,
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      cinemaItem.isSelected = value ?? false;
-                                      if (cinemaItem.isSelected == true) {
-                                        selectedCinema.add(cinemaItem);
-                                      } else {
-                                        selectedCinema.remove(cinemaItem);
-                                      }
-                                      isAllSelected =
-                                          cinemas.every((u) => u.isSelected);
-                                    });
-                                  },
-                                ),
-                              ),
-                              DataCell(Text(cinemaItem.name.toString())),
-                              DataCell(Text(cinemaItem.address.toString())),
-                              DataCell(Text(cinemaItem.phoneNumber.toString())),
-                              DataCell(
-                                  Text(cinemaItem.numberOfSeats.toString())),
-                              DataCell(Text(cinemaItem.city.name.toString())),
-                            ]))
-                        .toList() ??
-                    []),
+                    .map((Cinema cinemaItem) => DataRow(cells: [
+                          DataCell(
+                            Checkbox(
+                              value: cinemaItem.isSelected,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  cinemaItem.isSelected = value ?? false;
+                                  if (cinemaItem.isSelected == true) {
+                                    selectedCinema.add(cinemaItem);
+                                  } else {
+                                    selectedCinema.remove(cinemaItem);
+                                  }
+                                  isAllSelected =
+                                      cinemas.every((u) => u.isSelected);
+                                });
+                              },
+                            ),
+                          ),
+                          DataCell(Text(cinemaItem.name.toString())),
+                          DataCell(Text(cinemaItem.address.toString())),
+                          DataCell(Text(cinemaItem.phoneNumber.toString())),
+                          DataCell(Text(cinemaItem.numberOfSeats.toString())),
+                          DataCell(Text(cinemaItem.city.name.toString())),
+                        ]))
+                    .toList()),
           ),
         ),
       ),
@@ -693,8 +690,8 @@ class _CinemasScreenState extends State<CinemasScreen> {
                 currentPage--;
               });
               loadCinema(CinemaSearchObject(
-                PageNumber: currentPage,
-                PageSize: pageSize,
+                pageNumber: currentPage,
+                pageSize: pageSize,
               ));
             }
           },
@@ -715,8 +712,8 @@ class _CinemasScreenState extends State<CinemasScreen> {
             if (hasNextPage == pageSize) {
               loadCinema(
                 CinemaSearchObject(
-                    PageNumber: currentPage,
-                    PageSize: pageSize,
+                    pageNumber: currentPage,
+                    pageSize: pageSize,
                     name: _searchController.text),
               );
             }

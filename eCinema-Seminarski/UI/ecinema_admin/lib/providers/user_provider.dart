@@ -57,7 +57,7 @@ class UserProvider extends BaseProvider<User> {
   }
 
   Future<dynamic> delete(int id) async {
-    var uri = Uri.parse('$apiUrl/User/${id}');
+    var uri = Uri.parse('$apiUrl/User/$id');
     Map<String, String> headers = Authorization.createHeaders();
 
     var response = await http.delete(uri, headers: headers);
@@ -132,11 +132,11 @@ class UserProvider extends BaseProvider<User> {
       if (searchObject.isVerified != null) {
         queryParameters['isVerified'] = searchObject.isVerified.toString();
       }
-      if (searchObject.PageNumber != null) {
-        queryParameters['pageNumber'] = searchObject.PageNumber.toString();
+      if (searchObject.pageNumber != null) {
+        queryParameters['pageNumber'] = searchObject.pageNumber.toString();
       }
-      if (searchObject.PageSize != null) {
-        queryParameters['pageSize'] = searchObject.PageSize.toString();
+      if (searchObject.pageSize != null) {
+        queryParameters['pageSize'] = searchObject.pageSize.toString();
       }
     }
 

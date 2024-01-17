@@ -38,7 +38,7 @@ class CountryProvider extends BaseProvider<Country> {
   }
 
   Future<dynamic> delete(int id) async {
-    var uri = Uri.parse('$apiUrl/Countries/${id}');
+    var uri = Uri.parse('$apiUrl/Countries/$id');
     Map<String, String> headers = Authorization.createHeaders();
 
     var response = await http.delete(uri, headers: headers);

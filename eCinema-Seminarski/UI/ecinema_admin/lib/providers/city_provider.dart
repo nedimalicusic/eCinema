@@ -38,7 +38,7 @@ class CityProvider extends BaseProvider<City> {
   }
 
   Future<dynamic> delete(int id) async {
-    var uri = Uri.parse('$apiUrl/Cities/${id}');
+    var uri = Uri.parse('$apiUrl/Cities/$id');
     Map<String, String> headers = Authorization.createHeaders();
 
     var response = await http.delete(uri, headers: headers);

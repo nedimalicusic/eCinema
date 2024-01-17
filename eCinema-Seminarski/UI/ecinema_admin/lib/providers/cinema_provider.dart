@@ -44,11 +44,11 @@ class CinemaProvider extends BaseProvider<Cinema> {
       if (searchObject.name != null) {
         queryParameters['name'] = searchObject.name!;
       }
-      if (searchObject.PageNumber != null) {
-        queryParameters['pageNumber'] = searchObject.PageNumber.toString();
+      if (searchObject.pageNumber != null) {
+        queryParameters['pageNumber'] = searchObject.pageNumber.toString();
       }
-      if (searchObject.PageSize != null) {
-        queryParameters['pageSize'] = searchObject.PageSize.toString();
+      if (searchObject.pageSize != null) {
+        queryParameters['pageSize'] = searchObject.pageSize.toString();
       }
     }
 
@@ -78,7 +78,7 @@ class CinemaProvider extends BaseProvider<Cinema> {
   }
 
   Future<dynamic> delete(int id) async {
-    var uri = Uri.parse('$apiUrl/Cinema/${id}');
+    var uri = Uri.parse('$apiUrl/Cinema/$id');
     Map<String, String> headers = Authorization.createHeaders();
 
     var response = await http.delete(uri, headers: headers);
@@ -91,8 +91,8 @@ class CinemaProvider extends BaseProvider<Cinema> {
   }
 
   Future<Dashboard> getDashboardInformation(int cinemaId) async {
-    var uri = Uri.parse(
-        '$apiUrl/Cinema/GetDashboardInformation?cinemaId=${cinemaId}');
+    var uri =
+        Uri.parse('$apiUrl/Cinema/GetDashboardInformation?cinemaId=$cinemaId');
     var headers = Authorization.createHeaders();
     final response = await http.get(uri, headers: headers);
     if (response.statusCode == 200) {
