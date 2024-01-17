@@ -1,0 +1,57 @@
+name: ecinema_admin
+description: A new Flutter project.
+publish_to: 'none'
+
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.19.6 <3.0.0'
+
+dependencies:
+  http: ^0.13.5
+  provider: ^6.0.5
+  intl: ^0.18.0
+  flutter_svg: ^0.22.0
+  dart_jsonwebtoken: ^2.7.1
+  shared_preferences: ^2.2.1
+  image_picker: ^1.0.4
+  jwt_decoder: ^2.0.1
+  syncfusion_flutter_datepicker: ^23.1.40
+  transparent_image: ^2.0.1
+  flutter:
+    sdk: flutter
+
+
+  cupertino_icons: ^1.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^2.0.0
+
+
+flutter:
+  assets:
+    - assets/icons/dash.svg
+    - assets/icons/notification.svg
+    - assets/icons/users.svg
+    - assets/icons/userProfile.svg
+    - assets/icons/reservation.svg
+    - assets/icons/search.svg
+    - assets/icons/city.svg
+    - assets/icons/country.svg
+    - assets/icons/logout.svg
+    - assets/icons/admin.svg
+    - assets/icons/activeUser.svg
+    - assets/icons/movie.svg
+    - assets/icons/cinema.svg
+    - assets/icons/show.svg
+    - assets/icons/production.svg
+    - assets/icons/genre.svg
+    - assets/icons/language.svg
+    - assets/icons/report.svg
+    - assets/images/user2.png
+
+  uses-material-design: true

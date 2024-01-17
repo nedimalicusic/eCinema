@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\eCinema.Core\eCinema.Core.csproj" />
+    <ProjectReference Include="..\eCinema.Infrastructure.Interfaces\eCinema.Infrastructure.Interfaces.csproj" />
+  </ItemGroup>
+
+</Project>
