@@ -12,6 +12,7 @@ class Reservation {
   late User user;
   late bool isActive = false;
   late bool isConfirm = false;
+  late bool isSelected = false;
 
   Reservation(
       {required this.id,

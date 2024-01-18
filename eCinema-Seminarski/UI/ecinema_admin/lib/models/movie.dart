@@ -13,6 +13,7 @@ class Movie {
   Photo? photo;
   int productionId;
   Production production;
+  late bool isSelected = false;
 
   Movie({
     required this.id,

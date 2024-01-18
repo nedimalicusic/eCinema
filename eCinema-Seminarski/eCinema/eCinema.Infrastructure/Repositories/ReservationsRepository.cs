@@ -24,12 +24,13 @@ namespace eCinema.Infrastructure
 
         public override async Task<PagedList<Reservation>> GetPagedAsync(ReservationSearchObjet searchObject, CancellationToken cancellationToken = default)
         {
-            return await DbSet.Include(s => s.Show).ThenInclude(d=>d.Cinema)
-                .ThenInclude(s=>s.City).ThenInclude(s=>s.Country)
-                .Include(s=>s.Show).ThenInclude(s=>s.Movie).ThenInclude(s=>s.Production).ThenInclude(s=>s.Country)
-                .Include(s=>s.User).Include(s=>s.Seat).Where(s=> searchObject.name==null 
-                || s.Show.Cinema.Name.ToLower().Contains(searchObject.name.ToLower()) || s.Show.Movie.Title.ToLower().Contains(searchObject.name.ToLower())).ToPagedListAsync(searchObject, cancellationToken);
-
+            return await DbSet
+                .Include(s => s.Show.Cinema.City.Country)
+                .Include(s => s.Show.Movie.Production.Country)
+                .Include(s => s.User)
+                .Include(s => s.Seat)
+                .ToPagedListAsync(searchObject, cancellationToken);
         }
+
     }
 }

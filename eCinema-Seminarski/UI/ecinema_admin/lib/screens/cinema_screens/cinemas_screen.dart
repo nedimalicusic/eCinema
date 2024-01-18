@@ -188,10 +188,11 @@ class _CinemasScreenState extends State<CinemasScreen> {
               borderRadius: BorderRadius.circular(10.0),
             ),
             width: 350,
-            height: 45,
+            height: 40,
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
+                contentPadding: const EdgeInsets.only(top: 4.0, left: 10.0),
                 hintText: "Pretraga",
                 border: const OutlineInputBorder(
                   borderSide: BorderSide.none,
@@ -229,6 +230,7 @@ class _CinemasScreenState extends State<CinemasScreen> {
         ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: primaryColor,
+            minimumSize: const Size(40, 40),
           ),
           onPressed: () {
             showDialog(
@@ -265,31 +267,16 @@ class _CinemasScreenState extends State<CinemasScreen> {
                   );
                 });
           },
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Icon(
-                Icons.add_outlined,
-                color: Colors.white,
-              ),
-              SizedBox(
-                width: 8,
-                height: 30,
-              ),
-              Text(
-                'Dodaj',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
-            ],
+          child: const Icon(
+            Icons.add_outlined,
+            color: Colors.white,
           ),
         ),
-        const SizedBox(width: 16.0),
+        const SizedBox(width: 10.0),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: primaryColor,
+            minimumSize: const Size(40, 40),
           ),
           onPressed: () {
             if (selectedCinema.isEmpty) {
@@ -367,31 +354,16 @@ class _CinemasScreenState extends State<CinemasScreen> {
                   });
             }
           },
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Icon(
-                Icons.edit_outlined,
-                color: Colors.white,
-              ),
-              SizedBox(
-                width: 8,
-                height: 30,
-              ),
-              Text(
-                'Izmijeni',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
-            ],
+          child: const Icon(
+            Icons.edit_outlined,
+            color: Colors.white,
           ),
         ),
-        const SizedBox(width: 16.0),
+        const SizedBox(width: 10.0),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: primaryColor,
+            minimumSize: const Size(40, 40),
           ),
           onPressed: selectedCinema.isEmpty
               ? () {
@@ -454,25 +426,9 @@ class _CinemasScreenState extends State<CinemasScreen> {
                         );
                       });
                 },
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Icon(
-                Icons.delete_forever_outlined,
-                color: Colors.white,
-              ),
-              SizedBox(
-                width: 8,
-                height: 30,
-              ),
-              Text(
-                'Izbriši',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
-            ],
+          child: const Icon(
+            Icons.delete_forever_outlined,
+            color: Colors.white,
           ),
         ),
       ],

@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import '../helpers/constants.dart';
 import '../models/movie.dart';
+import '../models/searchObject/movie_search.dart';
 import '../utils/authorzation.dart';
 import 'base_provider.dart';
 import 'package:http/http.dart' as http;
@@ -16,6 +19,34 @@ class MovieProvider extends BaseProvider<Movie> {
       return "OK";
     } else {
       throw Exception('Greška prilikom unosa');
+    }
+  }
+
+  Future<List<Movie>> getPaged({MovieSearchObject? searchObject}) async {
+    var uri = Uri.parse('$apiUrl/Movie/GetPaged');
+    var headers = Authorization.createHeaders();
+    final Map<String, String> queryParameters = {};
+
+    if (searchObject != null) {
+      if (searchObject.name != null) {
+        queryParameters['name'] = searchObject.name!;
+      }
+      if (searchObject.pageNumber != null) {
+        queryParameters['pageNumber'] = searchObject.pageNumber.toString();
+      }
+      if (searchObject.pageSize != null) {
+        queryParameters['pageSize'] = searchObject.pageSize.toString();
+      }
+    }
+
+    uri = uri.replace(queryParameters: queryParameters);
+    final response = await http.get(uri, headers: headers);
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      var items = data['items'];
+      return items.map((d) => fromJson(d)).cast<Movie>().toList();
+    } else {
+      throw Exception('Failed to load data');
     }
   }
 

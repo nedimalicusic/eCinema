@@ -9,5 +9,6 @@ namespace eCinema.Infrastructure.Interfaces.SearchObjects
     public class ReservationSearchObjet : BaseSearchObject
     {
         public string? name { get; set; }
+        public int? cinemaId { get; set; }
     }
 }

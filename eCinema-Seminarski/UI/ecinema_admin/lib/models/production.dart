@@ -5,6 +5,7 @@ class Production {
   late String name;
   late int countryId;
   late Country country;
+  late bool isSelected = false;
 
   Production(
       {required this.id,

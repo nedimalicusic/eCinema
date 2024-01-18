@@ -6,16 +6,19 @@ import 'package:ecinema_admin/models/actor.dart';
 import 'package:ecinema_admin/models/language.dart';
 import 'package:ecinema_admin/models/movie.dart';
 import 'package:ecinema_admin/models/production.dart';
+import 'package:ecinema_admin/models/searchObject/movie_search.dart';
 import 'package:ecinema_admin/providers/actor_provider.dart';
 import 'package:ecinema_admin/providers/genre_provider.dart';
 import 'package:ecinema_admin/providers/language_provider.dart';
 import 'package:ecinema_admin/providers/movie_provider.dart';
 import 'package:ecinema_admin/providers/production_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:http/http.dart' as http;
+import '../../helpers/constants.dart';
 import '../../models/genre.dart';
 import '../../providers/photo_provider.dart';
 import '../../utils/authorzation.dart';
@@ -49,12 +52,16 @@ class _MoviesScreenState extends State<MoviesScreen> {
   final TextEditingController _durationController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
   ValueNotifier<File?> _pickedFileNotifier = ValueNotifier(null);
+  List<Movie> selectedMovie = <Movie>[];
   int? selectedLanguageId;
   int? selectedProductionId;
   int? selectedgenreId;
   File? _pickedFile;
   File? selectedImage;
-
+  int currentPage = 1;
+  int pageSize = 5;
+  int hasNextPage = 0;
+  bool isAllSelected = false;
   @override
   void initState() {
     super.initState();
@@ -65,14 +72,19 @@ class _MoviesScreenState extends State<MoviesScreen> {
     _productionProvider = context.read<ProductionProvider>();
     _actorProvider = context.read<ActorProvider>();
     _pickedFileNotifier = ValueNotifier<File?>(_pickedFile);
-    loadMovies('');
     loadGenres();
     loadLanguages();
     loadProductions();
     loadActors();
+    loadMovies(MovieSearchObject(
+        name: _searchController.text,
+        pageSize: pageSize,
+        pageNumber: currentPage));
+
     _searchController.addListener(() {
       final searchQuery = _searchController.text;
-      loadMovies(searchQuery);
+      loadMovies(MovieSearchObject(
+          name: searchQuery, pageNumber: currentPage, pageSize: pageSize));
     });
   }
 
@@ -90,17 +102,13 @@ class _MoviesScreenState extends State<MoviesScreen> {
     return await _photoProvider.getPhoto(guidId);
   }
 
-  void loadMovies(String? query) async {
-    var params;
+  void loadMovies(MovieSearchObject searchObject) async {
     try {
-      if (query != null) {
-        params = query;
-      } else {
-        params = null;
-      }
-      var moviesResponse = await _movieProvider.get({'params': params});
+      var moviesResponse =
+          await _movieProvider.getPaged(searchObject: searchObject);
       setState(() {
         movies = moviesResponse;
+        hasNextPage = movies.length;
       });
     } on Exception catch (e) {
       showErrorDialog(context, e.toString().substring(11));
@@ -173,7 +181,13 @@ class _MoviesScreenState extends State<MoviesScreen> {
 
       if (response == "OK") {
         Navigator.of(context).pop();
-        loadMovies('');
+        loadMovies(
+          MovieSearchObject(
+            name: _searchController.text,
+            pageNumber: currentPage,
+            pageSize: pageSize,
+          ),
+        );
       } else {
         showErrorDialog(context, 'Greška prilikom uređivanja');
       }
@@ -205,7 +219,13 @@ class _MoviesScreenState extends State<MoviesScreen> {
 
       if (response == "OK") {
         Navigator.of(context).pop();
-        loadMovies('');
+        loadMovies(
+          MovieSearchObject(
+            name: _searchController.text,
+            pageNumber: currentPage,
+            pageSize: pageSize,
+          ),
+        );
       } else {
         showErrorDialog(context, 'Greška prilikom uređivanja');
       }
@@ -219,7 +239,13 @@ class _MoviesScreenState extends State<MoviesScreen> {
       var user = await _movieProvider.delete(id);
       if (user == "OK") {
         Navigator.of(context).pop();
-        loadMovies('');
+        loadMovies(
+          MovieSearchObject(
+            name: _searchController.text,
+            pageNumber: currentPage,
+            pageSize: pageSize,
+          ),
+        );
       }
     } on Exception catch (e) {
       showErrorDialog(context, e.toString().substring(11));
@@ -229,71 +255,279 @@ class _MoviesScreenState extends State<MoviesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: SizedBox(
-          width: 1500,
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    width: 500,
-                    child: Padding(
-                      padding:
-                          const EdgeInsets.only(left: 136, top: 8, right: 8),
-                      child: TextField(
-                        controller: _searchController,
-                        decoration: const InputDecoration(
-                          hintText: 'Pretraga',
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8, right: 146),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const Text('Dodaj film'),
-                              content: SingleChildScrollView(
-                                child: AddMovieForm(),
-                              ),
-                              actions: <Widget>[
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('Zatvori'),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    if (_formKey.currentState!.validate()) {
-                                      insertMovie();
-                                    }
-                                  },
-                                  child: const Text('Spremi'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                      child: const Text("Dodaj"),
-                    ),
-                  ),
-                ],
+        appBar: AppBar(
+          title: const Text("Filmovi"),
+        ),
+        body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              BuildSearchField(context),
+              const SizedBox(
+                height: 10,
               ),
-              const SizedBox(height: 20),
-              _buildDataListView()
-            ],
+              buildDataList(context),
+              const SizedBox(
+                height: 10,
+              ),
+              buildPagination(),
+            ])));
+  }
+
+  Row BuildSearchField(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.teal),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            width: 350,
+            height: 40,
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.only(top: 4.0, left: 10.0),
+                hintText: "Pretraga",
+                border: const OutlineInputBorder(
+                  borderSide: BorderSide.none,
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                ),
+                suffixIcon: InkWell(
+                  onTap: () {},
+                  child: Container(
+                    padding: const EdgeInsets.all(defaultPadding * 0.75),
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: defaultPadding / 2),
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
+                    child: SvgPicture.asset(
+                      "assets/icons/Search.svg",
+                      color: Colors.teal,
+                    ),
+                  ),
+                ),
+              ),
+            )),
+        const SizedBox(
+          width: 20,
+        ),
+        buildButtons(context),
+      ],
+    );
+  }
+
+  Row buildButtons(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: primaryColor,
+            minimumSize: const Size(40, 40),
+          ),
+          onPressed: () {
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    backgroundColor: Colors.white,
+                    title: const Text("Dodaj film"),
+                    content: SingleChildScrollView(
+                      child: AddMovieForm(),
+                    ),
+                    actions: <Widget>[
+                      ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: primaryColor,
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text("Zatvori",
+                              style: TextStyle(color: white))),
+                      ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: primaryColor,
+                          ),
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              insertMovie();
+                            }
+                          },
+                          child: const Text("Spremi",
+                              style: TextStyle(color: white)))
+                    ],
+                  );
+                });
+          },
+          child: const Icon(
+            Icons.add_outlined,
+            color: Colors.white,
           ),
         ),
-      ),
+        const SizedBox(width: 10.0),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: primaryColor,
+            minimumSize: const Size(40, 40),
+          ),
+          onPressed: () {
+            if (selectedMovie.isEmpty) {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text("Upozorenje"),
+                      content: const Text(
+                          "Morate odabrati barem jedan film za uređivanje"),
+                      actions: <Widget>[
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: primaryColor),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child:
+                              const Text("OK", style: TextStyle(color: white)),
+                        ),
+                      ],
+                    );
+                  });
+            } else if (selectedMovie.length > 1) {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text("Upozorenje"),
+                      content: const Text(
+                          "Odaberite samo jedno film kojeg želite urediti"),
+                      actions: <Widget>[
+                        ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: primaryColor),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text("Ok",
+                                style: TextStyle(color: white)))
+                      ],
+                    );
+                  });
+            } else {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      backgroundColor: Colors.white,
+                      title: const Text("Uredi film"),
+                      content: AddMovieForm(
+                          isEditing: true, movieToEdit: selectedMovie[0]),
+                      actions: <Widget>[
+                        ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: primaryColor),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text("Zatvori",
+                                style: TextStyle(color: white))),
+                        ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: primaryColor),
+                            onPressed: () {
+                              editMovie(selectedMovie[0].id);
+                              setState(() {
+                                selectedMovie = [];
+                              });
+                            },
+                            child: const Text("Spremi",
+                                style: TextStyle(color: white))),
+                      ],
+                    );
+                  });
+            }
+          },
+          child: const Icon(
+            Icons.edit_outlined,
+            color: Colors.white,
+          ),
+        ),
+        const SizedBox(width: 10.0),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: primaryColor,
+            minimumSize: const Size(40, 40),
+          ),
+          onPressed: selectedMovie.isEmpty
+              ? () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                            title: const Text("Upozorenje"),
+                            content: const Text(
+                                "Morate odabrati film kojeg želite obrisati."),
+                            actions: <Widget>[
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: primaryColor,
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text("OK",
+                                    style: TextStyle(color: white)),
+                              ),
+                            ]);
+                      });
+                }
+              : () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text("Izbriši film!"),
+                          content: const SingleChildScrollView(
+                            child: Text(
+                                "Da li ste sigurni da želite obrisati film?"),
+                          ),
+                          actions: <Widget>[
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: primaryColor,
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text("Odustani",
+                                  style: TextStyle(color: white)),
+                            ),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                              ),
+                              onPressed: () {
+                                for (Movie n in selectedMovie) {
+                                  DeleteMovie(n.id);
+                                }
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text("Obriši",
+                                  style: TextStyle(color: white)),
+                            ),
+                          ],
+                        );
+                      });
+                },
+          child: const Icon(
+            Icons.delete_forever_outlined,
+            color: Colors.white,
+          ),
+        ),
+      ],
     );
   }
 
@@ -372,8 +606,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
                                       ? Container(
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 8.0),
-                                          child: const Text(
-                                              'Please select an image'),
+                                          child: const Text('Odaberite sliku'),
                                         )
                                       : Container(
                                           padding: const EdgeInsets.symmetric(
@@ -553,226 +786,196 @@ class _MoviesScreenState extends State<MoviesScreen> {
     );
   }
 
-  Widget _buildDataListView() {
+  Expanded buildDataList(BuildContext context) {
     return Expanded(
       child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: DataTable(
-              columns: const [
-                DataColumn(
-                    label: Expanded(
-                  flex: 2,
-                  child: Text(
-                    "ID",
-                    style: TextStyle(fontStyle: FontStyle.normal),
+        scrollDirection: Axis.vertical,
+        child: ConstrainedBox(
+          constraints:
+              BoxConstraints(minWidth: MediaQuery.of(context).size.width),
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.teal, style: BorderStyle.solid),
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: DataTable(
+                dataRowHeight: 80,
+                dataRowColor: MaterialStateProperty.all(
+                    const Color.fromARGB(42, 241, 241, 241)),
+                columns: [
+                  DataColumn(
+                      label: Checkbox(
+                          value: isAllSelected,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              isAllSelected = value ?? false;
+                              for (var movieItem in movies) {
+                                movieItem.isSelected = isAllSelected;
+                              }
+                              if (!isAllSelected) {
+                                selectedMovie.clear();
+                              } else {
+                                selectedMovie = List.from(movies);
+                              }
+                            });
+                          })),
+                  const DataColumn(
+                    label: Expanded(child: Text('Naziv')),
                   ),
-                )),
-                DataColumn(
-                    label: Expanded(
-                  flex: 5,
-                  child: Text(
-                    "Slika",
-                    style: TextStyle(fontStyle: FontStyle.normal),
+                  const DataColumn(
+                    label: Text('Slika'),
                   ),
-                )),
-                DataColumn(
-                    label: Expanded(
-                  flex: 5,
-                  child: Text(
-                    "Title",
-                    style: TextStyle(fontStyle: FontStyle.normal),
+                  const DataColumn(
+                    label: Expanded(child: Text('Autor')),
                   ),
-                )),
-                DataColumn(
-                    label: Expanded(
-                  flex: 4,
-                  child: Text(
-                    "Author",
-                    style: TextStyle(fontStyle: FontStyle.normal),
+                  const DataColumn(
+                    label: Text('Godina'),
                   ),
-                )),
-                DataColumn(
-                    label: Expanded(
-                  flex: 2,
-                  child: Text(
-                    "ReleaseYear",
-                    style: TextStyle(fontStyle: FontStyle.normal),
+                  const DataColumn(
+                    label: Text('Trajanje'),
                   ),
-                )),
-                DataColumn(
-                    label: Expanded(
-                  flex: 2,
-                  child: Text(
-                    "Duration",
-                    style: TextStyle(fontStyle: FontStyle.normal),
+                  const DataColumn(
+                    label: Text('Produkcija'),
                   ),
-                )),
-                DataColumn(
-                    label: Expanded(
-                  flex: 2,
-                  child: Text(
-                    "Production",
-                    style: TextStyle(fontStyle: FontStyle.normal),
-                  ),
-                )),
-                DataColumn(
-                    label: Expanded(
-                  flex: 2,
-                  child: Text(
-                    "",
-                    style: TextStyle(fontStyle: FontStyle.normal),
-                  ),
-                )),
-                DataColumn(
-                    label: Expanded(
-                  flex: 2,
-                  child: Text(
-                    "",
-                    style: TextStyle(fontStyle: FontStyle.normal),
-                  ),
-                )),
-              ],
-              rows: movies
-                  .map((Movie e) => DataRow(cells: [
-                        DataCell(Text(e.id.toString())),
-                        DataCell(
-                          Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(right: 8.0),
-                                child: FutureBuilder<String>(
-                                  future: loadPhoto(e.photo?.guidId ?? ''),
-                                  builder: (BuildContext context,
-                                      AsyncSnapshot<String> snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const CircularProgressIndicator();
-                                    } else if (snapshot.hasError) {
-                                      return const Text(
-                                          'Greška prilikom učitavanja slike');
-                                    } else {
-                                      final imageUrl = snapshot.data;
-
-                                      if (imageUrl != null &&
-                                          imageUrl.isNotEmpty) {
-                                        return Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 8.0),
-                                          child: FadeInImage(
-                                            image: NetworkImage(
-                                              imageUrl,
-                                              headers:
-                                                  Authorization.createHeaders(),
-                                            ),
-                                            placeholder:
-                                                MemoryImage(kTransparentImage),
-                                            fadeInDuration: const Duration(
-                                                milliseconds: 300),
-                                            fit: BoxFit.fill,
-                                            width: 50,
-                                            height: 100,
-                                          ),
-                                        );
+                ],
+                rows: movies
+                    .map((Movie movieItem) => DataRow(cells: [
+                          DataCell(
+                            Checkbox(
+                              value: movieItem.isSelected,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  movieItem.isSelected = value ?? false;
+                                  if (movieItem.isSelected == true) {
+                                    selectedMovie.add(movieItem);
+                                  } else {
+                                    selectedMovie.remove(movieItem);
+                                  }
+                                  isAllSelected =
+                                      movies.every((u) => u.isSelected);
+                                });
+                              },
+                            ),
+                          ),
+                          DataCell(Text(movieItem.title.toString())),
+                          DataCell(
+                            Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: FutureBuilder<String>(
+                                    future: loadPhoto(
+                                        movieItem.photo?.guidId ?? ''),
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot<String> snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return const CircularProgressIndicator();
+                                      } else if (snapshot.hasError) {
+                                        return const Text(
+                                            'Greška prilikom učitavanja slike');
                                       } else {
-                                        null;
-                                        return Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 8.0),
-                                          child: Image.asset(
-                                            'assets/images/user1.jpg',
-                                            width: 80,
-                                            height: 105,
-                                            fit: BoxFit.fill,
-                                          ),
-                                        );
+                                        final imageUrl = snapshot.data;
+
+                                        if (imageUrl != null &&
+                                            imageUrl.isNotEmpty) {
+                                          return Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 8.0),
+                                            child: FadeInImage(
+                                              image: NetworkImage(
+                                                imageUrl,
+                                                headers: Authorization
+                                                    .createHeaders(),
+                                              ),
+                                              placeholder: MemoryImage(
+                                                  kTransparentImage),
+                                              fadeInDuration: const Duration(
+                                                  milliseconds: 300),
+                                              fit: BoxFit.fill,
+                                              width: 80,
+                                              height: 105,
+                                            ),
+                                          );
+                                        } else {
+                                          return Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 8.0),
+                                            child: Image.asset(
+                                              'assets/images/user2.png',
+                                              width: 80,
+                                              height: 105,
+                                              fit: BoxFit.fill,
+                                            ),
+                                          );
+                                        }
                                       }
-                                    }
-                                  },
+                                    },
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                        DataCell(Text(e.title.toString())),
-                        DataCell(Text(e.author.toString())),
-                        DataCell(Text(e.releaseYear.toString())),
-                        DataCell(Text(e.duration.toString())),
-                        DataCell(Text(e.production.name.toString())),
-                        DataCell(
-                          ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                isEditing = true;
-                              });
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text(isEditing
-                                        ? 'Uredi film'
-                                        : 'Dodaj film'),
-                                    content: SingleChildScrollView(
-                                      child: AddMovieForm(
-                                          isEditing: isEditing, movieToEdit: e),
-                                    ),
-                                    actions: <Widget>[
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: const Text('Zatvori'),
-                                      ),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          if (_formKey.currentState!
-                                              .validate()) {
-                                            editMovie(e.id);
-                                          }
-                                        },
-                                        child: const Text('Spremi'),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                            child: const Text("Edit"),
-                          ),
-                        ),
-                        DataCell(
-                          ElevatedButton(
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: const Text("Izbrisi film"),
-                                    content: const SingleChildScrollView(
-                                        child: Text(
-                                            "Da li ste sigurni da zelite obisati film?")),
-                                    actions: <Widget>[
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: const Text('Odustani'),
-                                      ),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          DeleteMovie(e.id);
-                                        },
-                                        child: const Text('Izbrisi'),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                            child: const Text("Delete"),
-                          ),
-                        ),
-                      ]))
-                  .toList())),
+                          DataCell(Center(
+                            child: Text(movieItem.author.toString()),
+                          )),
+                          DataCell(Text(movieItem.releaseYear.toString())),
+                          DataCell(Text(movieItem.duration.toString())),
+                          DataCell(Text(movieItem.production.name.toString())),
+                        ]))
+                    .toList()),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildPagination() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
+          onPressed: () {
+            if (currentPage > 1) {
+              setState(() {
+                currentPage--;
+              });
+              loadMovies(MovieSearchObject(
+                pageNumber: currentPage,
+                pageSize: pageSize,
+              ));
+            }
+          },
+          child: const Icon(
+            Icons.arrow_left_outlined,
+            color: white,
+          ),
+        ),
+        const SizedBox(width: 16),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
+          onPressed: () {
+            setState(() {
+              if (hasNextPage == pageSize) {
+                currentPage++;
+              }
+            });
+            if (hasNextPage == pageSize) {
+              loadMovies(
+                MovieSearchObject(
+                    pageNumber: currentPage,
+                    pageSize: pageSize,
+                    name: _searchController.text),
+              );
+            }
+          },
+          child: const Icon(
+            Icons.arrow_right_outlined,
+            color: white,
+          ),
+        ),
+      ],
     );
   }
 }

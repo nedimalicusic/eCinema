@@ -56,6 +56,21 @@ class _ShowsScreenState extends State<ShowsScreen> {
     _movieProvider = context.read<MovieProvider>();
     loadCinema();
     loadMovies();
+    loadShows(ShowSearchObject(
+        name: _searchController.text,
+        cinemaId: selectedCinemaId,
+        pageSize: pageSize,
+        pageNumber: currentPage));
+
+    _searchController.addListener(() {
+      final searchQuery = _searchController.text;
+      loadShows(ShowSearchObject(
+        name: searchQuery,
+        pageNumber: currentPage,
+        pageSize: pageSize,
+        cinemaId: selectedCinemaId,
+      ));
+    });
   }
 
   void loadCinema() async {
@@ -171,7 +186,7 @@ class _ShowsScreenState extends State<ShowsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Uposlenici"),
+          title: const Text("Projekcije"),
         ),
         body: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -201,10 +216,11 @@ class _ShowsScreenState extends State<ShowsScreen> {
               borderRadius: BorderRadius.circular(10.0),
             ),
             width: 350,
-            height: 45,
+            height: 40,
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
+                contentPadding: const EdgeInsets.only(top: 4.0, left: 10.0),
                 hintText: "Pretraga",
                 border: const OutlineInputBorder(
                   borderSide: BorderSide.none,
@@ -312,6 +328,7 @@ class _ShowsScreenState extends State<ShowsScreen> {
         ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: primaryColor,
+            minimumSize: const Size(40, 40),
           ),
           onPressed: () {
             showDialog(
@@ -348,31 +365,16 @@ class _ShowsScreenState extends State<ShowsScreen> {
                   );
                 });
           },
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Icon(
-                Icons.add_outlined,
-                color: Colors.white,
-              ),
-              SizedBox(
-                width: 8,
-                height: 30,
-              ),
-              Text(
-                'Dodaj',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
-            ],
+          child: const Icon(
+            Icons.add_outlined,
+            color: Colors.white,
           ),
         ),
-        const SizedBox(width: 16.0),
+        const SizedBox(width: 10.0),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: primaryColor,
+            minimumSize: const Size(40, 40),
           ),
           onPressed: () {
             if (selectedShow.isEmpty) {
@@ -450,31 +452,16 @@ class _ShowsScreenState extends State<ShowsScreen> {
                   });
             }
           },
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Icon(
-                Icons.edit_outlined,
-                color: Colors.white,
-              ),
-              SizedBox(
-                width: 8,
-                height: 30,
-              ),
-              Text(
-                'Izmijeni',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
-            ],
+          child: const Icon(
+            Icons.edit_outlined,
+            color: Colors.white,
           ),
         ),
-        const SizedBox(width: 16.0),
+        const SizedBox(width: 10.0),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: primaryColor,
+            minimumSize: const Size(40, 40),
           ),
           onPressed: selectedShow.isEmpty
               ? () {
@@ -537,25 +524,9 @@ class _ShowsScreenState extends State<ShowsScreen> {
                         );
                       });
                 },
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Icon(
-                Icons.delete_forever_outlined,
-                color: Colors.white,
-              ),
-              SizedBox(
-                width: 8,
-                height: 30,
-              ),
-              Text(
-                'Izbriši',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
-            ],
+          child: const Icon(
+            Icons.delete_forever_outlined,
+            color: Colors.white,
           ),
         ),
       ],
