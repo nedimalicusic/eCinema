@@ -2,10 +2,13 @@
 
 import 'package:ecinema_admin/models/city.dart';
 import 'package:ecinema_admin/models/country.dart';
+import 'package:ecinema_admin/models/searchObject/city_search.dart';
 import 'package:ecinema_admin/providers/city_provider.dart';
 import 'package:ecinema_admin/providers/country_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import '../../helpers/constants.dart';
 import '../../utils/error_dialog.dart';
 
 class CityScreen extends StatefulWidget {
@@ -28,6 +31,11 @@ class _CityScreenState extends State<CityScreen> {
   bool isEditing = false;
   int? _selectedCountryId;
   bool _cityIsActive = false;
+  List<City> selectedCity = <City>[];
+  int currentPage = 1;
+  int pageSize = 5;
+  int hasNextPage = 0;
+  bool isAllSelected = false;
 
   @override
   void initState() {
@@ -35,25 +43,26 @@ class _CityScreenState extends State<CityScreen> {
     _cityProvider = context.read<CityProvider>();
     _countryProvider = context.read<CountryProvider>();
     _isActiveNotifier = ValueNotifier<bool>(_cityIsActive);
-    loadCities('');
     loadCountries();
+    loadCities(CitySearchObject(
+        name: _searchController.text,
+        pageSize: pageSize,
+        pageNumber: currentPage));
+
     _searchController.addListener(() {
       final searchQuery = _searchController.text;
-      loadCities(searchQuery);
+      loadCities(CitySearchObject(
+          name: searchQuery, pageNumber: currentPage, pageSize: pageSize));
     });
   }
 
-  void loadCities(String? query) async {
-    var params;
+  void loadCities(CitySearchObject searchObject) async {
     try {
-      if (query != null) {
-        params = query;
-      } else {
-        params = null;
-      }
-      var citiesResponse = await _cityProvider.get({'params': params});
+      var citiesResponse =
+          await _cityProvider.getPaged(searchObject: searchObject);
       setState(() {
         cities = citiesResponse;
+        hasNextPage = cities.length;
       });
     } on Exception catch (e) {
       showErrorDialog(context, e.toString().substring(11));
@@ -82,7 +91,13 @@ class _CityScreenState extends State<CityScreen> {
       var city = await _cityProvider.insert(newCity);
       if (city == "OK") {
         Navigator.of(context).pop();
-        loadCities('');
+        loadCities(
+          CitySearchObject(
+            name: _searchController.text,
+            pageNumber: currentPage,
+            pageSize: pageSize,
+          ),
+        );
         setState(() {
           _selectedCountryId = null;
         });
@@ -104,7 +119,13 @@ class _CityScreenState extends State<CityScreen> {
       var city = await _cityProvider.edit(newCity);
       if (city == "OK") {
         Navigator.of(context).pop();
-        loadCities('');
+        loadCities(
+          CitySearchObject(
+            name: _searchController.text,
+            pageNumber: currentPage,
+            pageSize: pageSize,
+          ),
+        );
         setState(() {
           _selectedCountryId = null;
         });
@@ -118,83 +139,296 @@ class _CityScreenState extends State<CityScreen> {
     try {
       var country = await _cityProvider.delete(id);
       if (country == "OK") {
-        Navigator.of(context).pop();
-        loadCities('');
+        loadCities(
+          CitySearchObject(
+            name: _searchController.text,
+            pageNumber: currentPage,
+            pageSize: pageSize,
+          ),
+        );
       }
     } on Exception catch (e) {
       showErrorDialog(context, e.toString().substring(11));
     }
   }
 
+  Row BuildSearchField(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.teal),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            width: 350,
+            height: 40,
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.only(top: 4.0, left: 10.0),
+                hintText: "Pretraga",
+                border: const OutlineInputBorder(
+                  borderSide: BorderSide.none,
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                ),
+                suffixIcon: InkWell(
+                  onTap: () {},
+                  child: Container(
+                    padding: const EdgeInsets.all(defaultPadding * 0.75),
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: defaultPadding / 2),
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
+                    child: SvgPicture.asset(
+                      "assets/icons/Search.svg",
+                      color: Colors.teal,
+                    ),
+                  ),
+                ),
+              ),
+            )),
+        const SizedBox(
+          width: 20,
+        ),
+        buildButtons(context),
+      ],
+    );
+  }
+
+  Row buildButtons(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: primaryColor,
+            minimumSize: const Size(40, 40),
+          ),
+          onPressed: () {
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    backgroundColor: Colors.white,
+                    title: const Text("Dodaj grad"),
+                    content: SingleChildScrollView(
+                      child: AddCityForm(),
+                    ),
+                    actions: <Widget>[
+                      ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: primaryColor,
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text("Zatvori",
+                              style: TextStyle(color: white))),
+                      ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: primaryColor,
+                          ),
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              InsertCity();
+                            }
+                          },
+                          child: const Text("Spremi",
+                              style: TextStyle(color: white)))
+                    ],
+                  );
+                });
+          },
+          child: const Icon(
+            Icons.add_outlined,
+            color: Colors.white,
+          ),
+        ),
+        const SizedBox(width: 10.0),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: primaryColor,
+            minimumSize: const Size(40, 40),
+          ),
+          onPressed: () {
+            if (selectedCity.isEmpty) {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text("Upozorenje"),
+                      content: const Text(
+                          "Morate odabrati barem jedan grad za uređivanje"),
+                      actions: <Widget>[
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: primaryColor),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child:
+                              const Text("OK", style: TextStyle(color: white)),
+                        ),
+                      ],
+                    );
+                  });
+            } else if (selectedCity.length > 1) {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text("Upozorenje"),
+                      content: const Text(
+                          "Odaberite samo jedan grad koji želite urediti"),
+                      actions: <Widget>[
+                        ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: primaryColor),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text("Ok",
+                                style: TextStyle(color: white)))
+                      ],
+                    );
+                  });
+            } else {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      backgroundColor: Colors.white,
+                      title: const Text("Uredi državu"),
+                      content: AddCityForm(
+                          isEditing: true, cityToEdit: selectedCity[0]),
+                      actions: <Widget>[
+                        ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: primaryColor),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text("Zatvori",
+                                style: TextStyle(color: white))),
+                        ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: primaryColor),
+                            onPressed: () {
+                              EditCity(selectedCity[0].id);
+                              setState(() {
+                                selectedCity = [];
+                              });
+                            },
+                            child: const Text("Spremi",
+                                style: TextStyle(color: white))),
+                      ],
+                    );
+                  });
+            }
+          },
+          child: const Icon(
+            Icons.edit_outlined,
+            color: Colors.white,
+          ),
+        ),
+        const SizedBox(width: 10.0),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: primaryColor,
+            minimumSize: const Size(40, 40),
+          ),
+          onPressed: selectedCity.isEmpty
+              ? () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                            title: const Text("Upozorenje"),
+                            content: const Text(
+                                "Morate odabrati grad koji želite obrisati."),
+                            actions: <Widget>[
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: primaryColor,
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text("OK",
+                                    style: TextStyle(color: white)),
+                              ),
+                            ]);
+                      });
+                }
+              : () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text("Izbriši grad!"),
+                          content: const SingleChildScrollView(
+                            child: Text(
+                                "Da li ste sigurni da želite obrisati grad?"),
+                          ),
+                          actions: <Widget>[
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: primaryColor,
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text("Odustani",
+                                  style: TextStyle(color: white)),
+                            ),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                              ),
+                              onPressed: () {
+                                for (City n in selectedCity) {
+                                  DeleteCity(n.id);
+                                }
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text("Obriši",
+                                  style: TextStyle(color: white)),
+                            ),
+                          ],
+                        );
+                      });
+                },
+          child: const Icon(
+            Icons.delete_forever_outlined,
+            color: Colors.white,
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: SizedBox(
-          width: 1050,
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    width: 500,
-                    child: Padding(
-                      padding:
-                          const EdgeInsets.only(left: 136, top: 8, right: 8),
-                      child: TextField(
-                        controller: _searchController,
-                        decoration: const InputDecoration(
-                          hintText: 'Pretraga',
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8, right: 146),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const Text('Dodaj grad'),
-                              content: SingleChildScrollView(
-                                child: AddCityForm(),
-                              ),
-                              actions: <Widget>[
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('Zatvori'),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    if (_formKey.currentState!.validate()) {
-                                      InsertCity();
-                                    }
-                                  },
-                                  child: const Text('Spremi'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                      child: const Text("Dodaj"),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              _buildDataListView()
-            ],
-          ),
+        appBar: AppBar(
+          title: const Text("Gradovi"),
         ),
-      ),
-    );
+        body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              BuildSearchField(context),
+              const SizedBox(
+                height: 10,
+              ),
+              buildDataList(context),
+              const SizedBox(
+                height: 10,
+              ),
+              buildPagination(),
+            ])));
   }
 
   Widget AddCityForm({bool isEditing = false, City? cityToEdit}) {
@@ -285,152 +519,129 @@ class _CityScreenState extends State<CityScreen> {
     );
   }
 
-  Widget _buildDataListView() {
+  Expanded buildDataList(BuildContext context) {
     return Expanded(
       child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: DataTable(
-              columns: const [
-                DataColumn(
-                    label: Expanded(
-                  flex: 2,
-                  child: Text(
-                    "ID",
-                    style: TextStyle(fontStyle: FontStyle.normal),
+        scrollDirection: Axis.vertical,
+        child: ConstrainedBox(
+          constraints:
+              BoxConstraints(minWidth: MediaQuery.of(context).size.width),
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.teal, style: BorderStyle.solid),
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: DataTable(
+                dataRowHeight: 50,
+                dataRowColor: MaterialStateProperty.all(
+                    const Color.fromARGB(42, 241, 241, 241)),
+                columns: [
+                  DataColumn(
+                      label: Checkbox(
+                          value: isAllSelected,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              isAllSelected = value ?? false;
+                              for (var cityItem in cities) {
+                                cityItem.isSelected = isAllSelected;
+                              }
+                              if (!isAllSelected) {
+                                selectedCity.clear();
+                              } else {
+                                selectedCity = List.from(cities);
+                              }
+                            });
+                          })),
+                  const DataColumn(
+                    label: Expanded(child: Text('Naziv')),
                   ),
-                )),
-                DataColumn(
-                    label: Expanded(
-                  flex: 5,
-                  child: Text(
-                    "Name",
-                    style: TextStyle(fontStyle: FontStyle.normal),
+                  const DataColumn(
+                    label: Expanded(child: Text('Zip')),
                   ),
-                )),
-                DataColumn(
-                    label: Expanded(
-                  flex: 4,
-                  child: Text(
-                    "ZipCode",
-                    style: TextStyle(fontStyle: FontStyle.normal),
+                  const DataColumn(
+                    label: Expanded(child: Text('Aktivn')),
                   ),
-                )),
-                DataColumn(
-                    label: Expanded(
-                  flex: 4,
-                  child: Text(
-                    "Active",
-                    style: TextStyle(fontStyle: FontStyle.normal),
+                  const DataColumn(
+                    label: Expanded(child: Text('Država')),
                   ),
-                )),
-                DataColumn(
-                    label: Expanded(
-                  flex: 4,
-                  child: Text(
-                    "Country",
-                    style: TextStyle(fontStyle: FontStyle.normal),
-                  ),
-                )),
-                DataColumn(
-                    label: Expanded(
-                  flex: 2,
-                  child: Text(
-                    "",
-                    style: TextStyle(fontStyle: FontStyle.normal),
-                  ),
-                )),
-                DataColumn(
-                    label: Expanded(
-                  flex: 2,
-                  child: Text(
-                    "",
-                    style: TextStyle(fontStyle: FontStyle.normal),
-                  ),
-                )),
-              ],
-              rows: cities
-                  .map((City e) => DataRow(cells: [
-                        DataCell(Text(e.id.toString())),
-                        DataCell(Text(e.name.toString())),
-                        DataCell(Text(e.zipCode.toString())),
-                        DataCell(Text(e.isActive.toString())),
-                        DataCell(Text(e.country.abbreviation.toString())),
-                        DataCell(
-                          ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                isEditing = true;
-                              });
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text(isEditing
-                                        ? 'Uredi grad'
-                                        : 'Dodaj grad'),
-                                    content: SingleChildScrollView(
-                                      child: AddCityForm(
-                                          isEditing: isEditing, cityToEdit: e),
-                                    ),
-                                    actions: <Widget>[
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: const Text('Zatvori'),
-                                      ),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          if (_formKey.currentState!
-                                              .validate()) {
-                                            EditCity(e.id);
-                                          }
-                                        },
-                                        child: const Text('Spremi'),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                            child: const Text("Edit"),
+                ],
+                rows: cities
+                    .map((City cityItem) => DataRow(cells: [
+                          DataCell(
+                            Checkbox(
+                              value: cityItem.isSelected,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  cityItem.isSelected = value ?? false;
+                                  if (cityItem.isSelected == true) {
+                                    selectedCity.add(cityItem);
+                                  } else {
+                                    selectedCity.remove(cityItem);
+                                  }
+                                  isAllSelected =
+                                      countries.every((u) => u.isSelected);
+                                });
+                              },
+                            ),
                           ),
-                        ),
-                        DataCell(
-                          ElevatedButton(
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: const Text("Izbrisi grad"),
-                                    content: const SingleChildScrollView(
-                                        child: Text(
-                                            "Da li ste sigurni da zelite obisati grad?")),
-                                    actions: <Widget>[
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.of(context)
-                                              .pop(); // Zatvorite modal
-                                        },
-                                        child: const Text('Odustani'),
-                                      ),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          DeleteCity(e.id);
-                                        },
-                                        child: const Text('Izbrisi'),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                            child: const Text("Delete"),
-                          ),
-                        ),
-                      ]))
-                  .toList())),
+                          DataCell(Text(cityItem.name.toString())),
+                          DataCell(Text(cityItem.zipCode.toString())),
+                          DataCell(Text(cityItem.isActive.toString())),
+                          DataCell(Text(cityItem.country.name.toString())),
+                        ]))
+                    .toList()),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildPagination() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
+          onPressed: () {
+            if (currentPage > 1) {
+              setState(() {
+                currentPage--;
+              });
+              loadCities(CitySearchObject(
+                pageNumber: currentPage,
+                pageSize: pageSize,
+              ));
+            }
+          },
+          child: const Icon(
+            Icons.arrow_left_outlined,
+            color: white,
+          ),
+        ),
+        const SizedBox(width: 16),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
+          onPressed: () {
+            setState(() {
+              if (hasNextPage == pageSize) {
+                currentPage++;
+              }
+            });
+            if (hasNextPage == pageSize) {
+              loadCities(
+                CitySearchObject(
+                    pageNumber: currentPage,
+                    pageSize: pageSize,
+                    name: _searchController.text),
+              );
+            }
+          },
+          child: const Icon(
+            Icons.arrow_right_outlined,
+            color: white,
+          ),
+        ),
+      ],
     );
   }
 }

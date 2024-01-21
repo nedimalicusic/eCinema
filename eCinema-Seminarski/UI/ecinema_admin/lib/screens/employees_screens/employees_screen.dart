@@ -217,7 +217,6 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
     try {
       var employee = await _employeeProvider.delete(id);
       if (employee == "OK") {
-        Navigator.of(context).pop();
         loadEmployee(
           EmployeeSearchObject(
             name: _searchController.text,

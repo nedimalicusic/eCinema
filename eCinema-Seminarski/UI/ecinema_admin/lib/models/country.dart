@@ -3,6 +3,7 @@ class Country {
   late String name;
   late String abbreviation;
   late bool isActive;
+  late bool isSelected = false;
 
   Country(
       {required this.id,

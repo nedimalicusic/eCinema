@@ -131,7 +131,6 @@ class _ProductionScreenState extends State<ProductionScreen> {
     try {
       var country = await _productionProvider.delete(id);
       if (country == "OK") {
-        Navigator.of(context).pop();
         loadProductions(
           ProductionSearchObject(
             name: _searchController.text,

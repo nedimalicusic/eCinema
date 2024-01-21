@@ -79,63 +79,63 @@ class _SideMenuState extends State<SideMenu> {
                   },
                 ),
                 DrawerListTile(
-                  title: "Users",
+                  title: "Korisnici",
                   svgSrc: "assets/icons/users.svg",
                   press: () {
                     widget.onMenuItemClicked(const UsersScreen());
                   },
                 ),
                 DrawerListTile(
-                  title: "Employees",
+                  title: "Uposlenici",
                   svgSrc: "assets/icons/activeUser.svg",
                   press: () {
                     widget.onMenuItemClicked(const EmployeesScreen());
                   },
                 ),
                 DrawerListTile(
-                  title: "Cinemas",
+                  title: "Kina",
                   svgSrc: "assets/icons/movie.svg",
                   press: () {
                     widget.onMenuItemClicked(const CinemasScreen());
                   },
                 ),
                 DrawerListTile(
-                  title: "Shows",
+                  title: "Projekcije",
                   svgSrc: "assets/icons/cinema.svg",
                   press: () {
                     widget.onMenuItemClicked(const ShowsScreen());
                   },
                 ),
                 DrawerListTile(
-                  title: "Movies",
+                  title: "Filmovi",
                   svgSrc: "assets/icons/show.svg",
                   press: () {
                     widget.onMenuItemClicked(const MoviesScreen());
                   },
                 ),
                 DrawerListTile(
-                  title: "Productions",
+                  title: "Produkcije",
                   svgSrc: "assets/icons/production.svg",
                   press: () {
                     widget.onMenuItemClicked(const ProductionScreen());
                   },
                 ),
                 DrawerListTile(
-                  title: "Genres",
+                  title: "Žanrovi",
                   svgSrc: "assets/icons/genre.svg",
                   press: () {
                     widget.onMenuItemClicked(const GenresScreen());
                   },
                 ),
                 DrawerListTile(
-                  title: "Reservations",
+                  title: "Rezervacije",
                   svgSrc: "assets/icons/reservation.svg",
                   press: () {
                     widget.onMenuItemClicked(const ReservationsScreen());
                   },
                 ),
                 DrawerListTile(
-                  title: "Reports",
+                  title: "Izvještaji",
                   svgSrc: "assets/icons/report.svg",
                   press: () {
                     widget.onMenuItemClicked(const ReportScreen());
@@ -148,7 +148,7 @@ class _SideMenuState extends State<SideMenu> {
                     });
                   },
                   title: const Text(
-                    "Referent data",
+                    "Referentni podaci",
                     style: TextStyle(color: Colors.white),
                   ),
                   trailing: Icon(
@@ -159,21 +159,21 @@ class _SideMenuState extends State<SideMenu> {
                   ),
                   children: <Widget>[
                     DrawerListTile(
-                      title: "Countries",
+                      title: "Države",
                       svgSrc: "assets/icons/country.svg",
                       press: () {
                         widget.onMenuItemClicked(const CountryScreen());
                       },
                     ),
                     DrawerListTile(
-                      title: "Cities",
+                      title: "Gradovi",
                       svgSrc: "assets/icons/city.svg",
                       press: () {
                         widget.onMenuItemClicked(const CityScreen());
                       },
                     ),
                     DrawerListTile(
-                      title: "Languages",
+                      title: "Jezici",
                       svgSrc: "assets/icons/language.svg",
                       press: () {
                         widget.onMenuItemClicked(const LanguageScreen());

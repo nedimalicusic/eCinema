@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:ecinema_admin/models/searchObject/genre_search.dart';
+
 import '../helpers/constants.dart';
 import '../models/genre.dart';
 import '../utils/authorzation.dart';
@@ -48,6 +50,34 @@ class GenreProvider extends BaseProvider<Genre> {
       return "OK";
     } else {
       throw Exception('Greška prilikom unosa');
+    }
+  }
+
+  Future<List<Genre>> getPaged({GenreSearchObject? searchObject}) async {
+    var uri = Uri.parse('$apiUrl/Genre/GetPaged');
+    var headers = Authorization.createHeaders();
+    final Map<String, String> queryParameters = {};
+
+    if (searchObject != null) {
+      if (searchObject.name != null) {
+        queryParameters['name'] = searchObject.name!;
+      }
+      if (searchObject.pageNumber != null) {
+        queryParameters['pageNumber'] = searchObject.pageNumber.toString();
+      }
+      if (searchObject.pageSize != null) {
+        queryParameters['pageSize'] = searchObject.pageSize.toString();
+      }
+    }
+
+    uri = uri.replace(queryParameters: queryParameters);
+    final response = await http.get(uri, headers: headers);
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      var items = data['items'];
+      return items.map((d) => fromJson(d)).cast<Genre>().toList();
+    } else {
+      throw Exception('Failed to load data');
     }
   }
 

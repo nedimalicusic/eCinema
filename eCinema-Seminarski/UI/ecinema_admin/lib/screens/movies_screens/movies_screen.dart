@@ -238,7 +238,6 @@ class _MoviesScreenState extends State<MoviesScreen> {
     try {
       var user = await _movieProvider.delete(id);
       if (user == "OK") {
-        Navigator.of(context).pop();
         loadMovies(
           MovieSearchObject(
             name: _searchController.text,

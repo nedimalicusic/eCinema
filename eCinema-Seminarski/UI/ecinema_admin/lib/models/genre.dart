@@ -1,6 +1,7 @@
 class Genre {
   late int id;
   late String name;
+  late bool isSelected = false;
 
   Genre({required this.id, required this.name});
 

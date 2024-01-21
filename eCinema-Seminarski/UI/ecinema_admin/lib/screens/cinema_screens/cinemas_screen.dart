@@ -142,7 +142,6 @@ class _CinemasScreenState extends State<CinemasScreen> {
     try {
       var actor = await _cinemaProvider.delete(id);
       if (actor == "OK") {
-        Navigator.of(context).pop();
         loadCinema(
           CinemaSearchObject(
             name: _searchController.text,

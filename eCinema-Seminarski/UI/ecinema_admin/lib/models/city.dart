@@ -7,6 +7,7 @@ class City {
   late bool isActive;
   late int countryId;
   late Country country;
+  late bool isSelected = false;
 
   City(
       {required this.id,
