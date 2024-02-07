@@ -863,8 +863,8 @@ class _MoviesScreenState extends State<MoviesScreen> {
                                 Padding(
                                   padding: const EdgeInsets.only(right: 8.0),
                                   child: FutureBuilder<String>(
-                                    future: loadPhoto(
-                                        movieItem.photo?.guidId ?? ''),
+                                    future:
+                                        loadPhoto(movieItem.photo.guidId ?? ''),
                                     builder: (BuildContext context,
                                         AsyncSnapshot<String> snapshot) {
                                       if (snapshot.connectionState ==

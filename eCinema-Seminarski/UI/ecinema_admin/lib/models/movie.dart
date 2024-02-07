@@ -10,7 +10,7 @@ class Movie {
   int releaseYear;
   int numberOfViews;
   int photoId;
-  Photo? photo;
+  Photo photo;
   int productionId;
   Production production;
   late bool isSelected = false;

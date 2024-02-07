@@ -769,11 +769,13 @@ class _ShowsScreenState extends State<ShowsScreen> {
                               },
                             ),
                           ),
-                          DataCell(Text(showItem.date.toString())),
-                          DataCell(Text(showItem.startTime.toString())),
-                          DataCell(Text(showItem.movie.toString())),
+                          DataCell(Text(
+                              DateFormat('dd.MM.yyyy').format(showItem.date))),
+                          DataCell(Text(
+                              '${DateFormat('HH:mm').format(showItem.date)}h')),
+                          DataCell(Text(showItem.movie.title.toString())),
                           DataCell(Text(showItem.format.toString())),
-                          DataCell(Text(showItem.price.toString())),
+                          DataCell(Text('${showItem.price.toString()} KM')),
                         ]))
                     .toList()),
           ),
