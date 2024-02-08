@@ -444,6 +444,7 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
   Widget EditReservationForm(
       {bool isEditing = false, Reservation? reservationToEdit}) {
     if (reservationToEdit != null) {
+      selectedCinema = reservationToEdit.show.cinema;
       selectedShowId = reservationToEdit.showId;
       selectedMovie = reservationToEdit.show.movie.title;
       selectedSeatId = reservationToEdit.seatId;
@@ -465,7 +466,7 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
           TextFormField(
             decoration: const InputDecoration(labelText: 'Kino'),
             enabled: false,
-            initialValue: selectedCinema!.name,
+            initialValue: selectedCinema?.name,
           ),
           TextFormField(
             decoration: const InputDecoration(labelText: 'Film'),
@@ -599,10 +600,36 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
                               reservationItem.show.cinema.name.toString())),
                           DataCell(Text(
                               reservationItem.show.movie.title.toString())),
-                          DataCell(
-                              Text(reservationItem.seat.column.toString())),
-                          DataCell(Text(reservationItem.isActive.toString())),
-                          DataCell(Text(reservationItem.isConfirm.toString())),
+                          DataCell(Text(
+                              '${reservationItem.seat.row.toString()}${reservationItem.seat.column.toString()}')),
+                          DataCell(Container(
+                            alignment: Alignment.center,
+                            child: reservationItem.isActive == true
+                                ? const Icon(
+                                    Icons.check_circle_outline,
+                                    color: green,
+                                    size: 30,
+                                  )
+                                : const Icon(
+                                    Icons.close_outlined,
+                                    color: Colors.red,
+                                    size: 30,
+                                  ),
+                          )),
+                          DataCell(Container(
+                            alignment: Alignment.center,
+                            child: reservationItem.isConfirm == true
+                                ? const Icon(
+                                    Icons.check_circle_outline,
+                                    color: green,
+                                    size: 30,
+                                  )
+                                : const Icon(
+                                    Icons.close_outlined,
+                                    color: Colors.red,
+                                    size: 30,
+                                  ),
+                          )),
                         ]))
                     .toList()),
           ),

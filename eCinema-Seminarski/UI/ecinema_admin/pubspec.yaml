@@ -53,5 +53,8 @@ flutter:
     - assets/icons/language.svg
     - assets/icons/report.svg
     - assets/images/user2.png
+    - assets/icons/users1.svg
+    - assets/icons/unactiveUser.svg
+    - assets/icons/calendar.svg
 
   uses-material-design: true

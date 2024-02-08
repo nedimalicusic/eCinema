@@ -1,6 +1,9 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:ecinema_admin/models/dashboard.dart';
 import 'package:ecinema_admin/providers/cinema_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 import '../models/cinema.dart';
@@ -22,7 +25,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       countOfReservation: 0);
   late CinemaProvider _cinemaProvider;
   List<Cinema> cinemaList = <Cinema>[];
-  int? selectedCinema;
+  Cinema? selectedCinema;
 
   @override
   void initState() {
@@ -36,9 +39,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
     try {
       var dashboardResponse =
           await _cinemaProvider.getDashboardInformation(cinemaId);
-      setState(() {
-        dashboard = dashboardResponse;
-      });
+      if (mounted) {
+        setState(() {
+          dashboard = dashboardResponse;
+        });
+      }
     } on Exception catch (e) {
       showErrorDialog(context, e.toString().substring(11));
     }
@@ -47,9 +52,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void loadCinemas() async {
     try {
       var cinemasResponse = await _cinemaProvider.get(null);
-      setState(() {
-        cinemaList = cinemasResponse;
-      });
+      if (mounted) {
+        setState(() {
+          cinemaList = cinemasResponse;
+        });
+      }
     } on Exception catch (e) {
       showErrorDialog(context, e.toString().substring(11));
     }
@@ -62,63 +69,62 @@ class _DashboardScreenState extends State<DashboardScreen> {
         title: const Text("Dashboard"),
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(
-            height: 30,
+          Padding(
+            padding: const EdgeInsets.all(14.0),
+            child: buildFilterDropdowns(),
           ),
-          SizedBox(
-            width: 500,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 136, top: 8, right: 8),
-              child: DropdownButtonFormField<int>(
-                decoration: const InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white70,
-                  hintText: 'Izaberite kino',
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minWidth: MediaQuery.of(context).size.width,
                 ),
-                value: selectedCinema,
-                items: cinemaList.map((Cinema cinema) {
-                  return DropdownMenuItem<int>(
-                    value: cinema.id,
-                    child: Text(cinema.name),
-                  );
-                }).toList(),
-                onChanged: (int? newValue) {
-                  setState(() {
-                    selectedCinema = newValue;
-                  });
-                  loadDashboardInformation(selectedCinema!);
-                },
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          StatsBuilder(
+                            "assets/icons/users1.svg",
+                            "Ukupan broj korisnika",
+                            dashboard.countUsers,
+                          ),
+                          const SizedBox(width: 14),
+                          StatsBuilder(
+                            "assets/icons/activeUser.svg",
+                            "Aktivni korisnici",
+                            dashboard.countUsersActive,
+                          ),
+                          const SizedBox(width: 14),
+                          StatsBuilder(
+                            "assets/icons/unactiveUser.svg",
+                            "Neaktivni korisnici",
+                            dashboard.countUsersInActive,
+                          ),
+                          const SizedBox(width: 14),
+                          StatsBuilder(
+                            "assets/icons/calendar.svg",
+                            "Broj rezervacija",
+                            dashboard.countOfReservation,
+                          ),
+                          const SizedBox(width: 14),
+                          StatsBuilder(
+                            "assets/icons/users1.svg",
+                            "Broj zaposlenika",
+                            dashboard.countEmployees,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ),
-          const SizedBox(
-            height: 100,
-          ),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _buildInfoContainer("Broj korisnika", dashboard.countUsers),
-                    _buildInfoContainer(
-                        "Aktivni korisnici", dashboard.countUsersActive),
-                    _buildInfoContainer(
-                        "Neaktivni korisnici", dashboard.countUsersInActive),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _buildInfoContainer(
-                        "Rezervacije", dashboard.countOfReservation),
-                    _buildInfoContainer(
-                        "Broj zaposlenika", dashboard.countEmployees),
-                  ],
-                ),
-              ],
             ),
           ),
         ],
@@ -126,30 +132,92 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildInfoContainer(String label, int value) {
-    return Container(
-      width: 300,
-      height: 150,
-      decoration: BoxDecoration(
-        color: Colors.teal,
-        borderRadius: BorderRadius.circular(10),
+  Expanded StatsBuilder(String icon, String label, int num) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(8.0),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: Colors.teal,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SvgPicture.asset(
+              icon,
+              width: 35,
+              color: Colors.white,
+            ),
+            const SizedBox(height: 5),
+            Text(label,
+                style: const TextStyle(color: Colors.white, fontSize: 16)),
+            Text(
+              num.toString(),
+              style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white),
+            )
+          ],
+        ),
       ),
-      margin: const EdgeInsets.all(10),
-      alignment: Alignment.center,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            value.toString(),
-            style: const TextStyle(
-                color: Colors.white, fontSize: 50, fontWeight: FontWeight.bold),
+    );
+  }
+
+  Row buildFilterDropdowns() {
+    return Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('  Pretraga po kinima:'),
+              Container(
+                height: 40,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.teal),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: DropdownButton<Cinema>(
+                  isExpanded: true,
+                  icon: const Icon(Icons.arrow_drop_down_outlined),
+                  value: selectedCinema,
+                  items: [
+                    const DropdownMenuItem<Cinema>(
+                      value: null,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 8.0),
+                        child: Text('Svi'),
+                      ),
+                    ),
+                    ...cinemaList.map((Cinema cinema) {
+                      return DropdownMenuItem<Cinema>(
+                        value: cinema,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text(cinema.name),
+                        ),
+                      );
+                    }).toList(),
+                  ],
+                  onChanged: (Cinema? newValue) {
+                    setState(() {
+                      selectedCinema = newValue;
+                    });
+                    if (selectedCinema == null) {
+                      loadDashboardInformation(1);
+                    } else {
+                      loadDashboardInformation(selectedCinema!.id);
+                    }
+                  },
+                  underline: const Text(""),
+                ),
+              ),
+            ],
           ),
-          Text(
-            label,
-            style: const TextStyle(color: Colors.white, fontSize: 16),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
