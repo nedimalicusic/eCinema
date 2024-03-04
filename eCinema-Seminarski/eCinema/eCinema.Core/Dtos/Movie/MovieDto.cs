@@ -9,6 +9,7 @@
         public int Length { get; set; }
         public int Duration { get; set; }
         public int NumberOfViews { get; set; }
+        public int? GenreId { get; set; }
 
         public int LanguageId { get; set; }
         public LanguageDto Language { get; set; } = null!;

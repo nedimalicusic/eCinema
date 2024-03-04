@@ -7,7 +7,7 @@ namespace eCinema.Infrastructure.Interfaces
     {
         Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default);
        int getCountOfUsers(CancellationToken cancellationToken = default);
-       int getCountOfUsersActive(int  cinemaId, CancellationToken cancellationToken = default);
-       int getCountOfUsersInactive(int  cinemaId, CancellationToken cancellationToken = default);
+       int getCountOfUsersActive(CancellationToken cancellationToken = default);
+       int getCountOfUsersInactive(CancellationToken cancellationToken = default);
     }
 }

@@ -13,5 +13,6 @@ namespace eCinema.Infrastructure.Interfaces.SearchObjects
         public Gender? gender { get; set; }
         public bool? isActive { get; set; }
         public bool? isVerified { get; set; }
+        public int role { get; set; }
     }
 }

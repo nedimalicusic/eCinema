@@ -7,6 +7,6 @@ namespace eCinema.Application.Interfaces
 {
     public interface ICinemasService : IBaseService<int,CinemaDto,CinemaUpsertDto, CinemaSearchObject>
     {
-        Task<DashboardDto> GetDashboardInformation(int cinemaId, CancellationToken cancellationToken);
+        Task<DashboardDto> GetDashboardInformation(int? cinemaId, CancellationToken cancellationToken);
     }
 }

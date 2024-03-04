@@ -17,11 +17,11 @@ namespace eCinema.Application
         {
         }
 
-        public async Task<DashboardDto> GetDashboardInformation(int cinemaId, CancellationToken cancellationToken)
+        public async Task<DashboardDto> GetDashboardInformation(int? cinemaId, CancellationToken cancellationToken)
         {
             var countOfUsers = UnitOfWork.UsersRepository.getCountOfUsers(cancellationToken);
-            var countOfUsersActive = UnitOfWork.UsersRepository.getCountOfUsersActive(cinemaId,cancellationToken);
-            var countOfUsersInActive = UnitOfWork.UsersRepository.getCountOfUsersInactive(cinemaId, cancellationToken);
+            var countOfUsersActive = UnitOfWork.UsersRepository.getCountOfUsersActive(cancellationToken);
+            var countOfUsersInActive = UnitOfWork.UsersRepository.getCountOfUsersInactive( cancellationToken);
             var countOfEmployees = UnitOfWork.EmployeesRepository.getCountOfEmployees(cinemaId,cancellationToken);
             var countOfReservation = UnitOfWork.ReservationsRepository.getCountOfReservation(cinemaId, cancellationToken);
 

@@ -2,7 +2,6 @@
 using eCinema.Infrastructure.Interfaces;
 using eCinema.Infrastructure.Interfaces.SearchObjects;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 
 namespace eCinema.Infrastructure
 {
@@ -17,20 +16,55 @@ namespace eCinema.Infrastructure
                 .AsQueryable().Where(s => s.UserId == userId).ToListAsync(cancellationToken);
         }
 
-        public int getCountOfReservation(int cinemaId, CancellationToken cancellationToken)
+        public int getCountOfReservation(int? cinemaId, CancellationToken cancellationToken)
         {
-            return DbSet.Where(s => s.Show.CinemaId == cinemaId).AsNoTracking().Count();
-        }
+            return DbSet.Where(s => cinemaId==null || s.Show.CinemaId == cinemaId).AsNoTracking().Count();
+        }   
 
         public override async Task<PagedList<Reservation>> GetPagedAsync(ReservationSearchObjet searchObject, CancellationToken cancellationToken = default)
         {
             return await DbSet
-             .Where(u =>
-                    (searchObject.name == null || u.Show.Movie.Title.Contains(searchObject.name)) &&
-                    (searchObject.cinemaId == null || u.Show.CinemaId == searchObject.cinemaId))
-             .Include(s => s.Seat).Include(s => s.Show).ThenInclude(s => s.Cinema).ThenInclude(s => s.City)
-             .ThenInclude(s => s.Country).Include(s => s.User).Include(s => s.Show).ThenInclude(s => s.Movie).ThenInclude(s => s.Production).Include(s=>s.Show).ThenInclude(s=>s.Movie).ThenInclude(s=>s.Photo).ToPagedListAsync(searchObject, cancellationToken);
+                 .Where(u =>
+                     (searchObject.name == null || u.Show.Movie.Title.Contains(searchObject.name)) &&
+                     (searchObject.cinemaId == null || u.Show.CinemaId == searchObject.cinemaId))
+                 .Include(s => s.Seat)
+                 .Include(s => s.Show)
+                     .ThenInclude(s => s.Cinema)
+                         .ThenInclude(s => s.City)
+                             .ThenInclude(s => s.Country)
+                 .Include(s => s.User)
+                 .Include(s => s.Show)
+                     .ThenInclude(s => s.Movie)
+                         .ThenInclude(s => s.Production)
+                 .Include(s => s.Show)
+                     .ThenInclude(s => s.Movie)
+                         .ThenInclude(s => s.Photo)
+                 .ToPagedListAsync(searchObject, cancellationToken);
+
         }
 
+        public async Task<List<int>> GetCountByMonthAsync(BarChartSearchObject searchObject, CancellationToken cancellationToken = default)
+        {
+            var counts = await DbSet
+               .Where(r => r.CreatedAt.Year == searchObject.year && (searchObject.cinemaId == null || searchObject.cinemaId==r.Show.CinemaId))
+               .GroupBy(r => r.CreatedAt.Month)
+               .Select(group => new
+               {
+                   Month = group.Key,
+                   Count = group.Count()
+               })
+               .OrderBy(result => result.Month)
+               .ToListAsync(cancellationToken);
+
+            List<int> result = new List<int>();
+
+            for (int month = 1; month <= 12; month++)
+            {
+                var count = counts.FirstOrDefault(c => c.Month == month)?.Count ?? 0;
+                result.Add(count);
+            }
+
+            return result;
+        }
     }
 }

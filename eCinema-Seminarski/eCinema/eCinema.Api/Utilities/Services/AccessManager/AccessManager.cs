@@ -62,13 +62,13 @@ namespace eCinema.Api
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-            new Claim(ClaimNames.Id, user.Id.ToString()), // Pretvorite Id u string
-            new Claim(ClaimNames.FirstName, user.FirstName),
-            new Claim(ClaimNames.LastName, user.LastName),
-            new Claim(ClaimNames.Email, user.Email),
-            new Claim(ClaimNames.PhoneNumber, user.PhoneNumber),
-            new Claim(ClaimNames.Role, user.Role.ToString()) // Pretvorite Role u string
-        }),
+                    new Claim(ClaimNames.Id, user.Id.ToString()),
+                    new Claim(ClaimNames.FirstName, user.FirstName),
+                    new Claim(ClaimNames.LastName, user.LastName),
+                    new Claim(ClaimNames.Email, user.Email),
+                    new Claim(ClaimNames.PhoneNumber, user.PhoneNumber),
+                    new Claim(ClaimNames.Role, user.Role.ToString()),
+                }),
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(secretKey),
                     SecurityAlgorithms.HmacSha512Signature
@@ -80,7 +80,7 @@ namespace eCinema.Api
 
             if (user.ProfilePhotoId != null)
             {
-                tokenDescriptor.Subject.AddClaim(new Claim(ClaimNames.ProfilePhotoId, user.ProfilePhotoId.Value.ToString())); // Pretvorite ProfilePhotoId u string
+                tokenDescriptor.Subject.AddClaim(new Claim(ClaimNames.ProfilePhotoId, user.ProfilePhotoId.Value.ToString())); 
             }
 
             var tokenHandler = new JwtSecurityTokenHandler();

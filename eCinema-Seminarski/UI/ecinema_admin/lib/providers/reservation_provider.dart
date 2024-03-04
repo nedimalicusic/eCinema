@@ -1,6 +1,7 @@
 import 'dart:convert';
 import '../helpers/constants.dart';
 import '../models/reservation.dart';
+import '../models/searchObject/bar_chart_search.dart';
 import '../models/searchObject/reservation_search.dart';
 import '../utils/authorzation.dart';
 import 'base_provider.dart';
@@ -50,6 +51,29 @@ class ReservationProvider extends BaseProvider<Reservation> {
       var data = json.decode(response.body);
       var items = data['items'];
       return items.map((d) => fromJson(d)).cast<Reservation>().toList();
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
+  Future<List<dynamic>> getByMonth(BarChartSearchObject? searchObject) async {
+    var uri = Uri.parse('$apiUrl/Reservation/GetByMonth');
+    var headers = Authorization.createHeaders();
+    final Map<String, String> queryParameters = {};
+    if (searchObject != null) {
+      if (searchObject.year != null) {
+        queryParameters['year'] = searchObject.year.toString();
+      }
+      if (searchObject.cinemaId != null) {
+        queryParameters['cinemaId'] = searchObject.cinemaId.toString();
+      }
+    }
+
+    uri = uri.replace(queryParameters: queryParameters);
+    final response = await http.get(uri, headers: headers);
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      return data;
     } else {
       throw Exception('Failed to load data');
     }

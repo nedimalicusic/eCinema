@@ -13,11 +13,10 @@ namespace eCinema.Api.Controllers
         }
 
         [HttpGet("GetDashboardInformation")]
-        public async Task<IActionResult> GetDashboardInformation(int cinemaId, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetDashboardInformation(int? cinemaId, CancellationToken cancellationToken = default)
         {
             try
             {
-
                 var information = await Service.GetDashboardInformation(cinemaId, cancellationToken);
                 return Ok(information);
             }

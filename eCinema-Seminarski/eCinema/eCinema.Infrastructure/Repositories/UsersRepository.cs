@@ -20,19 +20,26 @@ namespace eCinema.Infrastructure
             return DbSet.AsNoTracking().Count();
         }
 
-        public int getCountOfUsersActive(int cinemaId, CancellationToken cancellationToken = default)
+        public int getCountOfUsersActive(CancellationToken cancellationToken = default)
         {
-            return DbSet.Where(s=>s.IsActive==true).AsNoTracking().Count();
+            return DbSet.Where(s => s.IsActive == true).AsNoTracking().Count();
 
         }
 
-        public int getCountOfUsersInactive(int cinemaId, CancellationToken cancellationToken = default)
+        public int getCountOfUsersInactive(CancellationToken cancellationToken = default)
         {
             return DbSet.Where(s => s.IsActive == false).AsNoTracking().Count();
         }
 
         public override async Task<PagedList<User>> GetPagedAsync(UserSearchObject searchObject, CancellationToken cancellationToken = default)
         {
+             Role rola;
+
+            if (searchObject.role == 0)
+                rola = Role.Administrator;
+            else
+                rola = Role.User;
+
             return await DbSet.Include(s => s.ProfilePhoto)
                  .Where(u => (searchObject.name == null
                  || u.FirstName.ToLower().Contains(searchObject.name.ToLower())
@@ -40,7 +47,7 @@ namespace eCinema.Infrastructure
                   && (searchObject.isActive == null || u.IsActive == searchObject.isActive)
                   && (searchObject.gender == null || u.Gender == searchObject.gender)
                   && (searchObject.isVerified == null || u.IsVerified == searchObject.isVerified)
-                  && (u.Role == Role.User))
+                  && (u.Role == rola))
                   .ToPagedListAsync(searchObject, cancellationToken);
 
 

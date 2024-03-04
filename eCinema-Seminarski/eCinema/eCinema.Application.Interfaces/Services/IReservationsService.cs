@@ -7,5 +7,7 @@ namespace eCinema.Application.Interfaces
     public interface IReservationsService : IBaseService<int,ReservationDto,ReservationUpsertDto, ReservationSearchObjet>
     {
         Task<IEnumerable<ReservationDto>> GetByUserId(int userId, CancellationToken cancellationToken);
+        Task<List<int>> GetCountByMonthAsync(BarChartSearchObject searchObject, CancellationToken cancellationToken = default);
+
     }
 }

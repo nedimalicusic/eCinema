@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, non_constant_identifier_names
+// ignore_for_file: use_build_context_synchronously, non_constant_identifier_names, unrelated_type_equality_checks
 
 import 'dart:io';
 import 'package:ecinema_admin/models/user.dart';
@@ -11,22 +11,24 @@ import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 import '../../helpers/constants.dart';
 import '../../models/searchObject/user_search.dart';
+import '../../providers/login_provider.dart';
 import '../../providers/photo_provider.dart';
 import '../../utils/authorzation.dart';
 import '../../utils/error_dialog.dart';
 import 'package:http/http.dart' as http;
 
-class UsersScreen extends StatefulWidget {
-  const UsersScreen({Key? key}) : super(key: key);
+class AdminScreen extends StatefulWidget {
+  const AdminScreen({Key? key}) : super(key: key);
 
   @override
-  State<UsersScreen> createState() => _UsersScreenState();
+  State<AdminScreen> createState() => _AdminScreenState();
 }
 
-class _UsersScreenState extends State<UsersScreen> {
+class _AdminScreenState extends State<AdminScreen> {
   List<User> users = <User>[];
   List<User> selectedUsers = <User>[];
   late UserProvider _userProvider;
+  late LoginProvider _loginProvider;
   late PhotoProvider _photoProvider;
   bool isEditing = false;
   final _formKey = GlobalKey<FormState>();
@@ -59,6 +61,7 @@ class _UsersScreenState extends State<UsersScreen> {
     super.initState();
     _userProvider = context.read<UserProvider>();
     _photoProvider = context.read<PhotoProvider>();
+    _loginProvider = context.read<LoginProvider>();
     _isActiveNotifier = ValueNotifier<bool>(_isActive);
     _isVerifiedNotifier = ValueNotifier<bool>(_isVerified);
     _pickedFileNotifier = ValueNotifier<File?>(_pickedFile);
@@ -66,8 +69,8 @@ class _UsersScreenState extends State<UsersScreen> {
     loadUsers(
       UserSearchObject(
           name: _searchController.text,
+          role: 0,
           pageSize: pageSize,
-          role: 1,
           pageNumber: currentPage),
       _selectedIsActive,
       _selectedIsVerified,
@@ -80,7 +83,7 @@ class _UsersScreenState extends State<UsersScreen> {
             name: searchQuery,
             pageNumber: currentPage,
             pageSize: pageSize,
-            role: 1,
+            role: 0,
           ),
           _selectedIsActive,
           _selectedIsVerified);
@@ -162,7 +165,7 @@ class _UsersScreenState extends State<UsersScreen> {
         'Gender': selectedGender.toString(),
         'DateOfBirth':
             DateTime.parse(_birthDateController.text).toUtc().toIso8601String(),
-        'Role': '1',
+        'Role': '0',
         'LastSignInAt': DateTime.now().toUtc().toIso8601String(),
         'IsVerified': _isVerified.toString(),
         'IsActive': _isActive.toString(),
@@ -181,7 +184,7 @@ class _UsersScreenState extends State<UsersScreen> {
         loadUsers(
           UserSearchObject(
             name: _searchController.text,
-            role: 1,
+            role: 0,
             gender: null,
             isActive: null,
             isVerified: null,
@@ -214,7 +217,7 @@ class _UsersScreenState extends State<UsersScreen> {
         'Gender': selectedGender.toString(),
         'DateOfBirth':
             DateTime.parse(_birthDateController.text).toUtc().toIso8601String(),
-        'Role': '1',
+        'Role': '0',
         'LastSignInAt': DateTime.now().toUtc().toIso8601String(),
         'IsVerified': _isVerified.toString(),
         'IsActive': _isActive.toString(),
@@ -233,7 +236,7 @@ class _UsersScreenState extends State<UsersScreen> {
         loadUsers(
           UserSearchObject(
             name: _searchController.text,
-            role: 1,
+            role: 0,
             gender: null,
             isActive: null,
             isVerified: null,
@@ -255,13 +258,18 @@ class _UsersScreenState extends State<UsersScreen> {
   }
 
   void DeleteUser(int id) async {
+    if (id.toString() == _loginProvider.loginUser?.Id) {
+      showErrorDialog(context, "Ne možete obrisati svoj račun!");
+      return;
+    }
+
     try {
       var user = await _userProvider.delete(id);
       if (user == "OK") {
         loadUsers(
             UserSearchObject(
               name: _searchController.text,
-              role: 1,
+              role: 0,
             ),
             _selectedIsActive,
             _selectedIsVerified);
@@ -275,7 +283,7 @@ class _UsersScreenState extends State<UsersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Korisnici"),
+          title: const Text("Administratori"),
         ),
         body: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -378,7 +386,7 @@ class _UsersScreenState extends State<UsersScreen> {
                           UserSearchObject(
                               gender: selectedGender,
                               name: _searchController.text,
-                              role: 1,
+                              role: 0,
                               pageNumber: currentPage,
                               pageSize: pageSize),
                           _selectedIsActive,
@@ -430,8 +438,8 @@ class _UsersScreenState extends State<UsersScreen> {
                                     ? false
                                     : null,
                             name: _searchController.text,
-                            role: 1,
                             pageNumber: currentPage,
+                            role: 0,
                             pageSize: pageSize),
                         _selectedIsActive,
                         _selectedIsVerified);
@@ -480,7 +488,7 @@ class _UsersScreenState extends State<UsersScreen> {
                                     ? false
                                     : null,
                             name: _searchController.text,
-                            role: 1,
+                            role: 0,
                             pageNumber: currentPage,
                             pageSize: pageSize),
                         _selectedIsActive,
@@ -511,7 +519,7 @@ class _UsersScreenState extends State<UsersScreen> {
                 builder: (BuildContext context) {
                   return AlertDialog(
                     backgroundColor: Colors.white,
-                    title: const Text("Dodaj korisnika"),
+                    title: const Text("Dodaj administratora"),
                     content: SingleChildScrollView(
                       child: AddUserForm(),
                     ),
@@ -566,7 +574,7 @@ class _UsersScreenState extends State<UsersScreen> {
                     return AlertDialog(
                       title: const Text("Upozorenje"),
                       content: const Text(
-                          "Morate odabrati barem jednog klijenta za uređivanje"),
+                          "Morate odabrati barem jednog administratora za uređivanje"),
                       actions: <Widget>[
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
@@ -587,7 +595,7 @@ class _UsersScreenState extends State<UsersScreen> {
                     return AlertDialog(
                       title: const Text("Upozorenje"),
                       content: const Text(
-                          "Odaberite samo jednog klijenta kojeg želite urediti"),
+                          "Odaberite samo jednog administratora kojeg želite urediti"),
                       actions: <Widget>[
                         ElevatedButton(
                             style: ElevatedButton.styleFrom(
@@ -606,7 +614,7 @@ class _UsersScreenState extends State<UsersScreen> {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       backgroundColor: Colors.white,
-                      title: const Text("Uredi klijenta"),
+                      title: const Text("Uredi administratora"),
                       content: AddUserForm(
                           isEditing: true, userToEdit: selectedUsers[0]),
                       actions: <Widget>[
@@ -660,7 +668,7 @@ class _UsersScreenState extends State<UsersScreen> {
                         return AlertDialog(
                             title: const Text("Upozorenje"),
                             content: const Text(
-                                "Morate odabrati klijenta kojeg želite obrisati."),
+                                "Morate odabrati administratora kojeg želite obrisati."),
                             actions: <Widget>[
                               ElevatedButton(
                                 style: ElevatedButton.styleFrom(
@@ -680,10 +688,10 @@ class _UsersScreenState extends State<UsersScreen> {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: const Text("Izbriši klijenta!"),
+                          title: const Text("Izbriši administratora!"),
                           content: const SingleChildScrollView(
                             child: Text(
-                                "Da li ste sigurni da želite obrisati klijenta?"),
+                                "Da li ste sigurni da želite obrisati administratora?"),
                           ),
                           actions: <Widget>[
                             ElevatedButton(
@@ -1213,8 +1221,8 @@ class _UsersScreenState extends State<UsersScreen> {
               loadUsers(
                   UserSearchObject(
                     pageNumber: currentPage,
+                    role: 0,
                     pageSize: pageSize,
-                    role: 1,
                   ),
                   _selectedIsActive,
                   _selectedIsVerified);
@@ -1239,7 +1247,7 @@ class _UsersScreenState extends State<UsersScreen> {
                   UserSearchObject(
                       pageNumber: currentPage,
                       pageSize: pageSize,
-                      role: 1,
+                      role: 0,
                       name: _searchController.text),
                   _selectedIsActive,
                   _selectedIsVerified);

@@ -11,9 +11,9 @@ namespace eCinema.Infrastructure
         {
         }
 
-        public int getCountOfEmployees(int cinemaId, CancellationToken cancellationToken = default)
+        public int getCountOfEmployees(int? cinemaId, CancellationToken cancellationToken = default)
         {
-            return DbSet.Where(s=>s.CinemaId==cinemaId).AsNoTracking().Count();
+            return DbSet.Where(s=> cinemaId==null || s.CinemaId==cinemaId).AsNoTracking().Count();
         }
 
         public override async Task<PagedList<Employee>> GetPagedAsync(EmployeeSearchObject searchObject, CancellationToken cancellationToken = default)

@@ -21,5 +21,11 @@ namespace eCinema.Application
 
             return Mapper.Map<IEnumerable<ReservationDto>>(reservations);
         }
+
+        public async Task<List<int>> GetCountByMonthAsync(BarChartSearchObject searchObject, CancellationToken cancellationToken = default)
+        {
+
+            return await CurrentRepository.GetCountByMonthAsync(searchObject, cancellationToken);
+        }
     }
 }

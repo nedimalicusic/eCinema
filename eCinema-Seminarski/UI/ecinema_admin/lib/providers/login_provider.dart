@@ -45,9 +45,13 @@ class LoginProvider extends BaseProvider<LoginUser> {
     if (response.statusCode == 200) {
       Map<String, dynamic> decodedToken = JwtDecoder.decode(response.body);
       loginUser = LoginUser.fromJson(decodedToken);
-      Authorization.token = loginUser!.token;
-      notifyListeners();
-      return loginUser!;
+      if (loginUser?.Role == 'Administrator') {
+        Authorization.token = loginUser!.token;
+        notifyListeners();
+        return loginUser!;
+      } else {
+        throw Exception("UserWrongCredentialsException");
+      }
     } else {
       throw Exception(response.body);
     }

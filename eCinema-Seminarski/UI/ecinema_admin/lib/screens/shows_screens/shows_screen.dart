@@ -167,7 +167,6 @@ class _ShowsScreenState extends State<ShowsScreen> {
     try {
       var actor = await _showProvider.delete(id);
       if (actor == "OK") {
-        Navigator.of(context).pop();
         loadShows(
           ShowSearchObject(
             name: _searchController.text,
@@ -553,7 +552,7 @@ class _ShowsScreenState extends State<ShowsScreen> {
     }
 
     return SizedBox(
-      height: 400,
+      height: 450,
       width: 700,
       child: Form(
         key: _formKey,

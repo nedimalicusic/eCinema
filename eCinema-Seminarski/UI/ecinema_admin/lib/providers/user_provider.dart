@@ -126,6 +126,10 @@ class UserProvider extends BaseProvider<User> {
         queryParameters['gender'] = searchObject.gender.toString();
       }
 
+      if (searchObject.role != null) {
+        queryParameters['role'] = searchObject.role.toString();
+      }
+
       if (searchObject.isActive != null) {
         queryParameters['isActive'] = searchObject.isActive.toString();
       }

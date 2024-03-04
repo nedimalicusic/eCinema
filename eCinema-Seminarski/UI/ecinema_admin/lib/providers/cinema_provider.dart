@@ -90,7 +90,7 @@ class CinemaProvider extends BaseProvider<Cinema> {
     }
   }
 
-  Future<Dashboard> getDashboardInformation(int cinemaId) async {
+  Future<Dashboard> getDashboardInformation(int? cinemaId) async {
     var uri =
         Uri.parse('$apiUrl/Cinema/GetDashboardInformation?cinemaId=$cinemaId');
     var headers = Authorization.createHeaders();

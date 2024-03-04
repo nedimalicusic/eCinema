@@ -93,8 +93,11 @@ class _MoviesScreenState extends State<MoviesScreen> {
         await ImagePicker().pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
-      _pickedFileNotifier.value = File(pickedFile.path);
-      _pickedFile = File(pickedFile.path);
+      final File file = File(pickedFile.path);
+      setState(() {
+        _pickedFile = file;
+        _pickedFileNotifier.value = file;
+      });
     }
   }
 
@@ -106,10 +109,12 @@ class _MoviesScreenState extends State<MoviesScreen> {
     try {
       var moviesResponse =
           await _movieProvider.getPaged(searchObject: searchObject);
-      setState(() {
-        movies = moviesResponse;
-        hasNextPage = movies.length;
-      });
+      if (mounted) {
+        setState(() {
+          movies = moviesResponse;
+          hasNextPage = movies.length;
+        });
+      }
     } on Exception catch (e) {
       showErrorDialog(context, e.toString().substring(11));
     }
@@ -118,9 +123,11 @@ class _MoviesScreenState extends State<MoviesScreen> {
   void loadGenres() async {
     try {
       var genresResponse = await _genreProvider.get(null);
-      setState(() {
-        genres = genresResponse;
-      });
+      if (mounted) {
+        setState(() {
+          genres = genresResponse;
+        });
+      }
     } on Exception catch (e) {
       showErrorDialog(context, e.toString().substring(11));
     }
@@ -129,9 +136,11 @@ class _MoviesScreenState extends State<MoviesScreen> {
   void loadLanguages() async {
     try {
       var languagesResponse = await _languageProvider.get(null);
-      setState(() {
-        languages = languagesResponse;
-      });
+      if (mounted) {
+        setState(() {
+          languages = languagesResponse;
+        });
+      }
     } on Exception catch (e) {
       showErrorDialog(context, e.toString().substring(11));
     }
@@ -140,9 +149,11 @@ class _MoviesScreenState extends State<MoviesScreen> {
   void loadActors() async {
     try {
       var actorsResponse = await _actorProvider.get(null);
-      setState(() {
-        actors = actorsResponse;
-      });
+      if (mounted) {
+        setState(() {
+          actors = actorsResponse;
+        });
+      }
     } on Exception catch (e) {
       showErrorDialog(context, e.toString().substring(11));
     }
@@ -151,9 +162,11 @@ class _MoviesScreenState extends State<MoviesScreen> {
   void loadProductions() async {
     try {
       var productionResponse = await _productionProvider.get(null);
-      setState(() {
-        productions = productionResponse;
-      });
+      if (mounted) {
+        setState(() {
+          productions = productionResponse;
+        });
+      }
     } on Exception catch (e) {
       showErrorDialog(context, e.toString().substring(11));
     }
@@ -161,6 +174,26 @@ class _MoviesScreenState extends State<MoviesScreen> {
 
   void insertMovie() async {
     try {
+      if (_pickedFile == null) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Alert'),
+              content: const Text('Please select an image.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+        return;
+      }
       Map<String, dynamic> movieData = {
         'Title': _titleController.text,
         'Description': _descriptionController.text,
@@ -209,8 +242,8 @@ class _MoviesScreenState extends State<MoviesScreen> {
         'ProductionId': selectedProductionId,
       };
       if (_pickedFile != null) {
-        movieData['Photo'] = http.MultipartFile.fromBytes(
-          'Photo',
+        movieData['photo'] = http.MultipartFile.fromBytes(
+          'photo',
           _pickedFile!.readAsBytesSync(),
           filename: 'photo.jpg',
         );
@@ -537,6 +570,8 @@ class _MoviesScreenState extends State<MoviesScreen> {
       _authorController.text = movieToEdit.author;
       _relaseYearController.text = movieToEdit.releaseYear.toString();
       _durationController.text = movieToEdit.duration.toString();
+      selectedProductionId = movieToEdit.productionId;
+      selectedLanguageId = movieToEdit.languageId;
       _pickedFile = null;
     } else {
       _titleController.text = '';
@@ -571,7 +606,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
                             future: _pickedFile != null
                                 ? Future.value(_pickedFile!.path)
                                 : loadPhoto(isEditing
-                                    ? (movieToEdit?.photo?.guidId ?? '')
+                                    ? (movieToEdit?.photo.guidId ?? '')
                                     : ''),
                             builder: (BuildContext context,
                                 AsyncSnapshot<String> snapshot) {

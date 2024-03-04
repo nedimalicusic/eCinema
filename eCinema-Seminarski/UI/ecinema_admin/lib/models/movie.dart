@@ -12,6 +12,7 @@ class Movie {
   int photoId;
   Photo photo;
   int productionId;
+  int languageId;
   Production production;
   late bool isSelected = false;
 
@@ -26,6 +27,7 @@ class Movie {
     required this.photoId,
     required this.photo,
     required this.productionId,
+    required this.languageId,
     required this.production,
   });
 
@@ -41,6 +43,7 @@ class Movie {
       numberOfViews: json['numberOfViews'],
       photoId: json['photoId'],
       productionId: json['productionId'],
+      languageId: json['languageId'],
       production: Production.fromJson(json['production']),
     );
   }
@@ -58,6 +61,7 @@ class Movie {
     data['photoId'] = photoId;
     data['productionId'] = productionId;
     data['production'] = production;
+    data['languageId'] = languageId;
     return data;
   }
 }

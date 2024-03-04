@@ -1,4 +1,5 @@
 import 'package:ecinema_admin/models/loginUser.dart';
+import 'package:ecinema_admin/screens/admin_screens/admin_screen.dart';
 import 'package:ecinema_admin/screens/cities_screens/city_screen.dart';
 import 'package:ecinema_admin/screens/countries_screens/counry_screen.dart';
 import 'package:ecinema_admin/screens/languages_screens/langauge_screen.dart';
@@ -76,6 +77,13 @@ class _SideMenuState extends State<SideMenu> {
                   svgSrc: "assets/icons/dash.svg",
                   press: () {
                     widget.onMenuItemClicked(const DashboardScreen());
+                  },
+                ),
+                DrawerListTile(
+                  title: "Administratori",
+                  svgSrc: "assets/icons/users.svg",
+                  press: () {
+                    widget.onMenuItemClicked(const AdminScreen());
                   },
                 ),
                 DrawerListTile(

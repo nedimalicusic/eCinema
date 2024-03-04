@@ -27,6 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void login() async {
+    if (!mounted) return;
     try {
       await loginUserProvider.loginAsync(
           _emailController.text, _passwordController.text);
@@ -34,7 +35,22 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
       }
     } on Exception catch (e) {
-      showErrorDialog(context, e.toString().substring(11));
+      if (context.mounted) {
+        showErrorDialog(context, getErrorMessage(e));
+      }
+    }
+  }
+
+  String getErrorMessage(dynamic exception) {
+    if (exception.toString().contains('eCinema.Core.UserNotFoundException') ||
+        exception.toString().contains('UserWrongCredentialsException')) {
+      return 'Neispravni korisnički podaci. Pokušajte ponovo.';
+    } else if (exception
+        .toString()
+        .contains('The remote computer refused the network connection')) {
+      return 'Došlo je do greške na serveru. Pokušajte kasnije.';
+    } else {
+      return 'Došlo je do nepoznate greške. Pokušajte ponovo.';
     }
   }
 

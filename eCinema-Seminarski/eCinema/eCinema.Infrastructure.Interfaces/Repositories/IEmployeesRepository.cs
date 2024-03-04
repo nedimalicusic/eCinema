@@ -5,6 +5,6 @@ namespace eCinema.Infrastructure.Interfaces
 {
     public interface IEmployeesRepository : IBaseRepository<Employee,int,EmployeeSearchObject>
     {
-        int getCountOfEmployees(int cinemaId,CancellationToken cancellationToken = default);
+        int getCountOfEmployees(int? cinemaId,CancellationToken cancellationToken = default);
     }
 }

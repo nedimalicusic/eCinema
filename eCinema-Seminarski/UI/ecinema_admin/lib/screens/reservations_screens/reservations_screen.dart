@@ -36,6 +36,7 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
   int? selectedSeatId;
   int? selectedUserId;
   bool isActive = false;
+  int? selectedCinemaId;
   bool isConfirm = false;
   bool _isReservationActive = false;
   bool _isReservationConfirm = false;
@@ -44,6 +45,7 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
   int pageSize = 5;
   int hasNextPage = 0;
   List<Reservation> selectedReservation = <Reservation>[];
+
   @override
   void initState() {
     super.initState();
@@ -55,6 +57,7 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
     loadReservation(ReservationSearchObject(
         name: _searchController.text,
         pageSize: pageSize,
+        cinemaId: selectedCinemaId,
         pageNumber: currentPage));
 
     _searchController.addListener(() {
@@ -63,6 +66,7 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
         name: searchQuery,
         pageNumber: currentPage,
         pageSize: pageSize,
+        cinemaId: selectedCinemaId,
       ));
     });
   }
@@ -101,13 +105,14 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
         "isActive": _isReservationActive,
         "isConfirm": _isReservationConfirm,
       };
-      var city = await _reservationProvider.edit(editReservation);
-      if (city == "OK") {
+      var reservation = await _reservationProvider.edit(editReservation);
+      if (reservation == "OK") {
         Navigator.of(context).pop();
         loadReservation(
           ReservationSearchObject(
             name: _searchController.text,
             pageNumber: currentPage,
+            cinemaId: null,
             pageSize: pageSize,
           ),
         );
@@ -124,10 +129,10 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
         Navigator.of(context).pop();
         loadReservation(
           ReservationSearchObject(
-            name: _searchController.text,
-            pageNumber: currentPage,
-            pageSize: pageSize,
-          ),
+              name: _searchController.text,
+              pageNumber: currentPage,
+              pageSize: pageSize,
+              cinemaId: null),
         );
       }
     } on Exception catch (e) {
@@ -444,7 +449,7 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
   Widget EditReservationForm(
       {bool isEditing = false, Reservation? reservationToEdit}) {
     if (reservationToEdit != null) {
-      selectedCinema = reservationToEdit.show.cinema;
+      selectedCinemaId = reservationToEdit.show.cinemaId;
       selectedShowId = reservationToEdit.showId;
       selectedMovie = reservationToEdit.show.movie.title;
       selectedSeatId = reservationToEdit.seatId;
@@ -455,6 +460,7 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
           '${reservationToEdit.seat.row.toString()}${reservationToEdit.seat.column.toString()}';
       _isActiveNotifier.value = reservationToEdit.isActive;
       _isConfirmNotifier.value = reservationToEdit.isConfirm;
+      selectedCinemaId = null;
     }
 
     return SizedBox(
