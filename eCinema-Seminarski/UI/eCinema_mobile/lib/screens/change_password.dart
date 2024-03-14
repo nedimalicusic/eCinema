@@ -1,3 +1,6 @@
+// ignore_for_file: use_build_context_synchronously, non_constant_identifier_names
+
+import 'package:ecinema_mobile/screens/profile_screen.dart';
 import 'package:ecinema_mobile/utils/success_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,7 +26,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
-  final TextEditingController _confirmNewPasswordController = TextEditingController();
+  final TextEditingController _confirmNewPasswordController =
+      TextEditingController();
 
   @override
   void initState() {
@@ -61,18 +65,14 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Profil',
+          'Change password',
           textAlign: TextAlign.center,
         ),
       ),
       body: Column(
         children: [
           const SizedBox(
-            height: 50,
-          ),
-          Text(
-            "Change Password",
-            style: TextStyle(fontSize: 25, color: Colors.teal),
+            height: 20,
           ),
           Center(child: ChangePasswordWidget()),
         ],
@@ -81,57 +81,60 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   }
 
   Widget ChangePasswordWidget() {
-    return Container(
-      child: Form(
-        key: _formKey,
-        child: Container(
-          width: 400,
-          margin: EdgeInsets.all(24),
-          child: Column(children: [
-            TextFormField(
-              controller: _passwordController,
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Unesite staru šifru!';
+    return Form(
+      key: _formKey,
+      child: Container(
+        width: 400,
+        margin: const EdgeInsets.all(24),
+        child: Column(children: [
+          TextFormField(
+            controller: _passwordController,
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'Unesite staru šifru!';
+              }
+              return null;
+            },
+            decoration: const InputDecoration(label: Text("Old password")),
+          ),
+          const SizedBox(height: 20),
+          TextFormField(
+            controller: _newPasswordController,
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'Unesite novi šifru!';
+              }
+              return null;
+            },
+            decoration: const InputDecoration(label: Text("New password")),
+          ),
+          const SizedBox(height: 20),
+          TextFormField(
+            controller: _confirmNewPasswordController,
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'Potvrdite novu šifru!';
+              }
+              return null;
+            },
+            decoration:
+                const InputDecoration(label: Text("Confirm new password")),
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size.fromHeight(50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  changePassword();
                 }
-                return null;
               },
-              decoration: InputDecoration(label: Text("Old password")),
-            ),
-            const SizedBox(height: 20),
-            TextFormField(
-              controller: _newPasswordController,
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Unesite novi šifru!';
-                }
-                return null;
-              },
-              decoration: InputDecoration(label: Text("New password")),
-            ),
-            const SizedBox(height: 20),
-            TextFormField(
-              controller: _confirmNewPasswordController,
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Potvrdite novu šifru!';
-                }
-                return null;
-              },
-              decoration: InputDecoration(label: Text("Confirm new password")),
-            ),
-            const SizedBox(height: 20),
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      changePassword();
-                    }
-                  },
-                  child: Text("Save Changes"))
-            ])
-          ]),
-        ),
+              child: const Text("Save changes")),
+        ]),
       ),
     );
   }

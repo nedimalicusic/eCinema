@@ -7,9 +7,8 @@ import '../providers/notification_provider.dart';
 import '../providers/user_provider.dart';
 import '../utils/error_dialog.dart';
 
-
 class NotificationScreen extends StatefulWidget {
-  const NotificationScreen({Key? key}) : super(key: key);
+  const NotificationScreen({super.key});
 
   @override
   State<NotificationScreen> createState() => _NotificationScreenState();
@@ -29,10 +28,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
     loadNotifications();
   }
 
-  Future loadNotifications() async
-  {
+  Future loadNotifications() async {
     try {
-      var data = await _notificationProvider.getByUserId(int.parse(userProvider.user!.Id));
+      var data = await _notificationProvider
+          .getByUserId(int.parse(userProvider.user!.Id));
       setState(() {
         notifications = data;
       });
@@ -45,14 +44,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Notification"),
+          title: const Text("Notification"),
         ),
         body: Column(
-        children: [
-          Expanded(child: _buildNotificationsList())
-    ],
-    )
-    );
+          children: [Expanded(child: _buildNotificationsList())],
+        ));
   }
 
   Widget _buildNotificationsList() {
@@ -62,31 +58,30 @@ class _NotificationScreenState extends State<NotificationScreen> {
         return Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            SizedBox(height: 10),
-            _buildNotification(context,notifications[index]),
-            SizedBox(height: 5),
+            const SizedBox(height: 10),
+            _buildNotification(context, notifications[index]),
+            const SizedBox(height: 5),
           ],
         );
       },
     );
   }
 
-  Widget _buildNotification(BuildContext context,Notifications notification) {
+  Widget _buildNotification(BuildContext context, Notifications notification) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 8),
-      padding: EdgeInsets.all(16),
+      margin: const EdgeInsets.symmetric(horizontal: 8),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.teal, width: 1.0),
-        borderRadius: BorderRadius.circular(16),
-        color: Colors.teal
-      ),
+          border: Border.all(color: Colors.teal, width: 1.0),
+          borderRadius: BorderRadius.circular(16),
+          color: Colors.teal),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start, // Center the icon horizontally
+        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
-            margin: EdgeInsets.only(right: 16),
-            child: Icon(Icons.access_alarm, color: Colors.white),
+            margin: const EdgeInsets.only(right: 16),
+            child: const Icon(Icons.access_alarm, color: Colors.white),
           ),
           Expanded(
             child: Column(
@@ -94,12 +89,18 @@ class _NotificationScreenState extends State<NotificationScreen> {
               children: [
                 Text(
                   notification.title,
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
                 ),
-                SizedBox(height: 15),
+                const SizedBox(height: 15),
                 Text(
                   notification.description,
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white ),
+                  style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
                 ),
               ],
             ),
@@ -108,5 +109,4 @@ class _NotificationScreenState extends State<NotificationScreen> {
       ),
     );
   }
-
 }

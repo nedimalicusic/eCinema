@@ -1,3 +1,7 @@
+// ignore_for_file: prefer_typing_uninitialized_variables
+
+import 'package:ecinema_mobile/models/cinema.dart';
+import 'package:ecinema_mobile/models/reservation.dart';
 import 'package:ecinema_mobile/models/shows.dart';
 import 'package:ecinema_mobile/providers/cinema_provider.dart';
 import 'package:ecinema_mobile/providers/reservation_provider.dart';
@@ -5,14 +9,11 @@ import 'package:ecinema_mobile/providers/show_provider.dart';
 import 'package:ecinema_mobile/screens/payment_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../helpers/constants.dart';
-import '../models/movie.dart';
 import '../models/seats.dart';
 import '../providers/seats_provider.dart';
 import '../providers/user_provider.dart';
 import '../utils/error_dialog.dart';
 import 'package:intl/intl.dart';
-
 
 class SeatsScreen extends StatefulWidget {
   const SeatsScreen({super.key, required this.shows});
@@ -29,7 +30,8 @@ class _SeatsScreenState extends State<SeatsScreen> {
   var takenSeatIds = <int>[];
   var selectedSeats = <Seats>[];
   var shows = <Shows>[];
-  var cinema;
+  var reservations = <Reservation>[];
+  late Cinema cinema;
 
   late SeatsProvider seatProvider;
   late UserProvider userProvider;
@@ -45,6 +47,7 @@ class _SeatsScreenState extends State<SeatsScreen> {
     showProvider = context.read<ShowProvider>();
     cinemaProvider = context.read<CinemaProvider>();
     reservationProvider = context.read<ReservationProvider>();
+    loadReservation();
     load();
     loadShows();
   }
@@ -52,14 +55,27 @@ class _SeatsScreenState extends State<SeatsScreen> {
   updateTicketProvider() {
     reservationProvider.setSelectedSeats(selectedSeats);
     reservationProvider.setProjection(widget.shows);
-
   }
+
+  void loadReservation() async {
+    try {
+      var reservationsResponse =
+          await reservationProvider.getByShowId(widget.shows.id);
+      setState(() {
+        reservations = reservationsResponse;
+        takenSeatIds =
+            reservations.map((reservation) => reservation.seatId).toList();
+      });
+    } on Exception catch (e) {
+      showErrorDialog(context, e.toString().substring(11));
+    }
+  }
+
   void loadShows() async {
     try {
       var showsData = await showProvider.getByMovieId(widget.shows.movie.id);
       setState(() {
         shows = showsData;
-        print(shows);
       });
     } on Exception catch (e) {
       showErrorDialog(context, e.toString().substring(11));
@@ -67,12 +83,12 @@ class _SeatsScreenState extends State<SeatsScreen> {
   }
 
   void load() async {
-    cinema=cinemaProvider.getSelectCinema();
+    cinema = cinemaProvider.getSelectCinema();
     var data = await seatProvider.getbyCinemaId(cinema.id);
     var seatsData = data.map<Seats>(
-          (s) {
+      (s) {
         var seat = Seats(id: s.id, column: s.column, row: s.row);
-        if (takenSeatIds.any((id) => id == s.id)) {
+        if (takenSeatIds.contains(s.id)) {
           seat.isReserved = true;
         }
         return seat;
@@ -85,70 +101,75 @@ class _SeatsScreenState extends State<SeatsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'Select Seats',
-            textAlign: TextAlign.center,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Select Seats',
+          textAlign: TextAlign.center,
+        ),
+      ),
+      body: Column(
+        children: [
+          const Divider(
+            height: 2,
+            color: Colors.grey,
           ),
-        ),
-        body: Column(
-          children: [
-            const Divider(
-              height: 2,
-              color: Colors.grey,
+          const SizedBox(
+            height: 30,
+          ),
+          _buildCinemaScreen(),
+          Container(
+            constraints: const BoxConstraints(minHeight: 30),
+            margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+            child: seats.isNotEmpty
+                ? GridView.count(
+                    shrinkWrap: true,
+                    crossAxisCount: 10,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 20,
+                    children: _buildSeats(),
+                  )
+                : const Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.lightBlueAccent,
+                    ),
+                  ),
+          ),
+          _buildInfoBoxes(),
+          const Center(
+            child: Text(
+              "Select date and time",
+              style: TextStyle(fontSize: 18, color: Colors.teal),
             ),
-            const SizedBox(
-              height: 30,
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: _buildDate(),
             ),
-            _buildCinemaScreen(),
-            Container(
-              constraints: const BoxConstraints(minHeight: 100),
-              margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
-              child: seats.isNotEmpty
-                  ?  GridView.count(
-                shrinkWrap: true,
-                crossAxisCount: 10,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 20,
-                children: _buildSeats(),
-              )
-                  : const Center(
-                child: CircularProgressIndicator(
-                  color: Colors.lightBlueAccent,
-                ),
+          ),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: _buildTime(),
+            ),
+          ),
+          const Spacer(),
+          Stack(
+            children: [
+              _buildBottomBar(),
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: _buildBottomBar(),
               ),
-            ),
-            const Divider(
-              height: 2,
-              color: Colors.grey,
-            ),
-            _buildInfoBoxes(),
-            Center(
-              child: Text("Select date and time",style: TextStyle(fontSize: 18,color: Colors.teal),),
-            ),
-            SizedBox(height: 10,),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: _buildDate(),
-              ),
-            ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: _buildTime(),
-              ),
-            ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: _buildBottomBar(),
-            )
-          ],
-        ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -176,8 +197,8 @@ class _SeatsScreenState extends State<SeatsScreen> {
             color: s.isReserved
                 ? Colors.red
                 : s.isSelected
-                ? Colors.green
-                : null,
+                    ? Colors.green
+                    : null,
             border: Border.all(color: Colors.grey),
             borderRadius: BorderRadius.circular(4),
           ),
@@ -185,6 +206,7 @@ class _SeatsScreenState extends State<SeatsScreen> {
       );
     }).toList();
   }
+
   List<Widget> _buildDate() {
     return shows.map((s) {
       return Column(
@@ -192,23 +214,21 @@ class _SeatsScreenState extends State<SeatsScreen> {
           Container(
             height: 50,
             width: 80,
-            margin: EdgeInsets.all(10.0),
+            margin: const EdgeInsets.all(10.0),
             decoration: BoxDecoration(
               color: Colors.teal,
-              borderRadius: BorderRadius.circular(
-                  10.0), // Postavite željeni radijus zaobljenih ivica
+              borderRadius: BorderRadius.circular(10.0),
             ),
             child: Center(
               child: Text(
-                '${DateFormat('MMMM d').format(s.date)}',
-                style: TextStyle(
+                DateFormat('MMMM d').format(s.date),
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 13,
                 ),
               ),
             ),
           ),
-
         ],
       );
     }).toList();
@@ -216,32 +236,32 @@ class _SeatsScreenState extends State<SeatsScreen> {
 
   List<Widget> _buildTime() {
     return shows.map((s) {
-    return Row(
-      children: [
-        Container(
-          height: 35,
-          width: 75,
-          margin: EdgeInsets.all(10.0),
-          decoration: BoxDecoration(
-            color: Colors.teal,
-            borderRadius: BorderRadius.circular(10.0), // Postavite željeni radijus zaobljenih ivica
-          ),
-          child: Center(
-            child: Text(
-              '${DateFormat.Hm().format(s.startTime)}',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 15,
+      return Row(
+        children: [
+          Container(
+            height: 35,
+            width: 75,
+            margin: const EdgeInsets.all(10.0),
+            decoration: BoxDecoration(
+              color: Colors.teal,
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: Center(
+              child: Text(
+                DateFormat.Hm().format(s.startTime),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 15,
+                ),
               ),
             ),
-          ),
-        )
-      ],
-    );
+          )
+        ],
+      );
     }).toList();
   }
 
- Widget _buildInfoBoxes() {
+  Widget _buildInfoBoxes() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -352,7 +372,7 @@ class _SeatsScreenState extends State<SeatsScreen> {
                   height: 8,
                 ),
                 Text(
-                  widget.shows.price.toString() + "KM",
+                  "${widget.shows.price}KM",
                   style: const TextStyle(
                       color: Colors.teal,
                       fontWeight: FontWeight.bold,
@@ -365,13 +385,12 @@ class _SeatsScreenState extends State<SeatsScreen> {
             width: 150,
             height: 50,
             child: ElevatedButton(
-                onPressed: () {
-                  updateTicketProvider();
-                  Navigator.pushNamed(context, PaymentScreen.routeName);
-                },
+              onPressed: () {
+                updateTicketProvider();
+                Navigator.pushNamed(context, PaymentScreen.routeName);
+              },
               style: ButtonStyle(
-                backgroundColor:
-                MaterialStateProperty.all(Colors.teal),
+                backgroundColor: MaterialStateProperty.all(Colors.teal),
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),

@@ -12,7 +12,7 @@ namespace eCinema.Infrastructure
         }
         public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
         {
-            return await DbSet.AsNoTracking().FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
+            return await DbSet.Include(s=>s.ProfilePhoto).AsNoTracking().FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
         }
 
         public int getCountOfUsers(CancellationToken cancellationToken = default)
@@ -51,6 +51,10 @@ namespace eCinema.Infrastructure
                   .ToPagedListAsync(searchObject, cancellationToken);
 
 
+        }
+        public override async Task<User?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+        {
+            return await DbSet.Include(s => s.ProfilePhoto).FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
         }
     }
 }

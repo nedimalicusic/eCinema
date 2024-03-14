@@ -1,5 +1,14 @@
-
 class User {
+  late String Id;
+  late String FirstName;
+  late String LastName;
+  late String? PhoneNumber;
+  late String Email;
+  late String? profilePhotoId;
+  late String? token;
+  late String? Role;
+  late String? GuidId;
+
   User({
     required this.Id,
     required this.FirstName,
@@ -9,15 +18,8 @@ class User {
     this.profilePhotoId,
     this.token,
     this.Role,
+    this.GuidId,
   });
-  late String Id;
-  late String FirstName;
-  late String LastName;
-  late String? PhoneNumber;
-  late String Email;
-  late String? profilePhotoId;
-  late String? token;
-  late String? Role;
 
   User.fromJson(Map<String, dynamic> json) {
     Id = json['Id'];
@@ -28,6 +30,7 @@ class User {
     profilePhotoId = json['profilePhotoId'];
     token = json['token'];
     Role = json['Role'];
+    GuidId = json['GuidId'];
   }
 
   Map<String, dynamic> toJson() {
@@ -40,7 +43,7 @@ class User {
     data['profilePhotoId'] = profilePhotoId;
     data['token'] = token;
     data['Role'] = Role;
+    data['GuidId'] = GuidId;
     return data;
   }
-
 }

@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'package:ecinema_mobile/models/notifications.dart';
 
@@ -10,9 +9,8 @@ import 'package:http/http.dart' as http;
 class NotificationProvider extends BaseProvider<Notifications> {
   NotificationProvider() : super('Notification/GetPaged');
 
-  @override
   Future<List<Notifications>> getByUserId(int id) async {
-    var uri = Uri.parse('$apiUrl/Notification/GetByUserId?userId=${id}');
+    var uri = Uri.parse('$apiUrl/Notification/GetByUserId?userId=$id');
 
     var headers = Authorization.createHeaders();
 

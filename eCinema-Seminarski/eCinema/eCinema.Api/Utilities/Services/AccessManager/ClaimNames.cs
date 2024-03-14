@@ -9,5 +9,6 @@
         public const string PhoneNumber = "PhoneNumber";
         public const string Role = "Role";
         public const string ProfilePhotoId = "ProfilePhotoId";
+        public const string GuidId = "GuidId";
     }
 }

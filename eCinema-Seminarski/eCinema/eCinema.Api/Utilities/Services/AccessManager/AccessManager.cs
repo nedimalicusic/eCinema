@@ -82,6 +82,10 @@ namespace eCinema.Api
             {
                 tokenDescriptor.Subject.AddClaim(new Claim(ClaimNames.ProfilePhotoId, user.ProfilePhotoId.Value.ToString())); 
             }
+            if (user.ProfilePhoto != null)
+            {
+                tokenDescriptor.Subject.AddClaim(new Claim(ClaimNames.GuidId, user.ProfilePhoto.GuidId.ToString()));
+            }
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);

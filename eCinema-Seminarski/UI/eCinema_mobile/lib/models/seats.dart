@@ -5,9 +5,7 @@ class Seats {
   late bool isReserved = false;
   late bool isSelected = false;
 
-  Seats({required this.id,
-    required this.column,
-    required this.row});
+  Seats({required this.id, required this.column, required this.row});
 
   Seats.fromJson(Map<String, dynamic> json) {
     id = json['id'];

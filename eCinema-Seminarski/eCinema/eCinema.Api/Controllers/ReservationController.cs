@@ -42,5 +42,20 @@ namespace eCinema.Api.Controllers
             }
         }
 
+        [HttpGet("GetByShowId")]
+        public async Task<IActionResult> GetByShowId(int showId, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var reservations = await Service.GetByShowId(showId, cancellationToken);
+                return Ok(reservations);
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e, "Error while trying to get reservations!");
+                return BadRequest();
+            }
+        }
+
     }
 }

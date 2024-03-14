@@ -1,10 +1,8 @@
 import 'dart:convert';
-import 'dart:html';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import '../helpers/constants.dart';
 import '../utils/authorization.dart';
-
 
 abstract class BaseProvider<T> with ChangeNotifier {
   String endpoint;
@@ -16,11 +14,10 @@ abstract class BaseProvider<T> with ChangeNotifier {
     if (params != null) {
       uri = uri.replace(queryParameters: params);
     }
-    print(uri);
     final response = await http.get(uri, headers: headers);
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
-      var items=data['items'];
+      var items = data['items'];
       return items.map((d) => fromJson(d)).cast<T>().toList();
     } else {
       throw Exception('Failed to load data');

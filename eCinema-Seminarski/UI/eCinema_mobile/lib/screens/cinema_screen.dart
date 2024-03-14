@@ -30,7 +30,6 @@ class _CinemaScreenState extends State<CinemaScreen> {
       var cinemasResponse = await _cinemaProvider.get(null);
       setState(() {
         cinemas = cinemasResponse;
-        print(cinemas);
       });
     } on Exception catch (e) {
       showErrorDialog(context, e.toString().substring(11));
@@ -41,16 +40,23 @@ class _CinemaScreenState extends State<CinemaScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Center(
-          child: Column(
-            children: [
-              SizedBox(height: 40,),
-              Text("Odaberite kino",style: TextStyle(fontSize: 20,color: Colors.teal,fontWeight: FontWeight.bold),),
-              SizedBox(height: 30,),
-              Expanded(child: _buildCinemaList(cinemas))
-            ],
+      child: Column(
+        children: [
+          const SizedBox(
+            height: 40,
           ),
-        )
-    );
+          const Text(
+            "Odaberite kino",
+            style: TextStyle(
+                fontSize: 20, color: Colors.teal, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(
+            height: 30,
+          ),
+          Expanded(child: _buildCinemaList(cinemas))
+        ],
+      ),
+    ));
   }
 
   Widget _buildCinemaList(List<Cinema> cinemas) {
@@ -60,29 +66,26 @@ class _CinemaScreenState extends State<CinemaScreen> {
         return Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            SizedBox(height: 10),
-            _buildCinema(context,cinemas[index]),
-            SizedBox(height: 5), // Dodajte prazan prostor između notifikacija
+            const SizedBox(height: 10),
+            _buildCinema(context, cinemas[index]),
+            const SizedBox(height: 5),
           ],
         );
       },
     );
   }
 
-  Widget _buildCinema(BuildContext context,Cinema cinema) {
-    return Container(
+  Widget _buildCinema(BuildContext context, Cinema cinema) {
+    return SizedBox(
       height: 55,
       width: 350,
-      child:
-      ElevatedButton(
+      child: ElevatedButton(
         onPressed: () {
           _cinemaProvider.setSelectedCinema(cinema);
-          Navigator.pushNamedAndRemoveUntil(
-              context, '/', (route) => false);
+          Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
         },
         child: Text(cinema.name),
       ),
     );
   }
-
 }

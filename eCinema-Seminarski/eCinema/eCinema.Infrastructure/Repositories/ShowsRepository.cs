@@ -13,31 +13,42 @@ namespace eCinema.Infrastructure
 
         public async Task<IEnumerable<Show>> GetbyMovieId(int movieId, CancellationToken cancellationToken)
         {
-            return await DbSet.Include(d=>d.Movie).Include(s=>s.Cinema).ThenInclude(d=>d.City).Where(s => s.MovieId == movieId).ToListAsync(cancellationToken);
+            return await DbSet.Include(d=>d.Movie).ThenInclude (s=>s.Production).ThenInclude(s=>s.Country).Include(d => d.Movie)
+                .ThenInclude(s=>s.Language).Include(d => d.Movie).ThenInclude(s => s.Photo).Include(s=>s.Cinema)
+                .ThenInclude(d=>d.City).ThenInclude(s=>s.Country).Include(s => s.Reservations).Where(s => s.MovieId == movieId).ToListAsync(cancellationToken);
         }
 
         public async Task<IEnumerable<Show>> GetLastAddShows(int size,int cinemaId, CancellationToken cancellationToken)
         {
-            return await DbSet.Include(s=>s.Movie).ThenInclude(d => d.Production).ThenInclude(s => s.Country).Include(s=>s.Cinema).ThenInclude(s => s.City).Where(d => d.CinemaId == cinemaId).OrderByDescending(s => s.CreatedAt).Take(size).ToListAsync(cancellationToken);
+            return await DbSet.Include(s=>s.Movie).ThenInclude(d => d.Production).ThenInclude(s => s.Country)
+                .Include(s=>s.Cinema).ThenInclude(s => s.City).Where(d => d.CinemaId == cinemaId).Include(s=>s.Movie.Language).Include(s=>s.Movie.Photo).Include(s=>s.Movie.Production).ThenInclude(s=>s.Country)
+                .OrderByDescending(s => s.CreatedAt).Take(size).ToListAsync(cancellationToken);
         }
 
         public async Task<IEnumerable<Show>> GetMostWatchedShows(int size,int cinemaId, CancellationToken cancellationToken)
         {
-            return await DbSet.Include(s => s.Movie).ThenInclude(d=>d.Production).ThenInclude(s=>s.Country).Include(s => s.Cinema).ThenInclude(s=>s.City).Where(d=>d.CinemaId==cinemaId).OrderByDescending(s => s.Movie.NumberOfViews).Take(size).ToListAsync(cancellationToken);
+            return await DbSet.Include(s => s.Movie).ThenInclude(d=>d.Production).ThenInclude(s=>s.Country).Include(s => s.Cinema)
+                .ThenInclude(s=>s.City).Where(d=>d.CinemaId==cinemaId).Include(s => s.Movie.Language).Include(s => s.Movie.Photo)
+                .Include(s => s.Movie.Production).ThenInclude(s => s.Country)
+                .OrderByDescending(s => s.Movie.NumberOfViews).Take(size).ToListAsync(cancellationToken);
         }
 
         public async Task<IEnumerable<Show>> GetShowByGenreId(int? genreId,int cinemaId, CancellationToken cancellationToken)
         {
             if (genreId != null)
             {
-                var shows = await DbSet.Include(s => s.Movie).ThenInclude(d => d.MovieGenres).ThenInclude(d => d.Genre).Include(s => s.Movie).ThenInclude(s => s.Production).ThenInclude(s=>s.Country).Include(s => s.Cinema).ThenInclude(s => s.City)
+                var shows = await DbSet.Include(s => s.Movie).ThenInclude(d => d.Production).ThenInclude(s => s.Country).Include(s => s.Cinema)
+                .ThenInclude(s => s.City).Where(d => d.CinemaId == cinemaId).Include(s => s.Movie.Language).Include(s => s.Movie.Photo)
+                .Include(s => s.Movie.Production).ThenInclude(s => s.Country)
                           .Where(show => show.Movie.MovieGenres.Any(mg => mg.GenreId == genreId) && show.CinemaId == cinemaId)
                           .ToListAsync();
                 return shows;
             }
             else
             {
-                var shows = await DbSet.Include(s => s.Movie).ThenInclude(d => d.MovieGenres).ThenInclude(d => d.Genre).Include(s => s.Movie).ThenInclude(s => s.Production).ThenInclude(s => s.Country).Include(s => s.Cinema).ThenInclude(s => s.City)
+                var shows = await DbSet.Include(s => s.Movie).ThenInclude(d => d.Production).ThenInclude(s => s.Country).Include(s => s.Cinema)
+                .ThenInclude(s => s.City).Where(d => d.CinemaId == cinemaId).Include(s => s.Movie.Language).Include(s => s.Movie.Photo)
+                .Include(s => s.Movie.Production).ThenInclude(s => s.Country)
                     .Where(show => show.CinemaId == cinemaId)
                     .ToListAsync();
                 return shows;

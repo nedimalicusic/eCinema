@@ -44,24 +44,22 @@ class _PaymentScreenState extends State<PaymentScreen> {
         'BAM');
     await Stripe.instance
         .initPaymentSheet(
-        paymentSheetParameters: SetupPaymentSheetParameters(
-            paymentIntentClientSecret: paymentIntentData!['client_secret'],
-            merchantDisplayName: 'eCinema'))
+            paymentSheetParameters: SetupPaymentSheetParameters(
+                paymentIntentClientSecret: paymentIntentData!['client_secret'],
+                merchantDisplayName: 'eCinema'))
         .then((value) {})
         .onError((error, stackTrace) {
       showDialog(
           context: context,
           builder: (_) => const AlertDialog(
-            content: Text("Poništena transakcija"),
-          ));
+                content: Text("Poništena transakcija"),
+              ));
     });
 
     try {
       await Stripe.instance.presentPaymentSheet();
       await reservate();
-    } catch (e) {
-      //silent
-    }
+    } catch (e) {}
   }
 
   createPaymentIntent(String amount, String currency) async {
@@ -129,8 +127,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         vertical: 100, horizontal: 12),
                     decoration: const BoxDecoration(
                         color: Colors.teal,
-                        borderRadius:
-                         BorderRadius.all(Radius.circular(6))),
+                        borderRadius: BorderRadius.all(Radius.circular(6))),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -184,9 +181,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               const SizedBox(
                                 height: 6,
                               ),
-                              Text(
-                             "Nesto"
-                              ),
+                              Text("Nesto"),
                               const SizedBox(
                                 height: 6,
                               ),

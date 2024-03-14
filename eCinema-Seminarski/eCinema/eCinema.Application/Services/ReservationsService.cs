@@ -15,6 +15,13 @@ namespace eCinema.Application
         {
         }
 
+        public async Task<IEnumerable<ReservationDto>> GetByShowId(int showId, CancellationToken cancellationToken)
+        {
+            var reservations = await CurrentRepository.GetByShowId(showId, cancellationToken);
+
+            return Mapper.Map<IEnumerable<ReservationDto>>(reservations);
+        }
+
         public async Task<IEnumerable<ReservationDto>> GetByUserId(int userId, CancellationToken cancellationToken)
         {
             var reservations = await CurrentRepository.GetByUserId(userId, cancellationToken);

@@ -221,6 +221,8 @@ class _MoviesScreenState extends State<MoviesScreen> {
             pageSize: pageSize,
           ),
         );
+        selectedProductionId = null;
+        selectedLanguageId = null;
       } else {
         showErrorDialog(context, 'Greška prilikom uređivanja');
       }
@@ -259,6 +261,8 @@ class _MoviesScreenState extends State<MoviesScreen> {
             pageSize: pageSize,
           ),
         );
+        selectedProductionId = null;
+        selectedLanguageId = null;
       } else {
         showErrorDialog(context, 'Greška prilikom uređivanja');
       }

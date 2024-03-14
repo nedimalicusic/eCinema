@@ -1,3 +1,4 @@
+import 'package:ecinema_mobile/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 
 Future<dynamic> showSuccessDialog(BuildContext context, String? message) async {
@@ -12,7 +13,7 @@ Future<dynamic> showSuccessDialog(BuildContext context, String? message) async {
           TextButton(
             child: const Text('OK'),
             onPressed: () {
-              Navigator.of(context).pop();
+              Navigator.pop(context);
             },
           ),
         ],

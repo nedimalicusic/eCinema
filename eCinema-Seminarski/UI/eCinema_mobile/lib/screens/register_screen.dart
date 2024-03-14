@@ -5,7 +5,6 @@ import 'package:ecinema_mobile/utils/error_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
 
@@ -30,7 +29,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void initState() {
     super.initState();
     _userProvider = context.read<UserProvider>();
-
   }
 
   void register() async {
@@ -71,11 +69,42 @@ class _RegisterScreenState extends State<RegisterScreen> {
           padding: const EdgeInsets.all(30.0),
           child: Column(
             children: [
-              const SizedBox(height: 40),
-              Text("Sign Up",
-                style: Theme.of(context).textTheme.headlineLarge,
+              const SizedBox(height: 20),
+              Container(
+                margin: const EdgeInsets.only(top: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(
+                      Icons.slow_motion_video_rounded,
+                      color: Colors.teal,
+                      size: 36,
+                      weight: 10,
+                    ),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    Text(
+                      "eCinema",
+                      style: TextStyle(
+                          color: Colors.teal,
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold),
+                    )
+                  ],
+                ),
               ),
-              const SizedBox(height: 60),
+              const SizedBox(height: 40),
+              const Center(
+                child: Text(
+                  "Sign Up",
+                  style: TextStyle(
+                      color: Colors.teal,
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+              const SizedBox(height: 30),
               TextFormField(
                 controller: _firstNameController,
                 keyboardType: TextInputType.name,
@@ -125,7 +154,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   if (value!.isEmpty) {
                     return 'Unesite vaš email.';
                   }
-                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                      .hasMatch(value)) {
                     return 'Unesite validan email.';
                   }
                   return null;
@@ -199,8 +229,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   const Text("Already hava an account?"),
                   TextButton(
                     onPressed: () {
-                      Navigator.pushNamed(
-                          context, LoginScreen.routeName);
+                      Navigator.pushNamed(context, LoginScreen.routeName);
                     },
                     child: const Text("Sign In"),
                   ),

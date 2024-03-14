@@ -28,11 +28,22 @@ class ReservationProvider extends BaseProvider<Reservation> {
   List<Seats> get selectedSeats => _selectedSeats;
   Shows? get shows => _shows;
 
-  @override
   Future<List<Reservation>> getByUserId(int userId) async {
-    var uri = Uri.parse('$apiUrl/Reservation/GetByUserId?userId=${userId}');
+    var uri = Uri.parse('$apiUrl/Reservation/GetByUserId?userId=$userId');
     var headers = Authorization.createHeaders();
 
+    final response = await http.get(uri, headers: headers);
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      return data.map((d) => fromJson(d)).cast<Reservation>().toList();
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
+  Future<List<Reservation>> getByShowId(int showId) async {
+    var uri = Uri.parse('$apiUrl/Reservation/GetByShowId?showId=$showId');
+    var headers = Authorization.createHeaders();
     final response = await http.get(uri, headers: headers);
     if (response.statusCode == 200) {
       var data = json.decode(response.body);

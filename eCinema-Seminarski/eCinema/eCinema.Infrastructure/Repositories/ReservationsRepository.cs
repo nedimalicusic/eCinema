@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace eCinema.Infrastructure
 {
+
     public class ReservationsRepository : BaseRepository<Reservation, int, ReservationSearchObjet>, IReservationsRepository
     {
         public ReservationsRepository(DatabaseContext databaseContext) : base(databaseContext)
@@ -12,7 +13,9 @@ namespace eCinema.Infrastructure
         }
         public async Task<IEnumerable<Reservation>> GetByUserId(int userId, CancellationToken cancellationToken)
         {
-            return await DbSet.Include(d=>d.User).Include(d=>d.Show).ThenInclude(d=>d.Movie).ThenInclude(s=>s.Production).ThenInclude(s=>s.Country).Include(d=>d.Show).ThenInclude(d=>d.Cinema).ThenInclude(s=>s.City).Include(d=>d.Seat).AsNoTracking()
+            return await DbSet.Include(d=>d.User).Include(d=>d.Show).ThenInclude(d=>d.Movie).ThenInclude(s=>s.Production)
+                .ThenInclude(s=>s.Country).Include(s=>s.Show).ThenInclude(s=>s.Movie).ThenInclude(s=>s.Language).Include(s => s.Show).ThenInclude(s => s.Movie).ThenInclude(s => s.Photo)
+                .Include(d=>d.Show).ThenInclude(d=>d.Cinema).ThenInclude(s=>s.City).ThenInclude(s=>s.Country).Include(d=>d.Seat).AsNoTracking()
                 .AsQueryable().Where(s => s.UserId == userId).ToListAsync(cancellationToken);
         }
 
@@ -65,6 +68,15 @@ namespace eCinema.Infrastructure
             }
 
             return result;
+        }
+
+        public async Task<IEnumerable<Reservation>> GetByShowId(int showId, CancellationToken cancellationToken)
+        {
+            return await DbSet.Include(s=>s.Seat).Include(s=>s.Show).ThenInclude(s=>s.Movie).ThenInclude(s=>s.Production).ThenInclude(s=>s.Country)
+                .Include(s => s.Show).ThenInclude(s => s.Movie).ThenInclude(s => s.Photo)
+                   .Include(s => s.Show).ThenInclude(s => s.Movie).ThenInclude(s => s.Language)
+                   .Include(s => s.Show).ThenInclude(s=>s.Cinema).ThenInclude(s=>s.City).ThenInclude(s=>s.Country)
+                .Where(s=>s.ShowId==showId).ToListAsync(cancellationToken);
         }
     }
 }

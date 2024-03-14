@@ -10,19 +10,20 @@ class Shows {
   late int movieId;
   late Movie movie;
   late Cinema cinema;
-  late double price;
+  late int price;
+  late bool isSelected = false;
 
   Shows(
       {required this.id,
-        required this.date,
-        required this.startTime,
-        required this.format,
-        required this.cinemaId,
-        required this.movieId,
-        required this.movie,
-        required this.price,
-        required this.cinema
-   });
+      required this.date,
+      required this.startTime,
+      required this.format,
+      required this.cinemaId,
+      required this.movieId,
+      required this.movie,
+      required this.price,
+      required this.cinema,
+      required this.isSelected});
 
   Shows.fromJson(Map<String, dynamic> json) {
     id = json['id'];

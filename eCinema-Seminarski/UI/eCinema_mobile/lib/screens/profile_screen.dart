@@ -1,14 +1,16 @@
-import 'package:ecinema_mobile/helpers/constants.dart';
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:ecinema_mobile/models/user.dart';
 import 'package:ecinema_mobile/providers/user_provider.dart';
 import 'package:ecinema_mobile/screens/login_screen.dart';
-import 'package:ecinema_mobile/utils/authorization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ecinema_mobile/screens/change_password.dart';
 import 'package:ecinema_mobile/screens/edit_profile.dart';
+import 'package:transparent_image/transparent_image.dart';
 
-import '../utils/error_dialog.dart';
+import '../providers/photo_provider.dart';
+import '../utils/authorization.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -21,26 +23,18 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   late UserProvider userProvider;
+  late PhotoProvider _photoProvider;
   late User? user;
-
 
   @override
   void initState() {
     super.initState();
     userProvider = context.read<UserProvider>();
-    //loadUser();
+    _photoProvider = context.read<PhotoProvider>();
   }
 
-  void loadUser() async
-  {
-    try {
-      var data = await userProvider.getById(int.parse(user!.Id));
-      setState(() {
-        user = data;
-      });
-    } on Exception catch (e) {
-      showErrorDialog(context, e.toString().substring(11));
-    }
+  Future<String> loadPhoto(String guidId) async {
+    return await _photoProvider.getPhoto(guidId);
   }
 
   @override
@@ -62,15 +56,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       body: Column(
         children: [
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
           Center(child: ProfilePicture()),
-          SizedBox(
-            height: 10,
-          ),
+          const SizedBox(height: 10),
           ProfileInformation(),
-          SizedBox(
-            height: 5,
-          ),
+          const Spacer(),
           Center(child: Logout()),
         ],
       ),
@@ -78,39 +68,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget Logout() {
-    return Expanded(
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            SizedBox(
-              width: 400,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                onPressed: userProvider.logout,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Icon(
-                      Icons.logout,
-                      color: Colors.white,
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Text('Logout')
-                  ],
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          SizedBox(
+            width: 400,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size.fromHeight(50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
+              onPressed: userProvider.logout,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Icon(
+                    Icons.logout,
+                    color: Colors.white,
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Text('Logout')
+                ],
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -118,149 +106,144 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget ProfilePicture() {
     return Column(
       children: [
-        Image.asset(
-          'assets/images/user.png',
-          width: 100,
-          height: 100,
+        FutureBuilder<String>(
+          future: loadPhoto(user?.GuidId ?? ''),
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            } else if (snapshot.hasError) {
+              return const Text('Greška prilikom učitavanja slike');
+            } else {
+              final imageUrl = snapshot.data;
+
+              if (imageUrl != null && imageUrl.isNotEmpty) {
+                return ClipRRect(
+                  borderRadius: BorderRadius.circular(100.0),
+                  child: FadeInImage(
+                    image: NetworkImage(
+                      imageUrl,
+                      headers: Authorization.createHeaders(),
+                    ),
+                    placeholder: MemoryImage(kTransparentImage),
+                    fadeInDuration: const Duration(milliseconds: 300),
+                    fit: BoxFit.fill,
+                    width: 110,
+                    height: 110,
+                  ),
+                );
+              } else {
+                return Container(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Image.asset(
+                    'assets/images/user2.png',
+                    width: 110,
+                    height: 110,
+                    fit: BoxFit.fill,
+                  ),
+                );
+              }
+            }
+          },
         ),
-        SizedBox(
-          width: 150,
-          child: ElevatedButton(
-            onPressed: () {},
-            child: Text("Change picture"),
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size.fromHeight(40),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          ),
-        )
       ],
     );
   }
 
   Widget ProfileInformation() {
     return Container(
-      child: Container(
-        width: 400,
-        margin: EdgeInsets.all(24),
-        child: Column(children: [
-          TextFormField(
-            initialValue: user!.FirstName,
-            decoration: InputDecoration(
-              labelText: "FirstName",
-              border: OutlineInputBorder( // Postavite border na OutlineInputBorder.
-                borderRadius: BorderRadius.circular(10.0), // Prilagodite radijus ruba po želji.
-              ),
-              enabledBorder: OutlineInputBorder( // Prilagodite izgled obruba kad je polje omogućeno.
-                borderSide: BorderSide(color: Colors.blue, width: 2.0), // Prilagodite boju i debljinu obruba.
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              disabledBorder: OutlineInputBorder( // Prilagodite izgled obruba kad je polje onemogućeno.
-                borderSide: BorderSide(color: Colors.grey, width: 2.0), // Prilagodite boju i debljinu obruba.
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              focusedBorder: OutlineInputBorder( // Prilagodite izgled obruba kad je polje fokusirano.
-                borderSide: BorderSide(color: Colors.blue, width: 2.0), // Prilagodite boju i debljinu obruba.
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              // Možete dodati i druge opcije poput fillColor, errorBorder, itd.
+      width: 400,
+      margin: const EdgeInsets.all(24),
+      child: Column(children: [
+        TextFormField(
+          initialValue: user!.FirstName,
+          decoration: InputDecoration(
+            labelText: "FirstName",
+            border:
+                OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
+            disabledBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.grey, width: 2.0),
+              borderRadius: BorderRadius.circular(10.0),
             ),
-            enabled: false,
           ),
-          const SizedBox(height: 10),
-          TextFormField(
-            initialValue: user!.LastName,
-            decoration: InputDecoration(
-              labelText: "LastName",
-              border: OutlineInputBorder( // Postavite border na OutlineInputBorder.
-                borderRadius: BorderRadius.circular(10.0), // Prilagodite radijus ruba po želji.
-              ),
-              enabledBorder: OutlineInputBorder( // Prilagodite izgled obruba kad je polje omogućeno.
-                borderSide: BorderSide(color: Colors.blue, width: 2.0), // Prilagodite boju i debljinu obruba.
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              disabledBorder: OutlineInputBorder( // Prilagodite izgled obruba kad je polje onemogućeno.
-                borderSide: BorderSide(color: Colors.grey, width: 2.0), // Prilagodite boju i debljinu obruba.
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              focusedBorder: OutlineInputBorder( // Prilagodite izgled obruba kad je polje fokusirano.
-                borderSide: BorderSide(color: Colors.blue, width: 2.0), // Prilagodite boju i debljinu obruba.
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              // Možete dodati i druge opcije poput fillColor, errorBorder, itd.
+          enabled: false,
+        ),
+        const SizedBox(height: 10),
+        TextFormField(
+          initialValue: user!.LastName,
+          decoration: InputDecoration(
+            labelText: "LastName",
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
             ),
-            enabled: false,
-          ),
-          const SizedBox(height: 10),
-          TextFormField(
-            initialValue: user!.Email,
-            decoration: InputDecoration(
-              labelText: "Email",
-              border: OutlineInputBorder( // Postavite border na OutlineInputBorder.
-                borderRadius: BorderRadius.circular(10.0), // Prilagodite radijus ruba po želji.
-              ),
-              enabledBorder: OutlineInputBorder( // Prilagodite izgled obruba kad je polje omogućeno.
-                borderSide: BorderSide(color: Colors.blue, width: 2.0), // Prilagodite boju i debljinu obruba.
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              disabledBorder: OutlineInputBorder( // Prilagodite izgled obruba kad je polje onemogućeno.
-                borderSide: BorderSide(color: Colors.grey, width: 2.0), // Prilagodite boju i debljinu obruba.
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              focusedBorder: OutlineInputBorder( // Prilagodite izgled obruba kad je polje fokusirano.
-                borderSide: BorderSide(color: Colors.blue, width: 2.0), // Prilagodite boju i debljinu obruba.
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              // Možete dodati i druge opcije poput fillColor, errorBorder, itd.
+            disabledBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.grey, width: 2.0),
+              borderRadius: BorderRadius.circular(10.0),
             ),
-            enabled: false,
           ),
-          const SizedBox(height: 10),
-          TextFormField(
-            initialValue: user!.PhoneNumber,
-            decoration: InputDecoration(
-              labelText: "PhoneNumber",
-              border: OutlineInputBorder( // Postavite border na OutlineInputBorder.
-                borderRadius: BorderRadius.circular(10.0), // Prilagodite radijus ruba po želji.
-              ),
-              enabledBorder: OutlineInputBorder( // Prilagodite izgled obruba kad je polje omogućeno.
-                borderSide: BorderSide(color: Colors.blue, width: 2.0), // Prilagodite boju i debljinu obruba.
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              disabledBorder: OutlineInputBorder( // Prilagodite izgled obruba kad je polje onemogućeno.
-                borderSide: BorderSide(color: Colors.grey, width: 2.0), // Prilagodite boju i debljinu obruba.
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              focusedBorder: OutlineInputBorder( // Prilagodite izgled obruba kad je polje fokusirano.
-                borderSide: BorderSide(color: Colors.blue, width: 2.0), // Prilagodite boju i debljinu obruba.
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              // Možete dodati i druge opcije poput fillColor, errorBorder, itd.
+          enabled: false,
+        ),
+        const SizedBox(height: 10),
+        TextFormField(
+          initialValue: user!.Email,
+          decoration: InputDecoration(
+            labelText: "Email",
+            border:
+                OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
+            disabledBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.grey, width: 2.0),
+              borderRadius: BorderRadius.circular(10.0),
             ),
-            enabled: false,
           ),
-          SizedBox(
-            height: 10 ,
+          enabled: false,
+        ),
+        const SizedBox(height: 10),
+        TextFormField(
+          initialValue: user!.PhoneNumber,
+          decoration: InputDecoration(
+            labelText: "PhoneNumber",
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.grey, width: 2.0),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
           ),
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(onPressed: () {
-                Navigator.pushNamed(context, EditProfileScreen.routeName);
-              }, child: Text("Edit profile")),
-              SizedBox(
-                width: 20,
-              ),
-              ElevatedButton(onPressed: () {
-                Navigator.pushNamed(context, ChangePasswordScreen.routeName);
-              }, child: Text("Change password")),
-            ],
-          ),
-        ]),
-      ),
+          enabled: false,
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Expanded(
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size.fromHeight(37),
+                  ),
+                  onPressed: () {
+                    Navigator.pushNamed(context, EditProfileScreen.routeName);
+                  },
+                  child: const Text("Edit profile")),
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            Expanded(
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size.fromHeight(37),
+                  ),
+                  onPressed: () {
+                    Navigator.pushNamed(
+                        context, ChangePasswordScreen.routeName);
+                  },
+                  child: const Text("Change password")),
+            ),
+          ],
+        ),
+      ]),
     );
   }
 }

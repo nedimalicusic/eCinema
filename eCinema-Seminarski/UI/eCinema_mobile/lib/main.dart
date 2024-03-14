@@ -1,10 +1,10 @@
-import 'dart:io';
 import 'package:ecinema_mobile/models/shows.dart';
 import 'package:ecinema_mobile/models/user.dart';
 import 'package:ecinema_mobile/providers/cinema_provider.dart';
 import 'package:ecinema_mobile/providers/genre_provider.dart';
 import 'package:ecinema_mobile/providers/movie_provider.dart';
 import 'package:ecinema_mobile/providers/notification_provider.dart';
+import 'package:ecinema_mobile/providers/photo_provider.dart';
 import 'package:ecinema_mobile/providers/reservation_provider.dart';
 import 'package:ecinema_mobile/providers/seats_provider.dart';
 import 'package:ecinema_mobile/providers/show_provider.dart';
@@ -25,16 +25,13 @@ import 'package:ecinema_mobile/screens/edit_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'models/movie.dart';
-
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -48,6 +45,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CinemaProvider()),
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
         ChangeNotifierProvider(create: (_) => ReservationProvider()),
+        ChangeNotifierProvider(create: (_) => PhotoProvider()),
       ],
       child: MaterialApp(
           theme: ThemeData(primarySwatch: Colors.teal),
@@ -63,8 +61,8 @@ class MyApp extends StatelessWidget {
           onGenerateRoute: (settings) {
             if (settings.name == SeatsScreen.routeName) {
               return MaterialPageRoute(
-                  builder: (context) => SeatsScreen(
-                      shows: settings.arguments as Shows));
+                  builder: (context) =>
+                      SeatsScreen(shows: settings.arguments as Shows));
             }
             if (settings.name == MovieDetailScreen.routeName) {
               return MaterialPageRoute(
@@ -129,30 +127,30 @@ class _MainState extends State<Main> {
       child: Scaffold(
         body: screens.elementAt(_selectedIndex),
         bottomNavigationBar: BottomNavigationBar(
-          items: <BottomNavigationBarItem>[
-            const BottomNavigationBarItem(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
               icon: Icon(
                 Icons.home_filled,
               ),
               label: 'Home',
             ),
-            const BottomNavigationBarItem(
+            BottomNavigationBarItem(
               icon: Icon(
                 Icons.theaters,
               ),
               label: 'Movie',
             ),
-            const BottomNavigationBarItem(
+            BottomNavigationBarItem(
               icon: Icon(
                 Icons.local_activity,
               ),
               label: 'Ticket',
             ),
-            const BottomNavigationBarItem(
+            BottomNavigationBarItem(
               icon: Icon(Icons.notifications),
               label: 'Notification',
             ),
-            const BottomNavigationBarItem(
+            BottomNavigationBarItem(
               icon: Icon(Icons.person),
               label: 'Profile',
             ),

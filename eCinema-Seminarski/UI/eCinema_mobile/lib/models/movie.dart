@@ -1,4 +1,4 @@
-
+import 'package:ecinema_mobile/models/photo.dart';
 import 'package:ecinema_mobile/models/production.dart';
 
 class Movie {
@@ -8,40 +8,44 @@ class Movie {
   String description;
   String author;
   int releaseYear;
-  int length;
   int numberOfViews;
   int photoId;
+  Photo photo;
   int productionId;
+  int languageId;
   Production production;
+  late bool isSelected = false;
 
-  Movie(
-      {required this.id,
-        required this.title,
-        required this.duration,
-        required this.description,
-        required this.author,
-        required this.releaseYear,
-        required this.length,
-        required this.numberOfViews,
-        required this.photoId,
-        required this.productionId,
-        required this.production,
-       });
+  Movie({
+    required this.id,
+    required this.title,
+    required this.duration,
+    required this.description,
+    required this.author,
+    required this.releaseYear,
+    required this.numberOfViews,
+    required this.photoId,
+    required this.photo,
+    required this.productionId,
+    required this.languageId,
+    required this.production,
+  });
 
   factory Movie.fromJson(Map<String, dynamic> json) {
     return Movie(
       id: json['id'],
       title: json['title'],
       duration: json['duration'],
+      photo: Photo.fromJson(json['photo']),
       description: json['description'],
       author: json['author'],
       releaseYear: json['releaseYear'],
-      length: json['length'],
       numberOfViews: json['numberOfViews'],
       photoId: json['photoId'],
       productionId: json['productionId'],
+      languageId: json['languageId'],
       production: Production.fromJson(json['production']),
-       );
+    );
   }
 
   Map<String, dynamic> toJson() {
@@ -49,14 +53,15 @@ class Movie {
     data['id'] = id;
     data['title'] = title;
     data['duration'] = duration;
+    data['photo'] = photo;
     data['description'] = description;
     data['author'] = author;
     data['releaseYear'] = releaseYear;
-    data['length'] = length;
     data['numberOfViews'] = numberOfViews;
     data['photoId'] = photoId;
     data['productionId'] = productionId;
     data['production'] = production;
+    data['languageId'] = languageId;
     return data;
   }
 }

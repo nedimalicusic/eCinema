@@ -1,3 +1,4 @@
+import 'package:ecinema_mobile/models/profile_user.dart';
 import 'package:ecinema_mobile/models/register.dart';
 import 'package:ecinema_mobile/providers/base_provider.dart';
 import 'package:http/http.dart' as http;
@@ -7,7 +8,7 @@ import '../helpers/constants.dart';
 import '../models/user.dart';
 import '../utils/authorization.dart';
 
-class UserProvider extends BaseProvider  {
+class UserProvider extends BaseProvider {
   User? user;
 
   UserProvider() : super('User');
@@ -18,6 +19,21 @@ class UserProvider extends BaseProvider  {
 
   @override
   Future<User> getById(int id) async {
+    var uri = Uri.parse('$apiUrl/User/$id');
+
+    var headers = Authorization.createHeaders();
+
+    final response = await http.get(uri, headers: headers);
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+
+      return fromJson(data);
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
+  Future<ProfileUser> getProfileUserById(int id) async {
     var uri = Uri.parse('$apiUrl/User/$id');
 
     var headers = Authorization.createHeaders();
@@ -58,17 +74,17 @@ class UserProvider extends BaseProvider  {
   Future registerAsync(Register data) async {
     var url = '$apiUrl/Access/SignUp';
     final response = await http.post(
-        Uri.parse(url),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(<String, String>{
-          'firstName':data.firstName,
-          'lastName':data.lastName,
-          'email': data.email,
-          'phoneNumber': data.phoneNumber,
-          'password': data.password,
-        }),
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'firstName': data.firstName,
+        'lastName': data.lastName,
+        'email': data.email,
+        'phoneNumber': data.phoneNumber,
+        'password': data.password,
+      }),
     );
     if (response.statusCode == 200) {
       return;
@@ -87,6 +103,33 @@ class UserProvider extends BaseProvider  {
       return "OK";
     } else {
       throw Exception('Greška prilikom unosa');
+    }
+  }
+
+  Future<dynamic> updateUser(Map<String, dynamic> updatedUserData) async {
+    try {
+      var uri = Uri.parse('$apiUrl/User');
+
+      var request = http.MultipartRequest('PUT', uri);
+
+      var stringUpdatedUserData =
+          updatedUserData.map((key, value) => MapEntry(key, value.toString()));
+
+      request.fields.addAll(stringUpdatedUserData);
+
+      if (updatedUserData.containsKey('ProfilePhoto')) {
+        request.files.add(updatedUserData['ProfilePhoto']);
+      }
+
+      var response = await http.Response.fromStream(await request.send());
+
+      if (response.statusCode == 200) {
+        return "OK";
+      } else {
+        throw Exception('Error updating user: ${response.body}');
+      }
+    } catch (e) {
+      throw Exception('Error updating user: $e');
     }
   }
 
