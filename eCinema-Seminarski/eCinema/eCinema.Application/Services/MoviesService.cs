@@ -6,6 +6,9 @@ using eCinema.Core;
 using eCinema.Infrastructure;
 using eCinema.Infrastructure.Interfaces;
 using eCinema.Common.Service;
+using eCinema.Core.Entities;
+using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace eCinema.Application
 {
@@ -40,8 +43,59 @@ namespace eCinema.Application
 
             await CurrentRepository.AddAsync(entity, cancellationToken);
             await UnitOfWork.SaveChangesAsync(cancellationToken);
+            InsertRelatedEntities(dto, entity.Id);
+
 
             return Mapper.Map<MovieDto>(entity);
+        }
+
+        private void InsertRelatedEntities(MovieUpsertDto dto, int id)
+        {
+            InsertRelatedCategories(dto, id);
+            InsertRelatedGenres(dto, id);
+            InsertRelatedActors(dto, id);
+        }
+
+        private async void InsertRelatedActors(MovieUpsertDto dto, int id)
+        {
+            foreach (var item in dto.ActorIds)
+            {
+                var movieActors = new MovieActors
+                {
+                    MovieId = id,
+                    ActorId = item
+                };
+                await UnitOfWork.MovieActorsRepository.AddAsync(movieActors);
+                await UnitOfWork.SaveChangesAsync();
+            }
+        }
+
+        private async void InsertRelatedGenres(MovieUpsertDto dto, int id)
+        {
+            foreach (var item in dto.GenreIds)
+            {
+                var movieGenre = new MovieGenre
+                {
+                    MovieId = id,
+                    GenreId = item
+                };
+                await UnitOfWork.MovieGenresRepository.AddAsync(movieGenre);
+                await UnitOfWork.SaveChangesAsync();
+            }
+        }
+
+        private async void InsertRelatedCategories(MovieUpsertDto dto, int id)
+        {
+            foreach (var item in dto.CategoryIds)
+            {
+                var movieCategory = new MovieCategory
+                {
+                    MovieId = id,
+                    CategoryId = item
+                };
+                await UnitOfWork.MovieCategoryRepository.AddAsync(movieCategory);
+                await UnitOfWork.SaveChangesAsync();
+            }
         }
 
         public override async Task<MovieDto> UpdateAsync(MovieUpsertDto dto, CancellationToken cancellationToken = default)
@@ -55,6 +109,34 @@ namespace eCinema.Application
 
             CurrentRepository.Update(movie);
             await UnitOfWork.SaveChangesAsync(cancellationToken);
+
+            if (!movie!.MovieCategories.Select(x => x.CategoryId).SequenceEqual(dto.CategoryIds))
+            {
+                foreach (var item in movie.MovieCategories)
+                {
+                    UnitOfWork.MovieCategoryRepository.Remove(item);
+                }
+                
+                InsertRelatedCategories(dto, movie.Id);
+            }
+            if (!movie.MovieActors.Select(x => x.ActorId).SequenceEqual(dto.ActorIds))
+            {
+                foreach (var item in movie.MovieActors)
+                {
+                    UnitOfWork.MovieActorsRepository.Remove(item);
+                }
+
+                InsertRelatedActors(dto, movie.Id);
+            }
+            if (!movie.MovieGenres.Select(mc => mc.GenreId).SequenceEqual(dto.GenreIds))
+            {
+                foreach (var item in movie.MovieGenres)
+                {
+                    UnitOfWork.MovieGenresRepository.Remove(item);
+                }
+
+                InsertRelatedGenres(dto, movie.Id);
+            }
 
             return Mapper.Map<MovieDto>(movie);
         }

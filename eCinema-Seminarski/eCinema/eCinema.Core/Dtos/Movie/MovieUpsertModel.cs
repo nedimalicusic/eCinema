@@ -1,5 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace eCinema.Core.Dtos.Movie
 {
@@ -14,6 +13,9 @@ namespace eCinema.Core.Dtos.Movie
 
         public int LanguageId { get; set; }
         public int ProductionId { get; set; }
-        public IFormFile Photo { get; set; }
+        public int[] GenreIds { get; set; } = new int[0];
+        public int[] ActorIds { get; set; } = new int[0];
+        public int[] CategoryIds { get; set; } = new int[0];
+        public IFormFile Photo { get; set; } = null!;
     }
 }

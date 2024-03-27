@@ -1,4 +1,7 @@
 ﻿using eCinema.Application.Interfaces;
+using eCinema.Application.Interfaces.Services;
+using eCinema.Application.Services;
+using eCinema.Application.Validators;
 using eCinema.Core;
 using eCinema.Infrastructure.Interfaces;
 using FluentValidation;
@@ -28,6 +31,11 @@ namespace eCinema.Application
             services.AddScoped<ISeatsService, SeatsService>();
             services.AddScoped<IShowsService, ShowsService>();
             services.AddScoped<IUsersService, UseresService>();
+            services.AddScoped<IWeekDayService, WeekDayService>();
+            services.AddScoped<IShowTypeService, ShowTypeService>();
+            services.AddScoped<IReccuringShowService, ReccuringShowService>();
+            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IMovieCategoryService, MovieCategoryService>();
         }
 
         public static void AddValidators(this IServiceCollection services)
@@ -49,6 +57,11 @@ namespace eCinema.Application
             services.AddScoped<IValidator<SeatUpsertDto>, SeatValidator>();
             services.AddScoped<IValidator<ShowUpsertDto>, ShowValidator>();
             services.AddScoped<IValidator<UserUpsertDto>, UserValidator>();
+            services.AddScoped<IValidator<WeekDayUpsertDto>, WeekDayValidator>();
+            services.AddScoped<IValidator<ShowTypeUpsertDto>, ShowTypeValidator>();
+            services.AddScoped<IValidator<ReccuringShowUpsertDto>, ReccuringShowValidator>();
+            services.AddScoped<IValidator<CategoryUpsertDto>, CategoryValidator>();
+            services.AddScoped<IValidator<MovieCategoryUpsertDto>, MovieCategoryValidator>();
         }
     }
 }

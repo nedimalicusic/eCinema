@@ -1,4 +1,6 @@
-﻿namespace eCinema.Core
+﻿using eCinema.Core.Entities;
+
+namespace eCinema.Core
 {
     public class MovieDto : BaseDto
     {
@@ -22,5 +24,9 @@
 
         public int MovieGenreId { get; set; }
         public MovieGenreDto MovieGenre { get; set; } = null!;
+
+        public int MovieCategoryId { get; set; }
+        public MovieCategory MovieCategory { get; set; } = null!;
+
     }
 }

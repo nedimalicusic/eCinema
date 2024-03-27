@@ -1,4 +1,6 @@
 ﻿using eCinema.Infrastructure.Interfaces;
+using eCinema.Infrastructure.Interfaces.Repositories;
+using eCinema.Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace eCinema.Infrastructure
@@ -24,6 +26,11 @@ namespace eCinema.Infrastructure
             services.AddScoped<ISeatsRepository, SeatsRepository>();
             services.AddScoped<IShowsRepository, ShowsRepository>();
             services.AddScoped<IUsersRepository, UsersRepository>();
+            services.AddScoped<IWeekDayRepository, WeekDayRepository>();
+            services.AddScoped<IShowTypeRepository, ShowTypeRepository>();
+            services.AddScoped<IReccuringShowRepository, ReccuringShowRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IMovieCategoryRepository, MovieCategoryRepository>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
         }

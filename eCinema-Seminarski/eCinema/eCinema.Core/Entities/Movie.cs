@@ -1,4 +1,6 @@
-﻿namespace eCinema.Core
+﻿using eCinema.Core.Entities;
+
+namespace eCinema.Core
 {
     public class Movie : BaseEntity
     {
@@ -18,8 +20,9 @@
         public int PhotoId { get; set; }
         public Photo Photo { get; set; } = null!;
 
-        public ICollection<MovieGenre> MovieGenres { get; set; } = null!;
         public ICollection<MovieActors> MovieActors { get; set; } = null!;
+        public ICollection<MovieGenre> MovieGenres { get; set; } = null!;
+        public ICollection<MovieCategory> MovieCategories { get; set; } = null!;
         public ICollection<Show> Shows { get; set; } = null!;
     }
 }

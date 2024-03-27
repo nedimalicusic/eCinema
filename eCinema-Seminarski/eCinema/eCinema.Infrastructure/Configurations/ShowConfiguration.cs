@@ -10,17 +10,32 @@ namespace eCinema.Infrastructure
         {
             base.Configure(builder);
 
-            builder.Property(e => e.Date)
+            builder.Property(e => e.StartsAt)
             .IsRequired();
 
-            builder.Property(e => e.StartTime)
+            builder.Property(e => e.EndsAt)
             .IsRequired();
 
-            builder.Property(e => e.Format)
-           .IsRequired();
+
+            builder.Property(e => e.Price)
+            .IsRequired();
+
+            builder.HasOne(e => e.ShowType)
+                 .WithMany(e => e.Shows)
+                 .HasForeignKey(e => e.ShowTypeId)
+                 .OnDelete(DeleteBehavior.NoAction)
+                 .IsRequired();
+
+            builder.HasOne(e => e.ReccuringShow)
+              .WithMany(e => e.Shows)
+              .HasForeignKey(e => e.RecurringShowId)
+              .OnDelete(DeleteBehavior.NoAction)
+              .IsRequired(false);
+
 
             builder.HasOne(e => e.Cinema)
                .WithMany(e => e.Shows)
+               .HasForeignKey(e => e.CinemaId)
                .OnDelete(DeleteBehavior.NoAction)
                .IsRequired();
 

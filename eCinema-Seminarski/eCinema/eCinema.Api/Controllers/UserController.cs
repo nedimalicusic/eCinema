@@ -112,6 +112,62 @@ namespace eCinema.Api.Controllers
             }
         }
 
+        [HttpPut("EditUserProfile")]
+        public async Task<IActionResult> EditUserProfile([FromForm] UserUpsertModel model, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var user = await Service.GetByIdAsync(model.Id);
+
+                model.IsVerified = user.IsVerified;
+                model.IsActive = user.IsActive;
+                model.Gender=user.Gender;
+                model.BirthDate = user.BirthDate;
+                model.Role = user.Role;
+
+                var upsertDto = _mapper.Map<UserUpsertDto>(model);
+
+                if (model.ProfilePhoto != null && model.ProfilePhoto.Length > 0)
+                {
+                    var formFile = model.ProfilePhoto;
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await formFile.CopyToAsync(memoryStream);
+                        var photoData = memoryStream.ToArray();
+
+                        var photoInputModel = new PhotoUpsertModel
+                        {
+                            FileName = formFile.FileName,
+                            Type = formFile.ContentType,
+                            Content = formFile.OpenReadStream()
+                        };
+
+                        var guidId = await _photosService.ProcessAsync(new List<PhotoUpsertModel> { photoInputModel });
+
+                        var photoId = await _photosService.GetPhotoIdByGuidId(guidId[0], cancellationToken);
+
+                        upsertDto.ProfilePhotoId = photoId;
+                    }
+                }
+                else
+                {
+
+                    var userModel = await Service.GetByIdAsync(model.Id, cancellationToken);
+
+                    upsertDto.ProfilePhotoId = (int)userModel!.ProfilePhotoId;
+                }
+
+                await Service.UpdateAsync(upsertDto, cancellationToken);
+
+                return Ok(upsertDto);
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e, "Error while trying to get top users");
+                return BadRequest();
+            }
+        }
+
         [HttpPut("ChangePassword")]
         public async Task<IActionResult> ChangepPassword([FromBody] UserChangePasswordDto dto, CancellationToken cancellationtoken = default)
         {

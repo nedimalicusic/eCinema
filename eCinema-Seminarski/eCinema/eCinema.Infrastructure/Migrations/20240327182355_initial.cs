@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace eCinema.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -31,6 +31,23 @@ namespace eCinema.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Actors", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Category",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsDisplayed = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Category", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -89,8 +106,10 @@ namespace eCinema.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    GuidId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Data = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                     ContentType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ThumbnailContent = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -115,6 +134,38 @@ namespace eCinema.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Seats", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ShowType",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ShowType", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WeekDay",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WeekDay", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -199,6 +250,31 @@ namespace eCinema.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ReccuringShows",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StartingDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndingDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ShowTime = table.Column<TimeSpan>(type: "time", nullable: false),
+                    WeekDayId = table.Column<int>(type: "int", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ReccuringShows", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ReccuringShows_WeekDay_WeekDayId",
+                        column: x => x.WeekDayId,
+                        principalTable: "WeekDay",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Cinemas",
                 columns: table => new
                 {
@@ -236,9 +312,8 @@ namespace eCinema.Infrastructure.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Author = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ReleaseYear = table.Column<int>(type: "int", nullable: false),
-                    Length = table.Column<int>(type: "int", nullable: false),
                     Duration = table.Column<int>(type: "int", nullable: false),
-                    NumberOfViews = table.Column<int>(type: "int", nullable: false),
+                    NumberOfViews = table.Column<int>(type: "int", nullable: true),
                     LanguageId = table.Column<int>(type: "int", nullable: false),
                     ProductionId = table.Column<int>(type: "int", nullable: false),
                     PhotoId = table.Column<int>(type: "int", nullable: false),
@@ -360,6 +435,35 @@ namespace eCinema.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MovieCategory",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MovieId = table.Column<int>(type: "int", nullable: false),
+                    CategoryId = table.Column<int>(type: "int", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MovieCategory", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MovieCategory_Category_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Category",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MovieCategory_Movies_MovieId",
+                        column: x => x.MovieId,
+                        principalTable: "Movies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "MovieGenres",
                 columns: table => new
                 {
@@ -394,9 +498,11 @@ namespace eCinema.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Format = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StartsAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndsAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Price = table.Column<double>(type: "float", nullable: false),
+                    ShowTypeId = table.Column<int>(type: "int", nullable: false),
+                    RecurringShowId = table.Column<int>(type: "int", nullable: true),
                     CinemaId = table.Column<int>(type: "int", nullable: false),
                     MovieId = table.Column<int>(type: "int", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
@@ -416,38 +522,16 @@ namespace eCinema.Infrastructure.Migrations
                         column: x => x.MovieId,
                         principalTable: "Movies",
                         principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ShowSeats",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    isSelected = table.Column<bool>(type: "bit", nullable: false),
-                    isReserved = table.Column<bool>(type: "bit", nullable: false),
-                    isAvailable = table.Column<bool>(type: "bit", nullable: false),
-                    ShowId = table.Column<int>(type: "int", nullable: false),
-                    SeatId = table.Column<int>(type: "int", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ShowSeats", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ShowSeats_Seats_SeatId",
-                        column: x => x.SeatId,
-                        principalTable: "Seats",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_Shows_ReccuringShows_RecurringShowId",
+                        column: x => x.RecurringShowId,
+                        principalTable: "ReccuringShows",
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_ShowSeats_Shows_ShowId",
-                        column: x => x.ShowId,
-                        principalTable: "Shows",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_Shows_ShowType_ShowTypeId",
+                        column: x => x.ShowTypeId,
+                        principalTable: "ShowType",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -457,11 +541,10 @@ namespace eCinema.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     isActive = table.Column<bool>(type: "bit", nullable: false),
-                    IsClosed = table.Column<bool>(type: "bit", nullable: false),
-                    ShowSeatId = table.Column<int>(type: "int", nullable: false),
+                    isConfirm = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    ShowId = table.Column<int>(type: "int", nullable: false),
+                    SeatId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    SeatId = table.Column<int>(type: "int", nullable: true),
-                    ShowId = table.Column<int>(type: "int", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -473,24 +556,34 @@ namespace eCinema.Infrastructure.Migrations
                         name: "FK_Reservations_Seats_SeatId",
                         column: x => x.SeatId,
                         principalTable: "Seats",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Reservations_ShowSeats_ShowSeatId",
-                        column: x => x.ShowSeatId,
-                        principalTable: "ShowSeats",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Reservations_Shows_ShowId",
                         column: x => x.ShowId,
                         principalTable: "Shows",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Reservations_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Category",
+                columns: new[] { "Id", "CreatedAt", "IsDisplayed", "ModifiedAt", "Name" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), true, null, "Uskoro" },
+                    { 2, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), true, null, "Pretpremijera" },
+                    { 3, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), true, null, "Premijera" },
+                    { 4, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), true, null, "Klasik" },
+                    { 5, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), true, null, "Animirani" },
+                    { 6, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), true, null, "Dječiji" },
+                    { 7, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), true, null, "Domaći" }
                 });
 
             migrationBuilder.InsertData(
@@ -532,9 +625,35 @@ namespace eCinema.Infrastructure.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "ShowType",
+                columns: new[] { "Id", "CreatedAt", "ModifiedAt", "Name" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "3D" },
+                    { 2, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "4D" },
+                    { 3, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "Extreme 2D" },
+                    { 4, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "IMax" },
+                    { 5, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "Extreme 3D" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "BirthDate", "CreatedAt", "Email", "FirstName", "Gender", "IsActive", "IsVerified", "LastName", "LastSignInAt", "ModifiedAt", "PasswordHash", "PasswordSalt", "PhoneNumber", "ProfilePhotoId", "Role" },
                 values: new object[] { 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), "admin@eCinema.com", "Nedim", 0, true, true, "Admin", null, null, "b4I5yA4Mp+0Pg1C3EsKU17sS13eDExGtBjjI07Vh/JM=", "1wQEjdSFeZttx6dlvEDjOg==", "38761123456", null, 0 });
+
+            migrationBuilder.InsertData(
+                table: "WeekDay",
+                columns: new[] { "Id", "CreatedAt", "ModifiedAt", "Name" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "Ponedjeljak" },
+                    { 2, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "Utorak" },
+                    { 3, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "Srijeda" },
+                    { 4, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "Četvrtak" },
+                    { 5, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "Petak" },
+                    { 6, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "Subota" },
+                    { 7, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "Nedjelja" }
+                });
 
             migrationBuilder.InsertData(
                 table: "Cities",
@@ -564,7 +683,8 @@ namespace eCinema.Infrastructure.Migrations
                 values: new object[,]
                 {
                     { 1, "Bisce Polje bb", 1, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), "Opis1", "plazamostar@gmail.com", null, "Cineplexx Plaza Mostar", 30, 60100100 },
-                    { 2, "Dzemala Bijedica St", 2, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), "Opis1", "srajevocinestar@gmail.com", null, "CineStar Sarajevo", 40, 60200200 }
+                    { 2, "Zenica bb", 4, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), "Opis2", "plazazenica@gmail.com", null, "Cineplexx Plaza Zenica", 20, 60200200 },
+                    { 3, "Dzemala Bijedica St", 2, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), "Opis3", "srajevocinestar@gmail.com", null, "CineStar Sarajevo", 40, 60300300 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -595,6 +715,16 @@ namespace eCinema.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_MovieActors_MovieId",
                 table: "MovieActors",
+                column: "MovieId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MovieCategory_CategoryId",
+                table: "MovieCategory",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MovieCategory_MovieId",
+                table: "MovieCategory",
                 column: "MovieId");
 
             migrationBuilder.CreateIndex(
@@ -633,6 +763,11 @@ namespace eCinema.Infrastructure.Migrations
                 column: "CountryId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ReccuringShows_WeekDayId",
+                table: "ReccuringShows",
+                column: "WeekDayId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Reservations_SeatId",
                 table: "Reservations",
                 column: "SeatId");
@@ -641,11 +776,6 @@ namespace eCinema.Infrastructure.Migrations
                 name: "IX_Reservations_ShowId",
                 table: "Reservations",
                 column: "ShowId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Reservations_ShowSeatId",
-                table: "Reservations",
-                column: "ShowSeatId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reservations_UserId",
@@ -663,14 +793,14 @@ namespace eCinema.Infrastructure.Migrations
                 column: "MovieId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShowSeats_SeatId",
-                table: "ShowSeats",
-                column: "SeatId");
+                name: "IX_Shows_RecurringShowId",
+                table: "Shows",
+                column: "RecurringShowId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShowSeats_ShowId",
-                table: "ShowSeats",
-                column: "ShowId");
+                name: "IX_Shows_ShowTypeId",
+                table: "Shows",
+                column: "ShowTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_ProfilePhotoId",
@@ -688,6 +818,9 @@ namespace eCinema.Infrastructure.Migrations
                 name: "MovieActors");
 
             migrationBuilder.DropTable(
+                name: "MovieCategory");
+
+            migrationBuilder.DropTable(
                 name: "MovieGenres");
 
             migrationBuilder.DropTable(
@@ -700,13 +833,10 @@ namespace eCinema.Infrastructure.Migrations
                 name: "Actors");
 
             migrationBuilder.DropTable(
+                name: "Category");
+
+            migrationBuilder.DropTable(
                 name: "Genres");
-
-            migrationBuilder.DropTable(
-                name: "ShowSeats");
-
-            migrationBuilder.DropTable(
-                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Seats");
@@ -715,10 +845,19 @@ namespace eCinema.Infrastructure.Migrations
                 name: "Shows");
 
             migrationBuilder.DropTable(
+                name: "Users");
+
+            migrationBuilder.DropTable(
                 name: "Cinemas");
 
             migrationBuilder.DropTable(
                 name: "Movies");
+
+            migrationBuilder.DropTable(
+                name: "ReccuringShows");
+
+            migrationBuilder.DropTable(
+                name: "ShowType");
 
             migrationBuilder.DropTable(
                 name: "Cities");
@@ -731,6 +870,9 @@ namespace eCinema.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Productions");
+
+            migrationBuilder.DropTable(
+                name: "WeekDay");
 
             migrationBuilder.DropTable(
                 name: "Countries");

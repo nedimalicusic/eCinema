@@ -1,4 +1,5 @@
 ﻿using eCinema.Infrastructure.Interfaces;
+using eCinema.Infrastructure.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace eCinema.Infrastructure
@@ -24,6 +25,11 @@ namespace eCinema.Infrastructure
         public readonly ISeatsRepository SeatsRepository;
         public readonly IShowsRepository ShowsRepository;
         public readonly IUsersRepository UsersRepository;
+        public readonly IWeekDayRepository WeekDayRepository;
+        public readonly IShowTypeRepository ShowTypeRepository;
+        public readonly IReccuringShowRepository ReccuringShowRepository;
+        public readonly ICategoryRepository CategoryRepository;
+        public readonly IMovieCategoryRepository MovieCategoryRepository;
 
         public UnitOfWork(
             DatabaseContext databaseContext,
@@ -43,26 +49,38 @@ namespace eCinema.Infrastructure
             IReservationsRepository reservationsRepository,
             ISeatsRepository seatsRepository,
             IShowsRepository showsRepository,
-            IUsersRepository usersRepository)
+            IUsersRepository usersRepository,
+            IWeekDayRepository weekDayRepository,
+            IShowTypeRepository showTypeRepository,
+            IReccuringShowRepository reccuringShowRepository,
+            ICategoryRepository categoryRepository,
+            IMovieCategoryRepository movieCategoryRepository
+            )
         {
             _databaseContext = databaseContext;
             ActorsRepository = actorsRepository;
-            CinemasRepository= cinemasRepository;
-            CitiesRepository= citiesRepository;
-            CountiresRepository= countiresRepository;
-            EmployeesRepository= employeesRepository;
-            GenresRepository= genresRepository;
-            LanguagesRepository= languagesRepository;
-            MovieActorsRepository= movieActorsRepository;
+            CinemasRepository = cinemasRepository;
+            CitiesRepository = citiesRepository;
+            CountiresRepository = countiresRepository;
+            EmployeesRepository = employeesRepository;
+            GenresRepository = genresRepository;
+            LanguagesRepository = languagesRepository;
+            MovieActorsRepository = movieActorsRepository;
             MovieGenresRepository = movieGenresRepository;
-            MoviesRepository= moviesRepository;
-            NotificationsRepository= notificationsRepository;
+            MoviesRepository = moviesRepository;
+            NotificationsRepository = notificationsRepository;
             PhotosRepository = photosRepository;
-            ProductionsRepository= productionsRepository;
-            ReservationsRepository= reservationsRepository;
-            SeatsRepository= seatsRepository;
-            ShowsRepository= showsRepository;
-            UsersRepository= usersRepository;
+            ProductionsRepository = productionsRepository;
+            ReservationsRepository = reservationsRepository;
+            SeatsRepository = seatsRepository;
+            ShowsRepository = showsRepository;
+            UsersRepository = usersRepository;
+            MovieCategoryRepository = movieCategoryRepository;
+            WeekDayRepository = weekDayRepository;
+            CategoryRepository = categoryRepository;
+            ShowTypeRepository = showTypeRepository;
+            ReccuringShowRepository = reccuringShowRepository;
+            MovieCategoryRepository = movieCategoryRepository;
         }
 
 

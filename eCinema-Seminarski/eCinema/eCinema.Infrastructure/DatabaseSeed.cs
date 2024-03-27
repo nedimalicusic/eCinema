@@ -1,4 +1,5 @@
 ﻿using eCinema.Core;
+using eCinema.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace eCinema.Infrastructure
@@ -16,8 +17,165 @@ namespace eCinema.Infrastructure
             SeedProduction(modelBuilder);
             SeedCinema(modelBuilder);
             SeedGenre(modelBuilder);
+            SeedWeekDay(modelBuilder);
+            SeedShowType(modelBuilder);
+            SeedCategory(modelBuilder);
         }
 
+        private void SeedCategory(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Category>().HasData(
+                  new()
+                  {
+                      Id = 1,
+                      Name = "Uskoro",
+                      IsDisplayed = true,
+                      CreatedAt = _dateTime,
+                      ModifiedAt = null
+                  },
+                  new()
+                  {
+                      Id = 2,
+                      Name = "Pretpremijera",
+                      IsDisplayed = true,
+                      CreatedAt = _dateTime,
+                      ModifiedAt = null
+                  },
+                  new()
+                  {
+                      Id = 3,
+                      Name = "Premijera",
+                      IsDisplayed = true,
+                      CreatedAt = _dateTime,
+                      ModifiedAt = null
+                  },
+                   new()
+                   {
+                       Id = 4,
+                       Name = "Klasik",
+                       IsDisplayed = true,
+                       CreatedAt = _dateTime,
+                       ModifiedAt = null
+                   },
+                   new()
+                   {
+                       Id = 5,
+                       Name = "Animirani",
+                       IsDisplayed = true,
+                       CreatedAt = _dateTime,
+                       ModifiedAt = null
+                   },
+                   new()
+                   {
+                       Id = 6,
+                       Name = "Dječiji",
+                       IsDisplayed = true,
+                       CreatedAt = _dateTime,
+                       ModifiedAt = null
+                   },
+                   new()
+                   {
+                       Id = 7,
+                       Name = "Domaći",
+                       IsDisplayed = true,
+                       CreatedAt = _dateTime,
+                       ModifiedAt = null
+                   });
+        }
+
+        private void SeedShowType(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<ShowType>().HasData(
+                  new()
+                  {
+                      Id = 1,
+                      Name = "3D",
+                      CreatedAt = _dateTime,
+                      ModifiedAt = null
+                  },
+                  new()
+                  {
+                      Id = 2,
+                      Name = "4D",
+                      CreatedAt = _dateTime,
+                      ModifiedAt = null
+                  },
+                  new()
+                  {
+                      Id = 3,
+                      Name = "Extreme 2D",
+                      CreatedAt = _dateTime,
+                      ModifiedAt = null
+                  },
+                   new()
+                   {
+                       Id = 4,
+                       Name = "IMax",
+                       CreatedAt = _dateTime,
+                       ModifiedAt = null
+                   },
+                   new()
+                   {
+                       Id = 5,
+                       Name = "Extreme 3D",
+                       CreatedAt = _dateTime,
+                       ModifiedAt = null
+                   });
+        }
+
+        private void SeedWeekDay(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<WeekDay>().HasData(
+                 new()
+                 {
+                     Id = 1,
+                     Name = "Ponedjeljak",
+                     CreatedAt = _dateTime,
+                     ModifiedAt = null
+                 },
+                 new()
+                 {
+                     Id = 2,
+                     Name = "Utorak",
+                     CreatedAt = _dateTime,
+                     ModifiedAt = null
+                 },
+                 new()
+                 {
+                     Id = 3,
+                     Name = "Srijeda",
+                     CreatedAt = _dateTime,
+                     ModifiedAt = null
+                 },
+                  new()
+                  {
+                      Id = 4,
+                      Name = "Četvrtak",
+                      CreatedAt = _dateTime,
+                      ModifiedAt = null
+                  },
+                  new()
+                  {
+                      Id = 5,
+                      Name = "Petak",
+                      CreatedAt = _dateTime,
+                      ModifiedAt = null
+                  },
+                  new()
+                  {
+                      Id = 6,
+                      Name = "Subota",
+                      CreatedAt = _dateTime,
+                      ModifiedAt = null
+                  },
+                  new()
+                  {
+                      Id = 7,
+                      Name = "Nedjelja",
+                      CreatedAt = _dateTime,
+                      ModifiedAt = null
+                  });
+        }
 
         private void SeedCountries(ModelBuilder modelBuilder)
         {
@@ -239,11 +397,24 @@ namespace eCinema.Infrastructure
              new()
              {
                  Id = 2,
+                 Name = "Cineplexx Plaza Zenica",
+                 Address = "Zenica bb",
+                 Description = "Opis2",
+                 Email = "plazazenica@gmail.com",
+                 PhoneNumber = 060200200,
+                 NumberOfSeats = 20,
+                 CityId = 4,
+                 CreatedAt = _dateTime,
+                 ModifiedAt = null
+             },
+             new()
+             {
+                 Id = 3,
                  Name = "CineStar Sarajevo",
                  Address = "Dzemala Bijedica St",
-                 Description = "Opis1",
+                 Description = "Opis3",
                  Email = "srajevocinestar@gmail.com",
-                 PhoneNumber = 060200200,
+                 PhoneNumber = 060300300,
                  NumberOfSeats = 40,
                  CityId = 2,
                  CreatedAt = _dateTime,

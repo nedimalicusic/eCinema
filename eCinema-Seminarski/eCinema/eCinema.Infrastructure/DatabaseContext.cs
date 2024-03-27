@@ -1,4 +1,5 @@
 ﻿using eCinema.Core;
+using eCinema.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace eCinema.Infrastructure
@@ -22,6 +23,11 @@ namespace eCinema.Infrastructure
         public DbSet<Seat> Seats { get; set; } = null!;
         public DbSet<Show> Shows { get; set; } = null!;
         public DbSet<User> Users { get; set; } = null!;
+        public DbSet<WeekDay> WeekDay { get; set; } = null!;
+        public DbSet<ShowType> ShowType { get; set; } = null!;
+        public DbSet<Category> Category { get; set; } = null!;
+        public DbSet<MovieCategory> MovieCategory { get; set; } = null!;
+        public DbSet<ReccuringShows> ReccuringShows { get; set; } = null!;
 
         public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
         {

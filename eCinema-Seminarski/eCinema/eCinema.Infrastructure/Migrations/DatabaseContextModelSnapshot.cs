@@ -131,15 +131,28 @@ namespace eCinema.Infrastructure.Migrations
                         new
                         {
                             Id = 2,
+                            Address = "Zenica bb",
+                            CityId = 4,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            Description = "Opis2",
+                            Email = "plazazenica@gmail.com",
+                            IsDeleted = false,
+                            Name = "Cineplexx Plaza Zenica",
+                            NumberOfSeats = 20,
+                            PhoneNumber = 60200200
+                        },
+                        new
+                        {
+                            Id = 3,
                             Address = "Dzemala Bijedica St",
                             CityId = 2,
                             CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
-                            Description = "Opis1",
+                            Description = "Opis3",
                             Email = "srajevocinestar@gmail.com",
                             IsDeleted = false,
                             Name = "CineStar Sarajevo",
                             NumberOfSeats = 40,
-                            PhoneNumber = 60200200
+                            PhoneNumber = 60300300
                         });
                 });
 
@@ -387,6 +400,311 @@ namespace eCinema.Infrastructure.Migrations
                     b.HasIndex("ProfilePhotoId");
 
                     b.ToTable("Employees");
+                });
+
+            modelBuilder.Entity("eCinema.Core.Entities.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsDisplayed")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Category");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            IsDisplayed = true,
+                            Name = "Uskoro"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            IsDisplayed = true,
+                            Name = "Pretpremijera"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            IsDisplayed = true,
+                            Name = "Premijera"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            IsDisplayed = true,
+                            Name = "Klasik"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            IsDisplayed = true,
+                            Name = "Animirani"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            IsDisplayed = true,
+                            Name = "Dječiji"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            IsDisplayed = true,
+                            Name = "Domaći"
+                        });
+                });
+
+            modelBuilder.Entity("eCinema.Core.Entities.MovieCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MovieId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("MovieId");
+
+                    b.ToTable("MovieCategory");
+                });
+
+            modelBuilder.Entity("eCinema.Core.Entities.ReccuringShows", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("EndingDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<TimeSpan>("ShowTime")
+                        .HasColumnType("time");
+
+                    b.Property<DateTime>("StartingDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("WeekDayId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WeekDayId");
+
+                    b.ToTable("ReccuringShows");
+                });
+
+            modelBuilder.Entity("eCinema.Core.Entities.ShowType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ShowType");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Name = "3D"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Name = "4D"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Name = "Extreme 2D"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Name = "IMax"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Name = "Extreme 3D"
+                        });
+                });
+
+            modelBuilder.Entity("eCinema.Core.Entities.WeekDay", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("WeekDay");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Name = "Ponedjeljak"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Name = "Utorak"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Name = "Srijeda"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Name = "Četvrtak"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Name = "Petak"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Name = "Subota"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Name = "Nedjelja"
+                        });
                 });
 
             modelBuilder.Entity("eCinema.Core.Genre", b =>
@@ -884,12 +1202,8 @@ namespace eCinema.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("Date")
+                    b.Property<DateTime>("EndsAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Format")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
@@ -905,7 +1219,13 @@ namespace eCinema.Infrastructure.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
-                    b.Property<DateTime>("StartTime")
+                    b.Property<int?>("RecurringShowId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ShowTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartsAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -913,6 +1233,10 @@ namespace eCinema.Infrastructure.Migrations
                     b.HasIndex("CinemaId");
 
                     b.HasIndex("MovieId");
+
+                    b.HasIndex("RecurringShowId");
+
+                    b.HasIndex("ShowTypeId");
 
                     b.ToTable("Shows");
                 });
@@ -1046,6 +1370,36 @@ namespace eCinema.Infrastructure.Migrations
                     b.Navigation("ProfilePhoto");
                 });
 
+            modelBuilder.Entity("eCinema.Core.Entities.MovieCategory", b =>
+                {
+                    b.HasOne("eCinema.Core.Entities.Category", "Category")
+                        .WithMany("MovieCategories")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("eCinema.Core.Movie", "Movie")
+                        .WithMany("MovieCategories")
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Movie");
+                });
+
+            modelBuilder.Entity("eCinema.Core.Entities.ReccuringShows", b =>
+                {
+                    b.HasOne("eCinema.Core.Entities.WeekDay", "WeekDay")
+                        .WithMany("ReccuringShows")
+                        .HasForeignKey("WeekDayId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("WeekDay");
+                });
+
             modelBuilder.Entity("eCinema.Core.Movie", b =>
                 {
                     b.HasOne("eCinema.Core.Language", "Language")
@@ -1174,9 +1528,24 @@ namespace eCinema.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("eCinema.Core.Entities.ReccuringShows", "ReccuringShow")
+                        .WithMany("Shows")
+                        .HasForeignKey("RecurringShowId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("eCinema.Core.Entities.ShowType", "ShowType")
+                        .WithMany("Shows")
+                        .HasForeignKey("ShowTypeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.Navigation("Cinema");
 
                     b.Navigation("Movie");
+
+                    b.Navigation("ReccuringShow");
+
+                    b.Navigation("ShowType");
                 });
 
             modelBuilder.Entity("eCinema.Core.User", b =>
@@ -1212,6 +1581,26 @@ namespace eCinema.Infrastructure.Migrations
                     b.Navigation("Productions");
                 });
 
+            modelBuilder.Entity("eCinema.Core.Entities.Category", b =>
+                {
+                    b.Navigation("MovieCategories");
+                });
+
+            modelBuilder.Entity("eCinema.Core.Entities.ReccuringShows", b =>
+                {
+                    b.Navigation("Shows");
+                });
+
+            modelBuilder.Entity("eCinema.Core.Entities.ShowType", b =>
+                {
+                    b.Navigation("Shows");
+                });
+
+            modelBuilder.Entity("eCinema.Core.Entities.WeekDay", b =>
+                {
+                    b.Navigation("ReccuringShows");
+                });
+
             modelBuilder.Entity("eCinema.Core.Genre", b =>
                 {
                     b.Navigation("MovieGenres");
@@ -1225,6 +1614,8 @@ namespace eCinema.Infrastructure.Migrations
             modelBuilder.Entity("eCinema.Core.Movie", b =>
                 {
                     b.Navigation("MovieActors");
+
+                    b.Navigation("MovieCategories");
 
                     b.Navigation("MovieGenres");
 
