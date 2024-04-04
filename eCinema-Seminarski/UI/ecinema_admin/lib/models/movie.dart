@@ -1,3 +1,7 @@
+import 'package:ecinema_admin/models/actor.dart';
+import 'package:ecinema_admin/models/category.dart';
+import 'package:ecinema_admin/models/genre.dart';
+import 'package:ecinema_admin/models/language.dart';
 import 'package:ecinema_admin/models/photo.dart';
 import 'package:ecinema_admin/models/production.dart';
 
@@ -12,8 +16,12 @@ class Movie {
   int photoId;
   Photo photo;
   int productionId;
-  int languageId;
   Production production;
+  Language language;
+  int languageId;
+  List<Category> categories;
+  List<Genre> genres;
+  List<Actor> actors;
   late bool isSelected = false;
 
   Movie({
@@ -26,6 +34,10 @@ class Movie {
     required this.numberOfViews,
     required this.photoId,
     required this.photo,
+    required this.categories,
+    required this.genres,
+    required this.actors,
+    required this.language,
     required this.productionId,
     required this.languageId,
     required this.production,
@@ -42,9 +54,19 @@ class Movie {
       releaseYear: json['releaseYear'],
       numberOfViews: json['numberOfViews'],
       photoId: json['photoId'],
+      categories: (json['categories'] as List<dynamic>)
+          .map((categoryJson) => Category.fromJson(categoryJson))
+          .toList(),
+      genres: (json['genres'] as List<dynamic>)
+          .map((genreJson) => Genre.fromJson(genreJson))
+          .toList(),
+      actors: (json['actors'] as List<dynamic>)
+          .map((actorJson) => Actor.fromJson(actorJson))
+          .toList(),
       productionId: json['productionId'],
       languageId: json['languageId'],
       production: Production.fromJson(json['production']),
+      language: Language.fromJson(json['language']),
     );
   }
 
@@ -59,9 +81,13 @@ class Movie {
     data['releaseYear'] = releaseYear;
     data['numberOfViews'] = numberOfViews;
     data['photoId'] = photoId;
+    data['categories'] = categories;
+    data['genres'] = genres;
+    data['actors'] = actors;
     data['productionId'] = productionId;
     data['production'] = production;
     data['languageId'] = languageId;
+    data['language'] = language;
     return data;
   }
 }

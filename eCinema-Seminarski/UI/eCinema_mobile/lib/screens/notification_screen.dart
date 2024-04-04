@@ -1,10 +1,10 @@
 import 'package:ecinema_mobile/models/notifications.dart';
+import 'package:ecinema_mobile/providers/login_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../models/user.dart';
+import '../models/loginUser.dart';
 import '../providers/notification_provider.dart';
-import '../providers/user_provider.dart';
 import '../utils/error_dialog.dart';
 
 class NotificationScreen extends StatefulWidget {
@@ -17,14 +17,14 @@ class NotificationScreen extends StatefulWidget {
 class _NotificationScreenState extends State<NotificationScreen> {
   late NotificationProvider _notificationProvider;
   List<Notifications> notifications = <Notifications>[];
-  late UserProvider userProvider;
-  late User? user;
+  late UserLoginProvider userProvider;
+  late UserLogin? user;
 
   @override
   void initState() {
     super.initState();
     _notificationProvider = context.read<NotificationProvider>();
-    userProvider = context.read<UserProvider>();
+    userProvider = context.read<UserLoginProvider>();
     loadNotifications();
   }
 

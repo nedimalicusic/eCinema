@@ -1,5 +1,6 @@
 import 'package:ecinema_admin/models/loginUser.dart';
 import 'package:ecinema_admin/providers/actor_provider.dart';
+import 'package:ecinema_admin/providers/category_provider.dart';
 import 'package:ecinema_admin/providers/cinema_provider.dart';
 import 'package:ecinema_admin/providers/city_provider.dart';
 import 'package:ecinema_admin/providers/country_provider.dart';
@@ -10,10 +11,13 @@ import 'package:ecinema_admin/providers/login_provider.dart';
 import 'package:ecinema_admin/providers/movie_provider.dart';
 import 'package:ecinema_admin/providers/photo_provider.dart';
 import 'package:ecinema_admin/providers/production_provider.dart';
+import 'package:ecinema_admin/providers/reccuring_show_provider.dart';
 import 'package:ecinema_admin/providers/reservation_provider.dart';
 import 'package:ecinema_admin/providers/seats_provider.dart';
 import 'package:ecinema_admin/providers/show_provider.dart';
+import 'package:ecinema_admin/providers/show_type_provider.dart';
 import 'package:ecinema_admin/providers/user_provider.dart';
+import 'package:ecinema_admin/providers/week_days_provider.dart';
 import 'package:ecinema_admin/screens/home_screen.dart';
 import 'package:ecinema_admin/screens/login_screen.dart';
 import 'package:flutter/material.dart';
@@ -45,6 +49,10 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider(create: (_) => SeatsProvider()),
           ChangeNotifierProvider(create: (_) => LoginProvider()),
           ChangeNotifierProvider(create: (_) => PhotoProvider()),
+          ChangeNotifierProvider(create: (_) => CategoryProvider()),
+          ChangeNotifierProvider(create: (_) => ShowTypeProvider()),
+          ChangeNotifierProvider(create: (_) => WeekDayProvider()),
+          ChangeNotifierProvider(create: (_) => ReccuringShowProvider()),
         ],
         child: MaterialApp(
           title: 'eCinema application',

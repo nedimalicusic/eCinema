@@ -28,11 +28,15 @@ class _CinemaScreenState extends State<CinemaScreen> {
   void loadCinema() async {
     try {
       var cinemasResponse = await _cinemaProvider.get(null);
-      setState(() {
-        cinemas = cinemasResponse;
-      });
+      if (mounted) {
+        setState(() {
+          cinemas = cinemasResponse;
+        });
+      }
     } on Exception catch (e) {
-      showErrorDialog(context, e.toString().substring(11));
+      if (mounted) {
+        showErrorDialog(context, e.toString().substring(11));
+      }
     }
   }
 

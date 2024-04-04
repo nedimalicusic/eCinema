@@ -1,11 +1,11 @@
 // ignore_for_file: use_build_context_synchronously, non_constant_identifier_names
 
-import 'package:ecinema_mobile/screens/profile_screen.dart';
+import 'package:ecinema_mobile/providers/login_provider.dart';
 import 'package:ecinema_mobile/utils/success_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../models/user.dart';
+import '../models/loginUser.dart';
 import '../providers/user_provider.dart';
 import '../utils/error_dialog.dart';
 import 'login_screen.dart';
@@ -20,8 +20,8 @@ class ChangePasswordScreen extends StatefulWidget {
 }
 
 class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
-  late UserProvider userProvider;
-  late User? user;
+  late UserLoginProvider userProvider;
+  late UserLogin? user;
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _passwordController = TextEditingController();
@@ -32,8 +32,16 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   @override
   void initState() {
     super.initState();
-    userProvider = context.read<UserProvider>();
+    userProvider = context.read<UserLoginProvider>();
     user = userProvider.user;
+  }
+
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    _newPasswordController.dispose();
+    _confirmNewPasswordController.dispose();
+    super.dispose();
   }
 
   void changePassword() async {
@@ -55,7 +63,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    user = context.watch<UserProvider>().user;
+    user = context.watch<UserLoginProvider>().user;
     if (user == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);

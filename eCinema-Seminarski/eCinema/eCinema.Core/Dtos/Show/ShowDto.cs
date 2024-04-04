@@ -9,15 +9,15 @@ namespace eCinema.Core
         public double Price { get; set; }
 
         public int ShowTypeId { get; set; }
-        public ShowType ShowType { get; set; } = null!;
+        public ShowTypeDto ShowType { get; set; } = null!;
 
         public int? RecurringShowId { get; set; }
-        public ReccuringShows? ReccuringShow { get; set; }
+        public ReccuringShowDto? ReccuringShow { get; set; }
 
         public int CinemaId { get; set; }
-        public Cinema Cinema { get; set; } = null!;
+        public CinemaDto Cinema { get; set; } = null!;
 
         public int MovieId { get; set; }
-        public Movie Movie { get; set; } = null!;
+        public MovieDto Movie { get; set; } = null!;
     }
 }

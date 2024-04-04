@@ -1,5 +1,4 @@
-﻿using eCinema.Core.Entities;
-
+﻿
 namespace eCinema.Core
 {
     public class ShowUpsertDto : BaseUpsertDto

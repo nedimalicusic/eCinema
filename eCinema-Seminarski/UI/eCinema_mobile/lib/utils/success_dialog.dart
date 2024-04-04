@@ -1,4 +1,3 @@
-import 'package:ecinema_mobile/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 
 Future<dynamic> showSuccessDialog(BuildContext context, String? message) async {

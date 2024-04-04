@@ -1,4 +1,5 @@
 import 'package:ecinema_mobile/models/register.dart';
+import 'package:ecinema_mobile/providers/login_provider.dart';
 import 'package:ecinema_mobile/providers/user_provider.dart';
 import 'package:ecinema_mobile/screens/login_screen.dart';
 import 'package:ecinema_mobile/utils/error_dialog.dart';
@@ -15,7 +16,7 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  late UserProvider _userProvider;
+  late UserLoginProvider _userProvider;
 
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _firstNameController = TextEditingController();
@@ -28,7 +29,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   void initState() {
     super.initState();
-    _userProvider = context.read<UserProvider>();
+    _userProvider = context.read<UserLoginProvider>();
   }
 
   void register() async {

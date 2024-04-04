@@ -50,22 +50,27 @@ class MovieProvider extends BaseProvider<Movie> {
     }
   }
 
-  Future<dynamic> insertMovie(Map<String, dynamic> userData) async {
+  Future<String> insertMovie(Map<String, dynamic> movieData) async {
     try {
       var uri = Uri.parse('$apiUrl/Movie/insertMovie');
-
       var request = http.MultipartRequest('POST', uri);
 
-      var stringUserData =
-          userData.map((key, value) => MapEntry(key, value.toString()));
+      movieData.forEach((key, value) {
+        if (value is List<int>) {
+          request.fields[key] = value.map((e) => e.toString()).join(',');
+        } else {
+          request.fields[key] = value.toString();
+        }
+      });
 
-      request.fields.addAll(stringUserData);
-
-      if (userData.containsKey('photo')) {
-        request.files.add(userData['photo']);
+      if (movieData.containsKey('photo')) {
+        var multipartFile = movieData['photo'] as http.MultipartFile;
+        request.files.add(multipartFile);
       }
-
-      var response = await http.Response.fromStream(await request.send());
+      print(request.fields);
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+      print(response.body);
 
       if (response.statusCode == 200) {
         return "OK";

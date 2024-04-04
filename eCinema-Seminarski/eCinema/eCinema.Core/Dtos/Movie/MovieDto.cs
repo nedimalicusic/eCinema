@@ -8,10 +8,8 @@ namespace eCinema.Core
         public string Description { get; set; } = null!;
         public string Author { get; set; } = null!;
         public int ReleaseYear { get; set; }
-        public int Length { get; set; }
         public int Duration { get; set; }
-        public int NumberOfViews { get; set; }
-        public int? GenreId { get; set; }
+        public int? NumberOfViews { get; set; }
 
         public int LanguageId { get; set; }
         public LanguageDto Language { get; set; } = null!;
@@ -22,11 +20,9 @@ namespace eCinema.Core
         public int PhotoId { get; set; }
         public PhotoDto Photo { get; set; } = null!;
 
-        public int MovieGenreId { get; set; }
-        public MovieGenreDto MovieGenre { get; set; } = null!;
-
-        public int MovieCategoryId { get; set; }
-        public MovieCategory MovieCategory { get; set; } = null!;
+        public List<GenreDto> Genres { get; set; } = null!;
+        public List<CategoryDto> Categories { get; set; } = null!;
+        public List<ActorsDto> Actors { get; set; } = null!;
 
     }
 }

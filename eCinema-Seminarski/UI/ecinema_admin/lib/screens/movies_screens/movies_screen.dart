@@ -3,11 +3,13 @@
 import 'dart:io';
 
 import 'package:ecinema_admin/models/actor.dart';
+import 'package:ecinema_admin/models/category.dart';
 import 'package:ecinema_admin/models/language.dart';
 import 'package:ecinema_admin/models/movie.dart';
 import 'package:ecinema_admin/models/production.dart';
 import 'package:ecinema_admin/models/searchObject/movie_search.dart';
 import 'package:ecinema_admin/providers/actor_provider.dart';
+import 'package:ecinema_admin/providers/category_provider.dart';
 import 'package:ecinema_admin/providers/genre_provider.dart';
 import 'package:ecinema_admin/providers/language_provider.dart';
 import 'package:ecinema_admin/providers/movie_provider.dart';
@@ -15,6 +17,9 @@ import 'package:ecinema_admin/providers/production_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
+import 'package:multi_select_flutter/util/multi_select_item.dart';
+import 'package:multi_select_flutter/util/multi_select_list_type.dart';
 import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:http/http.dart' as http;
@@ -34,11 +39,13 @@ class MoviesScreen extends StatefulWidget {
 class _MoviesScreenState extends State<MoviesScreen> {
   List<Movie> movies = <Movie>[];
   List<Genre> genres = <Genre>[];
+  List<Category> categories = <Category>[];
   List<Language> languages = <Language>[];
   List<Production> productions = <Production>[];
   List<Actor> actors = <Actor>[];
   late MovieProvider _movieProvider;
   late GenreProvider _genreProvider;
+  late CategoryProvider _categoryProvider;
   late LanguageProvider _languageProvider;
   late ProductionProvider _productionProvider;
   late ActorProvider _actorProvider;
@@ -55,24 +62,29 @@ class _MoviesScreenState extends State<MoviesScreen> {
   List<Movie> selectedMovie = <Movie>[];
   int? selectedLanguageId;
   int? selectedProductionId;
-  int? selectedgenreId;
+  var selectedCategoriesId = <int>[];
+  var selectedGenresId = <int>[];
+  var selectedActorsId = <int>[];
   File? _pickedFile;
   File? selectedImage;
   int currentPage = 1;
   int pageSize = 5;
   int hasNextPage = 0;
   bool isAllSelected = false;
+
   @override
   void initState() {
     super.initState();
     _movieProvider = context.read<MovieProvider>();
     _photoProvider = context.read<PhotoProvider>();
     _genreProvider = context.read<GenreProvider>();
+    _categoryProvider = context.read<CategoryProvider>();
     _languageProvider = context.read<LanguageProvider>();
     _productionProvider = context.read<ProductionProvider>();
     _actorProvider = context.read<ActorProvider>();
     _pickedFileNotifier = ValueNotifier<File?>(_pickedFile);
     loadGenres();
+    loadCategories();
     loadLanguages();
     loadProductions();
     loadActors();
@@ -113,6 +125,19 @@ class _MoviesScreenState extends State<MoviesScreen> {
         setState(() {
           movies = moviesResponse;
           hasNextPage = movies.length;
+        });
+      }
+    } on Exception catch (e) {
+      showErrorDialog(context, e.toString().substring(11));
+    }
+  }
+
+  void loadCategories() async {
+    try {
+      var categoriesResponse = await _categoryProvider.get(null);
+      if (mounted) {
+        setState(() {
+          categories = categoriesResponse;
         });
       }
     } on Exception catch (e) {
@@ -202,6 +227,9 @@ class _MoviesScreenState extends State<MoviesScreen> {
         'Duration': _durationController.text,
         'LanguageId': selectedLanguageId,
         'ProductionId': selectedProductionId,
+        'GenreIds': selectedGenresId.toList(),
+        'ActorIds': selectedActorsId.toList(),
+        'CategoryIds': selectedCategoriesId.toList(),
       };
       if (_pickedFile != null) {
         movieData['photo'] = http.MultipartFile.fromBytes(
@@ -223,8 +251,11 @@ class _MoviesScreenState extends State<MoviesScreen> {
         );
         selectedProductionId = null;
         selectedLanguageId = null;
+        selectedGenresId = <int>[];
+        selectedActorsId = <int>[];
+        selectedCategoriesId = <int>[];
       } else {
-        showErrorDialog(context, 'Greška prilikom uređivanja');
+        showErrorDialog(context, 'Greška prilikom dodavanja');
       }
     } catch (e) {
       showErrorDialog(context, e.toString());
@@ -241,7 +272,9 @@ class _MoviesScreenState extends State<MoviesScreen> {
         'ReleaseYear': _relaseYearController.text,
         'Duration': _durationController.text,
         'LanguageId': selectedLanguageId,
-        'ProductionId': selectedProductionId,
+        'GenreIds': selectedGenresId,
+        'ActorIds': selectedActorsId,
+        'CategoryIds': selectedCategoriesId,
       };
       if (_pickedFile != null) {
         movieData['photo'] = http.MultipartFile.fromBytes(
@@ -263,6 +296,9 @@ class _MoviesScreenState extends State<MoviesScreen> {
         );
         selectedProductionId = null;
         selectedLanguageId = null;
+        selectedGenresId = <int>[];
+        selectedActorsId = <int>[];
+        selectedCategoriesId = <int>[];
       } else {
         showErrorDialog(context, 'Greška prilikom uređivanja');
       }
@@ -584,6 +620,11 @@ class _MoviesScreenState extends State<MoviesScreen> {
       _relaseYearController.text = '';
       _durationController.text = '';
       _pickedFile = null;
+      selectedLanguageId = null;
+      selectedProductionId = null;
+      selectedActorsId = <int>[];
+      selectedCategoriesId = <int>[];
+      selectedGenresId = <int>[];
     }
 
     return SizedBox(
@@ -702,6 +743,83 @@ class _MoviesScreenState extends State<MoviesScreen> {
                     },
                   ),
                   TextFormField(
+                    controller: _durationController,
+                    decoration: const InputDecoration(labelText: 'Trajanje'),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Unesite trajanje!';
+                      }
+                      return null;
+                    },
+                  ),
+                  MultiSelectDialogField<int>(
+                    items: genres
+                        .map((genre) => MultiSelectItem<int>(
+                              genre.id,
+                              genre.name,
+                            ))
+                        .toList(),
+                    initialValue: selectedGenresId,
+                    searchable: true,
+                    listType: MultiSelectListType.LIST,
+                    onConfirm: (List<int> values) {
+                      selectedGenresId = values;
+                    },
+                    title: const Text('Odaberi žanrove'),
+                    buttonText: const Text('Odaberi žanrove'),
+                    dialogHeight: 400,
+                    dialogWidth: 400,
+                    selectedColor: Colors.teal,
+                  ),
+                  MultiSelectDialogField<int>(
+                    items: categories
+                        .map((category) => MultiSelectItem<int>(
+                              category.id,
+                              category.name,
+                            ))
+                        .toList(),
+                    initialValue: selectedCategoriesId,
+                    searchable: true,
+                    listType: MultiSelectListType.LIST,
+                    onConfirm: (List<int> values) {
+                      selectedCategoriesId = values;
+                    },
+                    title: const Text('Odaberi kategorije'),
+                    buttonText: const Text('Odaberi kategorije'),
+                    dialogHeight: 400,
+                    dialogWidth: 400,
+                    selectedColor: Colors.teal,
+                  ),
+                  MultiSelectDialogField<int>(
+                    items: actors
+                        .map((actor) => MultiSelectItem<int>(
+                              actor.id,
+                              '${actor.firstName} ${actor.lastName}',
+                            ))
+                        .toList(),
+                    initialValue: selectedActorsId,
+                    searchable: true,
+                    listType: MultiSelectListType.LIST,
+                    onConfirm: (List<int> values) {
+                      selectedActorsId = values;
+                    },
+                    title: const Text('Odaberi glumce'),
+                    buttonText: const Text('Odaberi glumce'),
+                    dialogHeight: 400,
+                    dialogWidth: 400,
+                    selectedColor: Colors.teal,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              width: 30,
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextFormField(
                     controller: _relaseYearController,
                     decoration:
                         const InputDecoration(labelText: 'Godina izdavanja'),
@@ -723,27 +841,6 @@ class _MoviesScreenState extends State<MoviesScreen> {
                     },
                   ),
                   DropdownButtonFormField<int>(
-                    value: selectedgenreId,
-                    onChanged: (int? newValue) {
-                      setState(() {
-                        selectedgenreId = newValue;
-                      });
-                    },
-                    items: genres.map((Genre genre) {
-                      return DropdownMenuItem<int>(
-                        value: genre.id,
-                        child: Text(genre.name),
-                      );
-                    }).toList(),
-                    decoration: const InputDecoration(labelText: 'Žanr'),
-                    validator: (value) {
-                      if (value == null) {
-                        return 'Odaberite žanr!';
-                      }
-                      return null;
-                    },
-                  ),
-                  DropdownButtonFormField<int>(
                     value: selectedLanguageId,
                     onChanged: (int? newValue) {
                       setState(() {
@@ -760,26 +857,6 @@ class _MoviesScreenState extends State<MoviesScreen> {
                     validator: (value) {
                       if (value == null) {
                         return 'Odaberite jezik!';
-                      }
-                      return null;
-                    },
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(
-              width: 30,
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextFormField(
-                    controller: _durationController,
-                    decoration: const InputDecoration(labelText: 'Trajanje'),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Unesite trajanje!';
                       }
                       return null;
                     },

@@ -12,16 +12,23 @@ namespace eCinema.Infrastructure
 
         public override async Task<PagedList<Movie>> GetPagedAsync(MovieSearchObject searchObject, CancellationToken cancellationToken = default)
         {
-            var query = DbSet.Include(s => s.MovieGenres).ThenInclude(s => s.Genre).Include(d => d.Production).ThenInclude(s=>s.Country).Include(s => s.Photo).AsQueryable();
+            var query = DbSet.Include(s=>s.Language).Include(d => d.Production).ThenInclude(s=>s.Country).Include(s => s.Photo)
+                .Include(s => s.MovieGenres).ThenInclude(s => s.Genre)
+                .Include(s => s.MovieCategories).ThenInclude(s => s.Category)
+                .Include(s=>s.MovieActors).ThenInclude(s => s.Actors)
+                .AsQueryable();
 
+            if (searchObject.name != null)
+            {
+                query = query.Where(s => searchObject.name == null || s.Title.ToLower().Contains(searchObject.name.ToLower()));
+            }
             if (searchObject.GenreId != null)
             {
-                query = query.Include(s=>s.MovieGenres).ThenInclude(s=>s.Genre).Include(d=>d.Production).Include(s => s.Photo).Where(s => s.MovieGenres.Any(d => d.GenreId == searchObject.GenreId));
+                query = query.Where(s => s.MovieGenres.Any(d => d.GenreId == searchObject.GenreId));
             }
-            else
+            if (searchObject.CategoryId != null)
             {
-                query = query.Include(s => s.MovieGenres).ThenInclude(s => s.Genre).
-                    Include(d => d.Production).Include(s => s.Photo).Where(s => searchObject.name==null || s.Title.ToLower().Contains(searchObject.name.ToLower()));
+                query = query.Where(s => s.MovieCategories.Any(d => d.CategoryId == searchObject.CategoryId));
             }
 
             var result = await query.ToPagedListAsync(searchObject, cancellationToken);

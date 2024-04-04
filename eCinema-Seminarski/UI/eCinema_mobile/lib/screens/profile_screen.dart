@@ -1,6 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'package:ecinema_mobile/models/user.dart';
+import 'package:ecinema_mobile/models/loginUser.dart';
+import 'package:ecinema_mobile/providers/login_provider.dart';
 import 'package:ecinema_mobile/providers/user_provider.dart';
 import 'package:ecinema_mobile/screens/login_screen.dart';
 import 'package:flutter/material.dart';
@@ -22,14 +23,14 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  late UserProvider userProvider;
+  late UserLoginProvider userProvider;
   late PhotoProvider _photoProvider;
-  late User? user;
+  late UserLogin? user;
 
   @override
   void initState() {
     super.initState();
-    userProvider = context.read<UserProvider>();
+    userProvider = context.read<UserLoginProvider>();
     _photoProvider = context.read<PhotoProvider>();
   }
 
@@ -39,7 +40,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    user = context.watch<UserProvider>().user;
+    user = context.watch<UserLoginProvider>().user;
     if (user == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);

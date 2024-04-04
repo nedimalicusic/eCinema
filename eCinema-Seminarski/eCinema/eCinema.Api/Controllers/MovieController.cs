@@ -58,6 +58,7 @@ namespace eCinema.Api.Controllers
         {
             try
             {
+                var list=model.ActorIds.ToList();
                 var upsertDto = _mapper.Map<MovieUpsertDto>(model);
 
                 if (model.Photo != null && model.Photo.Length > 0)

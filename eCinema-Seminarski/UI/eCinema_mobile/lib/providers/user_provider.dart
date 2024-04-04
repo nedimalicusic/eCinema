@@ -1,8 +1,6 @@
 import 'package:ecinema_mobile/models/profile_user.dart';
-import 'package:ecinema_mobile/models/register.dart';
 import 'package:ecinema_mobile/providers/base_provider.dart';
 import 'package:http/http.dart' as http;
-import 'package:jwt_decoder/jwt_decoder.dart';
 import 'dart:convert';
 import '../helpers/constants.dart';
 import '../models/user.dart';
@@ -14,7 +12,7 @@ class UserProvider extends BaseProvider {
   UserProvider() : super('User');
 
   refreshUser() async {
-    user = await getById(int.parse(user!.Id));
+    user = await getById(user!.id);
   }
 
   @override
@@ -48,51 +46,6 @@ class UserProvider extends BaseProvider {
     }
   }
 
-  Future<User> loginAsync(String email, String password) async {
-    var url = '$apiUrl/Access/SignIn';
-    final response = await http.post(
-      Uri.parse(url),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'email': email,
-        'password': password,
-      }),
-    );
-    if (response.statusCode == 200) {
-      Map<String, dynamic> decodedToken = JwtDecoder.decode(response.body);
-      user = User.fromJson(decodedToken);
-      Authorization.token = user!.token;
-      notifyListeners();
-      return user!;
-    } else {
-      throw Exception(response.body);
-    }
-  }
-
-  Future registerAsync(Register data) async {
-    var url = '$apiUrl/Access/SignUp';
-    final response = await http.post(
-      Uri.parse(url),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'firstName': data.firstName,
-        'lastName': data.lastName,
-        'email': data.email,
-        'phoneNumber': data.phoneNumber,
-        'password': data.password,
-      }),
-    );
-    if (response.statusCode == 200) {
-      return;
-    } else {
-      throw Exception('Greška prilikom registracije.');
-    }
-  }
-
   Future edit(user) async {
     var uri = Uri.parse('$apiUrl/User');
     Map<String, String> headers = Authorization.createHeaders();
@@ -103,6 +56,33 @@ class UserProvider extends BaseProvider {
       return "OK";
     } else {
       throw Exception('Greška prilikom unosa');
+    }
+  }
+
+  Future<dynamic> editUserProfile(Map<String, dynamic> updatedUserData) async {
+    try {
+      var uri = Uri.parse('$apiUrl/User/EditUserProfile');
+
+      var request = http.MultipartRequest('PUT', uri);
+
+      var stringUpdatedUserData =
+          updatedUserData.map((key, value) => MapEntry(key, value.toString()));
+
+      request.fields.addAll(stringUpdatedUserData);
+
+      if (updatedUserData.containsKey('ProfilePhoto')) {
+        request.files.add(updatedUserData['ProfilePhoto']);
+      }
+
+      var response = await http.Response.fromStream(await request.send());
+
+      if (response.statusCode == 200) {
+        return "OK";
+      } else {
+        throw Exception('Error updating user: ${response.body}');
+      }
+    } catch (e) {
+      throw Exception('Error updating user: $e');
     }
   }
 

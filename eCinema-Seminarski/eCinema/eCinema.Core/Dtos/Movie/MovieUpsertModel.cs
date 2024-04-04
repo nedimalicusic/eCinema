@@ -13,9 +13,9 @@ namespace eCinema.Core.Dtos.Movie
 
         public int LanguageId { get; set; }
         public int ProductionId { get; set; }
-        public int[] GenreIds { get; set; } = new int[0];
-        public int[] ActorIds { get; set; } = new int[0];
-        public int[] CategoryIds { get; set; } = new int[0];
+        public List<int> GenreIds { get; set; }
+        public List<int> ActorIds { get; set; } 
+        public List<int> CategoryIds { get; set; }
         public IFormFile Photo { get; set; } = null!;
     }
 }

@@ -61,7 +61,14 @@ namespace eCinema.Infrastructure
                 .Where(u =>
                     (searchObject.name == null || u.Movie.Title.ToLower().Contains(searchObject.name.ToLower())) &&
                     (searchObject.cinemaId == null || u.CinemaId == searchObject.cinemaId)
-                ).Include(s => s.Movie).ThenInclude(s=>s.Production).ThenInclude(s=>s.Country).Include(s=>s.Movie).ThenInclude(s=>s.Photo).Include(s => s.Cinema).ThenInclude(s=>s.City).ThenInclude(s=>s.Country)
+                ).Include(s => s.Movie.Production.Country)
+                 .Include(s=>s.Movie.Language)
+                 .Include(s=>s.Movie.MovieGenres).ThenInclude(s=>s.Genre)
+                 .Include(s=>s.Movie.MovieCategories).ThenInclude(s=>s.Category)
+                 .Include(s=>s.Movie.MovieActors).ThenInclude(s=>s.Actors)
+                 .Include(s=>s.ShowType).Include(s=>s.ReccuringShow)
+                .Include(s=>s.Movie.Photo)
+                .Include(s => s.Cinema.City.Country)
                  .ToPagedListAsync(searchObject, cancellationToken);
         }
 

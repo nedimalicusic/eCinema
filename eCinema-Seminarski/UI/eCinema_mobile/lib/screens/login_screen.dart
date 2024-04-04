@@ -1,5 +1,6 @@
 // ignore_for_file: use_key_in_widget_constructors
 
+import 'package:ecinema_mobile/providers/login_provider.dart';
 import 'package:ecinema_mobile/providers/user_provider.dart';
 import 'package:ecinema_mobile/screens/register_screen.dart';
 import 'package:ecinema_mobile/utils/error_dialog.dart';
@@ -16,7 +17,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  late UserProvider userProvider;
+  late UserLoginProvider userProvider;
 
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController =
@@ -28,7 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    userProvider = context.read<UserProvider>();
+    userProvider = context.read<UserLoginProvider>();
   }
 
   void login() async {

@@ -42,9 +42,10 @@ namespace eCinema.Application
             var entity = Mapper.Map<Movie>(dto);
 
             await CurrentRepository.AddAsync(entity, cancellationToken);
-            await UnitOfWork.SaveChangesAsync(cancellationToken);
+
             InsertRelatedEntities(dto, entity.Id);
 
+            await UnitOfWork.SaveChangesAsync(cancellationToken);
 
             return Mapper.Map<MovieDto>(entity);
         }
@@ -66,7 +67,6 @@ namespace eCinema.Application
                     ActorId = item
                 };
                 await UnitOfWork.MovieActorsRepository.AddAsync(movieActors);
-                await UnitOfWork.SaveChangesAsync();
             }
         }
 
@@ -80,7 +80,6 @@ namespace eCinema.Application
                     GenreId = item
                 };
                 await UnitOfWork.MovieGenresRepository.AddAsync(movieGenre);
-                await UnitOfWork.SaveChangesAsync();
             }
         }
 
@@ -94,7 +93,6 @@ namespace eCinema.Application
                     CategoryId = item
                 };
                 await UnitOfWork.MovieCategoryRepository.AddAsync(movieCategory);
-                await UnitOfWork.SaveChangesAsync();
             }
         }
 
@@ -140,6 +138,5 @@ namespace eCinema.Application
 
             return Mapper.Map<MovieDto>(movie);
         }
-
     }
 }

@@ -1,7 +1,8 @@
 import 'package:ecinema_mobile/models/shows.dart';
-import 'package:ecinema_mobile/models/user.dart';
+import 'package:ecinema_mobile/models/loginUser.dart';
 import 'package:ecinema_mobile/providers/cinema_provider.dart';
 import 'package:ecinema_mobile/providers/genre_provider.dart';
+import 'package:ecinema_mobile/providers/login_provider.dart';
 import 'package:ecinema_mobile/providers/movie_provider.dart';
 import 'package:ecinema_mobile/providers/notification_provider.dart';
 import 'package:ecinema_mobile/providers/photo_provider.dart';
@@ -46,6 +47,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
         ChangeNotifierProvider(create: (_) => ReservationProvider()),
         ChangeNotifierProvider(create: (_) => PhotoProvider()),
+        ChangeNotifierProvider(create: (_) => UserLoginProvider()),
       ],
       child: MaterialApp(
           theme: ThemeData(primarySwatch: Colors.teal),
@@ -101,14 +103,14 @@ class _MainState extends State<Main> {
   ];
 
   late int _selectedIndex;
-  late UserProvider userProvider;
+  late UserLoginProvider userProvider;
 
   @override
   void initState() {
     super.initState();
     _selectedIndex = widget.index;
 
-    userProvider = context.read<UserProvider>();
+    userProvider = context.read<UserLoginProvider>();
   }
 
   void _onItemTapped(int index) {
@@ -119,7 +121,7 @@ class _MainState extends State<Main> {
 
   @override
   Widget build(BuildContext context) {
-    User? user = userProvider.user;
+    UserLogin? user = userProvider.user;
     if (user == null) {
       return const LoginScreen();
     }

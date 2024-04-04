@@ -3,16 +3,22 @@
 import 'package:ecinema_admin/models/cinema.dart';
 import 'package:ecinema_admin/models/movie.dart';
 import 'package:ecinema_admin/models/searchObject/show_search.dart';
+import 'package:ecinema_admin/models/show_type.dart';
 import 'package:ecinema_admin/models/shows.dart';
 import 'package:ecinema_admin/providers/movie_provider.dart';
+import 'package:ecinema_admin/providers/reccuring_show_provider.dart';
 import 'package:ecinema_admin/providers/show_provider.dart';
+import 'package:ecinema_admin/providers/show_type_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../helpers/constants.dart';
+import '../../models/week_day.dart';
 import '../../providers/cinema_provider.dart';
+import '../../providers/week_days_provider.dart';
 import '../../utils/error_dialog.dart';
 
 class ShowsScreen extends StatefulWidget {
@@ -28,22 +34,37 @@ class _ShowsScreenState extends State<ShowsScreen> {
   late ShowProvider _showProvider;
   late MovieProvider _movieProvider;
   late CinemaProvider _cinemaProvider;
+  late ShowTypeProvider _showTypeProvider;
+  late WeekDayProvider _weekDayProvider;
+  late ReccuringShowProvider _reccuringShowProvider;
   List<Cinema> cinemaList = <Cinema>[];
+  List<WeekDay> weekDays = <WeekDay>[];
+  List<ShowType> showtypes = <ShowType>[];
   Cinema? selectedCinema;
   bool isEditing = false;
   final _formKey = GlobalKey<FormState>();
+  final _formKeySecond = GlobalKey<FormState>();
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
-  final TextEditingController _dateController = TextEditingController();
-  final TextEditingController _timeController = TextEditingController();
-  DateTime selectedDate = DateTime.now();
-  DateTime selecteTime = DateTime.now();
+  final TextEditingController _startDateTimeController =
+      TextEditingController();
+  final TextEditingController _endDateTimeController = TextEditingController();
+  final TextEditingController _reccuringStartDate = TextEditingController();
+  final TextEditingController _reccuringEndDate = TextEditingController();
+  DateTime selectedreccuringStartDate = DateTime.now();
+  DateTime selectedreccuringEndDate = DateTime.now();
+  DateTime selectedreccuringTime = DateTime.now();
+
+  DateTime selectedDateStart = DateTime.now();
+  DateTime selecteDateEnd = DateTime.now();
   int? selectedMovieId;
   int? selectedCinemaId;
-  List<String> formats = ["2D", "3D", "Extreme", "4D"];
-  String? selectedFormat;
+  int? selectedShowTypeId;
+  int? selectWeekDayId;
   List<Shows> selectedShow = <Shows>[];
   bool isAllSelected = false;
+  bool isReccuringShow = false;
+  late ValueNotifier<bool> _isReccuringShow;
   int currentPage = 1;
   int pageSize = 5;
   int hasNextPage = 0;
@@ -54,8 +75,14 @@ class _ShowsScreenState extends State<ShowsScreen> {
     _showProvider = context.read<ShowProvider>();
     _cinemaProvider = context.read<CinemaProvider>();
     _movieProvider = context.read<MovieProvider>();
+    _showTypeProvider = context.read<ShowTypeProvider>();
+    _weekDayProvider = context.read<WeekDayProvider>();
+    _reccuringShowProvider = context.read<ReccuringShowProvider>();
+    _isReccuringShow = ValueNotifier<bool>(isReccuringShow);
     loadCinema();
     loadMovies();
+    loadShowTypes();
+    loadWeekDays();
     loadShows(ShowSearchObject(
         name: _searchController.text,
         cinemaId: selectedCinemaId,
@@ -97,6 +124,28 @@ class _ShowsScreenState extends State<ShowsScreen> {
     }
   }
 
+  void loadWeekDays() async {
+    try {
+      var weekDayResponse = await _weekDayProvider.get(null);
+      setState(() {
+        weekDays = weekDayResponse;
+      });
+    } on Exception catch (e) {
+      showErrorDialog(context, e.toString().substring(11));
+    }
+  }
+
+  void loadShowTypes() async {
+    try {
+      var showtypesResponse = await _showTypeProvider.get(null);
+      setState(() {
+        showtypes = showtypesResponse;
+      });
+    } on Exception catch (e) {
+      showErrorDialog(context, e.toString().substring(11));
+    }
+  }
+
   void loadMovies() async {
     try {
       var moviesResponse = await _movieProvider.get(null);
@@ -108,18 +157,23 @@ class _ShowsScreenState extends State<ShowsScreen> {
     }
   }
 
-  void InsertShow() async {
+  void InsertShow(int? reccuringShowId) async {
     try {
       var newShow = {
-        "date": _dateController.text,
-        "startTime": _timeController.text,
-        "movieId": selectedMovieId,
-        "cinemaId": selectedCinemaId,
-        "format": selectedFormat,
-        "price": _priceController.text
+        "MovieId": selectedMovieId,
+        "CinemaId": selectedCinemaId,
+        "ShowTypeId": selectedShowTypeId,
+        "Price": _priceController.text,
+        "StartsAt": DateTime.parse(_startDateTimeController.text)
+            .toUtc()
+            .toIso8601String(),
+        "EndsAt": DateTime.parse(_endDateTimeController.text)
+            .toUtc()
+            .toIso8601String(),
+        "RecurringShowId": reccuringShowId,
       };
-      var city = await _showProvider.insert(newShow);
-      if (city == "OK") {
+      var show = await _showProvider.insert(newShow);
+      if (show == "OK") {
         Navigator.of(context).pop();
         loadShows(
           ShowSearchObject(
@@ -135,19 +189,73 @@ class _ShowsScreenState extends State<ShowsScreen> {
     }
   }
 
-  void EditShow(int id) async {
+  void InsertReccuringShow(bool isEdit, int? showId) async {
     try {
-      var newShow = {
-        "id": id,
-        "date": _dateController.text,
-        "startTime": _timeController.text,
-        "movieId": selectedMovieId,
-        "cinemaId": selectedCinemaId,
-        "format": selectedFormat,
-        "price": _priceController.text
+      var showTime =
+          TimeOfDay.fromDateTime(DateTime.parse(_startDateTimeController.text));
+      var newReccuringShow = {
+        "StartingDate":
+            DateTime.parse(_reccuringStartDate.text).toUtc().toIso8601String(),
+        "EndingDate":
+            DateTime.parse(_reccuringEndDate.text).toUtc().toIso8601String(),
+        "ShowTime":
+            Duration(hours: showTime.hour, minutes: showTime.minute).toString(),
+        "WeekDayId": selectWeekDayId,
       };
-      var city = await _showProvider.edit(newShow);
-      if (city == "OK") {
+      var recurringShow = await _reccuringShowProvider.insert(newReccuringShow);
+      if (recurringShow.id > 0) {
+        if (isEdit) {
+          EditShow(showId!, recurringShow.id);
+        } else {
+          InsertShow(recurringShow.id);
+        }
+      }
+    } on Exception catch (e) {
+      showErrorDialog(context, e.toString().substring(11));
+    }
+  }
+
+  void EditReccuringShow(int showId, int id) async {
+    try {
+      var showTime =
+          TimeOfDay.fromDateTime(DateTime.parse(_startDateTimeController.text));
+      var ediReccurinhShow = {
+        "Id": id,
+        "StartingDate":
+            DateTime.parse(_reccuringStartDate.text).toUtc().toIso8601String(),
+        "EndingDate":
+            DateTime.parse(_reccuringEndDate.text).toUtc().toIso8601String(),
+        "ShowTime":
+            Duration(hours: showTime.hour, minutes: showTime.minute).toString(),
+        "WeekDayId": selectWeekDayId,
+      };
+      var recurringShow = await _reccuringShowProvider.edit(ediReccurinhShow);
+      if (recurringShow.id > 0) {
+        EditShow(showId, recurringShow.id);
+      }
+    } on Exception catch (e) {
+      showErrorDialog(context, e.toString().substring(11));
+    }
+  }
+
+  void EditShow(int id, int? reccuringShowId) async {
+    try {
+      var editShow = {
+        "Id": id,
+        "MovieId": selectedMovieId,
+        "CinemaId": selectedCinemaId,
+        "ShowTypeId": selectedShowTypeId,
+        "Price": _priceController.text,
+        "StartsAt": DateTime.parse(_startDateTimeController.text)
+            .toUtc()
+            .toIso8601String(),
+        "EndsAt": DateTime.parse(_endDateTimeController.text)
+            .toUtc()
+            .toIso8601String(),
+        "RecurringShowId": reccuringShowId,
+      };
+      var show = await _showProvider.edit(editShow);
+      if (show == "OK") {
         Navigator.of(context).pop();
         loadShows(
           ShowSearchObject(
@@ -354,8 +462,15 @@ class _ShowsScreenState extends State<ShowsScreen> {
                             backgroundColor: primaryColor,
                           ),
                           onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              InsertShow();
+                            if (_isReccuringShow.value) {
+                              if (_formKeySecond.currentState!.validate() &&
+                                  _formKey.currentState!.validate()) {
+                                InsertReccuringShow(false, null);
+                              }
+                            } else {
+                              if (_formKey.currentState!.validate()) {
+                                InsertShow(null);
+                              }
                             }
                           },
                           child: const Text("Spremi",
@@ -439,7 +554,32 @@ class _ShowsScreenState extends State<ShowsScreen> {
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: primaryColor),
                             onPressed: () {
-                              EditShow(selectedShow[0].id);
+                              if (selectedShow[0].recurringShowId != null &&
+                                  selectedShow[0].recurringShowId! > 0) {
+                                if (_isReccuringShow.value) {
+                                  if (_formKeySecond.currentState!.validate() &&
+                                      _formKey.currentState!.validate()) {
+                                    EditReccuringShow(selectedShow[0].id,
+                                        selectedShow[0].recurringShowId!);
+                                  }
+                                } else {
+                                  if (_formKey.currentState!.validate()) {
+                                    EditShow(selectedShow[0].id, null);
+                                  }
+                                }
+                              } else {
+                                if (_isReccuringShow.value) {
+                                  if (_formKeySecond.currentState!.validate() &&
+                                      _formKey.currentState!.validate()) {
+                                    InsertReccuringShow(
+                                        true, selectedShow[0].id);
+                                  }
+                                } else {
+                                  if (_formKey.currentState!.validate()) {
+                                    EditShow(selectedShow[0].id, null);
+                                  }
+                                }
+                              }
                               setState(() {
                                 selectedShow = [];
                               });
@@ -533,170 +673,368 @@ class _ShowsScreenState extends State<ShowsScreen> {
   }
 
   Widget AddShowForm({bool isEditing = false, Shows? showToEdit}) {
+    if (showToEdit?.recurringShowId != null) {
+      _isReccuringShow.value = true;
+    }
     if (showToEdit != null) {
-      _priceController.text = showToEdit.price.toString();
-      _dateController.text =
-          DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(showToEdit.date);
-      _timeController.text =
-          DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(showToEdit.startTime);
       selectedCinemaId = showToEdit.cinemaId;
       selectedMovieId = showToEdit.movieId;
-      selectedFormat = showToEdit.format;
+      selectedShowTypeId = showToEdit.showTypeId;
+      _priceController.text = showToEdit.price.toString();
+      _startDateTimeController.text =
+          DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(showToEdit.startsAt);
+      _endDateTimeController.text =
+          DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(showToEdit.endsAt);
+      if (showToEdit.recurringShowId != null) {
+        isReccuringShow = true;
+        selectWeekDayId = showToEdit.reccuringShow!.weekDayId;
+        _reccuringStartDate.text = DateFormat('yyyy-MM-dd')
+            .format(showToEdit.reccuringShow!.startingDate);
+        _reccuringEndDate.text = DateFormat('yyyy-MM-dd')
+            .format(showToEdit.reccuringShow!.endingDate);
+      } else {
+        isReccuringShow = false;
+        selectWeekDayId = null;
+        _reccuringStartDate.text = '';
+        _reccuringEndDate.text = '';
+      }
     } else {
       _priceController.text = '';
-      _dateController.text = '';
-      _timeController.text = '';
+      _startDateTimeController.text = '';
+      _endDateTimeController.text = '';
       selectedCinemaId = null;
       selectedMovieId = null;
-      selectedFormat = null;
+      isReccuringShow = false;
+      selectedShowTypeId = null;
+      selectWeekDayId = null;
+      _reccuringStartDate.text = '';
+      _reccuringEndDate.text = '';
     }
 
     return SizedBox(
-      height: 450,
+      height: 515,
       width: 700,
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            DropdownButtonFormField<int>(
-              value: selectedCinemaId,
-              onChanged: (int? newValue) {
-                setState(() {
-                  selectedCinemaId = newValue;
-                });
-              },
-              items: cinemaList.map((Cinema cinema) {
-                return DropdownMenuItem<int>(
-                  value: cinema.id,
-                  child: Text(cinema.name),
-                );
-              }).toList(),
-              decoration: const InputDecoration(labelText: 'Kino'),
-              validator: (value) {
-                if (value == null) {
-                  return 'Odaberite kino!';
-                }
-                return null;
-              },
-            ),
-            DropdownButtonFormField<int>(
-              value: selectedMovieId,
-              onChanged: (int? newValue) {
-                setState(() {
-                  selectedMovieId = newValue;
-                });
-              },
-              items: movies.map((Movie movie) {
-                return DropdownMenuItem<int>(
-                  value: movie.id,
-                  child: Text(movie.title),
-                );
-              }).toList(),
-              decoration: const InputDecoration(labelText: 'Film'),
-              validator: (value) {
-                if (value == null) {
-                  return 'Odaberite film!';
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _dateController,
-              decoration: const InputDecoration(
-                labelText: 'Datum',
-                hintText: 'Odaberite datum',
+      child: Row(children: [
+        Form(
+          key: _formKey,
+          child: Expanded(
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    DropdownButtonFormField<int>(
+                      value: selectedCinemaId,
+                      onChanged: (int? newValue) {
+                        setState(() {
+                          selectedCinemaId = newValue;
+                        });
+                      },
+                      items: cinemaList.map((Cinema cinema) {
+                        return DropdownMenuItem<int>(
+                          value: cinema.id,
+                          child: Text(cinema.name),
+                        );
+                      }).toList(),
+                      decoration: const InputDecoration(labelText: 'Kino'),
+                      validator: (value) {
+                        if (value == null) {
+                          return 'Odaberite kino!';
+                        }
+                        return null;
+                      },
+                    ),
+                    DropdownButtonFormField<int>(
+                      value: selectedMovieId,
+                      onChanged: (int? newValue) {
+                        setState(() {
+                          selectedMovieId = newValue;
+                        });
+                      },
+                      items: movies.map((Movie movie) {
+                        return DropdownMenuItem<int>(
+                          value: movie.id,
+                          child: Text(movie.title),
+                        );
+                      }).toList(),
+                      decoration: const InputDecoration(labelText: 'Film'),
+                      validator: (value) {
+                        if (value == null) {
+                          return 'Odaberite film!';
+                        }
+                        return null;
+                      },
+                    ),
+                    TextFormField(
+                      controller: _startDateTimeController,
+                      decoration: const InputDecoration(
+                        labelText: 'Početni datum i vrijeme',
+                        hintText: 'Odaberite početak',
+                      ),
+                      onTap: () {
+                        showDatePicker(
+                          context: context,
+                          initialDate: selectedDateStart,
+                          firstDate: DateTime(1950),
+                          lastDate: DateTime(2101),
+                        ).then((date) {
+                          if (date != null) {
+                            showTimePicker(
+                              context: context,
+                              initialTime:
+                                  TimeOfDay.fromDateTime(selectedDateStart),
+                            ).then((time) {
+                              if (time != null) {
+                                setState(() {
+                                  selectedDateStart = DateTime(
+                                    date.year,
+                                    date.month,
+                                    date.day,
+                                    time.hour,
+                                    time.minute,
+                                  );
+                                  _startDateTimeController.text =
+                                      DateFormat('yyyy-MM-dd HH:mm')
+                                          .format(selectedDateStart);
+                                });
+                              }
+                            });
+                          }
+                        });
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Unesite datum i vrijeme početka!';
+                        }
+                        return null;
+                      },
+                    ),
+                    TextFormField(
+                      controller: _endDateTimeController,
+                      decoration: const InputDecoration(
+                        labelText: 'Završni datum i vrijeme',
+                        hintText: 'Odaberite završetak',
+                      ),
+                      onTap: () {
+                        showDatePicker(
+                          context: context,
+                          initialDate: selecteDateEnd,
+                          firstDate: DateTime(1950),
+                          lastDate: DateTime(2101),
+                        ).then((date) {
+                          if (date != null) {
+                            showTimePicker(
+                              context: context,
+                              initialTime:
+                                  TimeOfDay.fromDateTime(selecteDateEnd),
+                            ).then((time) {
+                              if (time != null) {
+                                setState(() {
+                                  selecteDateEnd = DateTime(
+                                    date.year,
+                                    date.month,
+                                    date.day,
+                                    time.hour,
+                                    time.minute,
+                                  );
+                                  _endDateTimeController.text =
+                                      DateFormat('yyyy-MM-dd HH:mm')
+                                          .format(selecteDateEnd);
+                                });
+                              }
+                            });
+                          }
+                        });
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Unesite datum i vrijeme završetka!';
+                        }
+                        return null;
+                      },
+                    ),
+                    DropdownButtonFormField<int>(
+                      value: selectedShowTypeId,
+                      onChanged: (int? newValue) {
+                        setState(() {
+                          selectedShowTypeId = newValue;
+                        });
+                      },
+                      items: showtypes.map((ShowType showType) {
+                        return DropdownMenuItem<int>(
+                          value: showType.id,
+                          child: Text(showType.name),
+                        );
+                      }).toList(),
+                      decoration: const InputDecoration(labelText: 'Format'),
+                      validator: (value) {
+                        if (value == null) {
+                          return 'Odaberite format!';
+                        }
+                        return null;
+                      },
+                    ),
+                    TextFormField(
+                      controller: _priceController,
+                      decoration: const InputDecoration(labelText: 'Cijena'),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Unesite cijenu!';
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
+                ),
               ),
-              onTap: () {
-                showDatePicker(
-                  context: context,
-                  initialDate: selectedDate,
-                  firstDate: DateTime(1950),
-                  lastDate: DateTime(2101),
-                ).then((date) {
-                  if (date != null) {
-                    setState(() {
-                      selectedDate = date;
-                      _dateController.text =
-                          DateFormat('yyyy-MM-dd').format(date);
-                    });
-                  }
-                });
-              },
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Unesite datum!';
-                }
-                return null;
-              },
             ),
-            TextFormField(
-              controller: _timeController,
-              decoration: const InputDecoration(
-                labelText: 'Vrijeme',
-                hintText: 'Odaberite vrijeme',
-              ),
-              onTap: () {
-                showTimePicker(
-                  context: context,
-                  initialTime: TimeOfDay.fromDateTime(selecteTime),
-                ).then((time) {
-                  if (time != null) {
-                    setState(() {
-                      selecteTime = DateTime(
-                          selecteTime.year,
-                          selecteTime.month,
-                          selecteTime.day,
-                          time.hour,
-                          time.minute);
-                      _timeController.text =
-                          DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ')
-                              .format(selecteTime);
-                    });
-                  }
-                });
-              },
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Unesite vrijeme!';
-                }
-                return null;
-              },
-            ),
-            DropdownButtonFormField<String>(
-              value: selectedFormat,
-              onChanged: (String? newValue) {
-                setState(() {
-                  selectedFormat = newValue;
-                });
-              },
-              items: formats.map((String format) {
-                return DropdownMenuItem<String>(
-                  value: format,
-                  child: Text(format),
-                );
-              }).toList(),
-              decoration: const InputDecoration(labelText: 'Format'),
-              validator: (value) {
-                if (value == null) {
-                  return 'Odaberite format!';
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _priceController,
-              decoration: const InputDecoration(labelText: 'Cijena'),
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Unesite cijenu!';
-                }
-                return null;
-              },
-            ),
-          ],
+          ),
         ),
-      ),
+        const SizedBox(
+          width: 30,
+        ),
+        Form(
+          key: _formKeySecond,
+          child: Expanded(
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(35),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ValueListenableBuilder<bool>(
+                      valueListenable: _isReccuringShow,
+                      builder: (context, isActive, child) {
+                        if (_isReccuringShow.value) {
+                          isReccuringShow = true;
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Checkbox(
+                                    value: _isReccuringShow.value,
+                                    onChanged: (bool? value) {
+                                      setState(() {
+                                        _isReccuringShow.value =
+                                            !_isReccuringShow.value;
+                                      });
+                                    },
+                                  ),
+                                  const Text('Redovna projekcija'),
+                                ],
+                              ),
+                              DropdownButtonFormField<int>(
+                                value: selectWeekDayId,
+                                onChanged: (int? newValue) {
+                                  setState(() {
+                                    selectWeekDayId = newValue;
+                                  });
+                                },
+                                items: weekDays.map((WeekDay weekDay) {
+                                  return DropdownMenuItem<int>(
+                                    value: weekDay.id,
+                                    child: Text(weekDay.name),
+                                  );
+                                }).toList(),
+                                decoration: const InputDecoration(
+                                    labelText: 'Dan u sedmici'),
+                                validator: (value) {
+                                  if (value == null) {
+                                    return 'Odaberite dan!';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              TextFormField(
+                                controller: _reccuringStartDate,
+                                decoration: const InputDecoration(
+                                  labelText: 'Datum početka',
+                                  hintText: 'Odaberite datum početka',
+                                ),
+                                onTap: () {
+                                  showDatePicker(
+                                    context: context,
+                                    initialDate: selectedreccuringStartDate,
+                                    firstDate: DateTime(1950),
+                                    lastDate: DateTime(2101),
+                                  ).then((date) {
+                                    if (date != null) {
+                                      setState(() {
+                                        selectedreccuringStartDate = date;
+                                        _reccuringStartDate.text =
+                                            DateFormat('yyyy-MM-dd')
+                                                .format(date);
+                                      });
+                                    }
+                                  });
+                                },
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Unesite datum početka!';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              TextFormField(
+                                controller: _reccuringEndDate,
+                                decoration: const InputDecoration(
+                                  labelText: 'Datum kraja',
+                                  hintText: 'Odaberite datum kraja',
+                                ),
+                                onTap: () {
+                                  showDatePicker(
+                                    context: context,
+                                    initialDate: selectedreccuringEndDate,
+                                    firstDate: DateTime(1950),
+                                    lastDate: DateTime(2101),
+                                  ).then((date) {
+                                    if (date != null) {
+                                      setState(() {
+                                        selectedreccuringEndDate = date;
+                                        _reccuringEndDate.text =
+                                            DateFormat('yyyy-MM-dd')
+                                                .format(date);
+                                      });
+                                    }
+                                  });
+                                },
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Unesite datum kraja!';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ],
+                          );
+                        } else {
+                          isReccuringShow = false;
+                          return Row(
+                            children: [
+                              Checkbox(
+                                value: _isReccuringShow.value,
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    _isReccuringShow.value =
+                                        !_isReccuringShow.value;
+                                  });
+                                },
+                              ),
+                              const Text('Redovna projekcija'),
+                            ],
+                          );
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ]),
     );
   }
 
@@ -734,10 +1072,10 @@ class _ShowsScreenState extends State<ShowsScreen> {
                             });
                           })),
                   const DataColumn(
-                    label: Expanded(child: Text('Datum')),
+                    label: Expanded(child: Text('Početak')),
                   ),
                   const DataColumn(
-                    label: Text('Početak'),
+                    label: Expanded(child: Text('Kraj')),
                   ),
                   const DataColumn(
                     label: Text('Film'),
@@ -768,12 +1106,12 @@ class _ShowsScreenState extends State<ShowsScreen> {
                               },
                             ),
                           ),
-                          DataCell(Text(
-                              DateFormat('dd.MM.yyyy').format(showItem.date))),
-                          DataCell(Text(
-                              '${DateFormat('HH:mm').format(showItem.date)}h')),
+                          DataCell(Text(DateFormat('dd.MM.yyyy HH:mm')
+                              .format(showItem.startsAt))),
+                          DataCell(Text(DateFormat('dd.MM.yyyy HH:mm')
+                              .format(showItem.endsAt))),
                           DataCell(Text(showItem.movie.title.toString())),
-                          DataCell(Text(showItem.format.toString())),
+                          DataCell(Text(showItem.showType.name.toString())),
                           DataCell(Text('${showItem.price.toString()} KM')),
                         ]))
                     .toList()),

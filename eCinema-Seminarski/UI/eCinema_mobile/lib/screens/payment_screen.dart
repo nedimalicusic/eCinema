@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:ecinema_mobile/providers/login_provider.dart';
 import 'package:ecinema_mobile/providers/reservation_provider.dart';
 import 'package:ecinema_mobile/providers/user_provider.dart';
 import 'package:ecinema_mobile/screens/profile_screen.dart';
@@ -27,14 +28,14 @@ class PaymentScreen extends StatefulWidget {
 
 class _PaymentScreenState extends State<PaymentScreen> {
   late SeatsProvider seatsProvider;
-  late UserProvider userProvider;
+  late UserLoginProvider userProvider;
   late ReservationProvider reservationProvider;
 
   @override
   void initState() {
     super.initState();
     seatsProvider = context.read<SeatsProvider>();
-    userProvider = context.read<UserProvider>();
+    userProvider = context.read<UserLoginProvider>();
     reservationProvider = context.read<ReservationProvider>();
   }
 
@@ -114,7 +115,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Kupovina'),
+          title: const Text('Plaćanje'),
         ),
         body: Column(
           children: [
@@ -122,34 +123,37 @@ class _PaymentScreenState extends State<PaymentScreen> {
               child: Align(
                 alignment: Alignment.topCenter,
                 child: Container(
-                    padding: const EdgeInsets.all(16),
-                    margin: const EdgeInsets.symmetric(
-                        vertical: 100, horizontal: 12),
-                    decoration: const BoxDecoration(
-                        color: Colors.teal,
-                        borderRadius: BorderRadius.all(Radius.circular(6))),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          width: 100,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(6),
-                            child: FadeInImage(
-                              placeholder: MemoryImage(kTransparentImage),
-                              image: NetworkImage(
-                                '$apiUrl/images/${reservationProvider.shows!.movie.photoId}?original=true',
-                                headers: Authorization.createHeaders(),
-                              ),
-                              fadeInDuration: const Duration(milliseconds: 300),
-                              fit: BoxFit.fill,
+                  padding: const EdgeInsets.all(16),
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 100, horizontal: 12),
+                  decoration: const BoxDecoration(
+                    color: Colors.teal,
+                    borderRadius: BorderRadius.all(Radius.circular(6)),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: 100, // Consider making this flexible
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(6),
+                          child: FadeInImage(
+                            placeholder: MemoryImage(kTransparentImage),
+                            image: NetworkImage(
+                              '$apiUrl/images/${reservationProvider.shows!.movie.photoId}?original=true',
+                              headers: Authorization.createHeaders(),
                             ),
+                            fadeInDuration: const Duration(milliseconds: 300),
+                            fit: BoxFit.fill,
                           ),
                         ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Container(
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Expanded(
+                        // Use Expanded to allow flexible width for text content
+                        child: Container(
                           margin: const EdgeInsets.only(top: 8),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
@@ -158,7 +162,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               Text(
                                 reservationProvider.shows!.movie.title,
                                 style: const TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.w600),
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white),
                               ),
                               const SizedBox(
                                 height: 12,
@@ -181,7 +187,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               const SizedBox(
                                 height: 6,
                               ),
-                              Text("Nesto"),
+                              const Text("Nesto"),
                               const SizedBox(
                                 height: 6,
                               ),
@@ -194,8 +200,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             ],
                           ),
                         ),
-                      ],
-                    )),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
             Padding(
@@ -204,7 +212,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(
-                    'Ukupno',
+                    'Ukupno:',
                     style: TextStyle(
                       color: Colors.grey,
                       fontSize: 16,
@@ -215,7 +223,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     NumberFormat.currency(locale: 'bs')
                         .format(reservationProvider.selectedTicketTotalPrice),
                     style: const TextStyle(
-                        color: Colors.amber,
+                        color: Colors.teal,
                         fontWeight: FontWeight.bold,
                         fontSize: 18),
                   ),
@@ -228,8 +236,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               height: 50,
               child: ElevatedButton(
                   onPressed: () async => await showPaymentSheet(),
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFE51937)),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.teal),
                   child: const Text(
                     'Plaćanje',
                     style: TextStyle(fontSize: 18),
