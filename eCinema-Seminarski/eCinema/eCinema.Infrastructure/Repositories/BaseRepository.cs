@@ -66,5 +66,6 @@ namespace eCinema.Infrastructure
                 await DbSet.Where(e => e.Id.Equals(id)).ExecuteDeleteAsync(cancellationToken);
             }
         }
+      
     }
 }

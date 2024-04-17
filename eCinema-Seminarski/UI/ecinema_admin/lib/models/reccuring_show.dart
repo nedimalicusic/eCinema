@@ -1,5 +1,3 @@
-import 'package:ecinema_admin/models/week_day.dart';
-
 class ReccuringShow {
   late int id;
   late DateTime startingDate;

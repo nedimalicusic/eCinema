@@ -9,6 +9,12 @@ namespace eCinema.Infrastructure
         public MoviesRepository(DatabaseContext databaseContext) : base(databaseContext)
         {
         }
+        public override Task<Movie?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+        {
+            return DbSet.Include(s => s.MovieGenres).ThenInclude(s => s.Genre)
+                .Include(s => s.MovieActors).ThenInclude(s => s.Actors)
+                .Include(s => s.MovieCategories).ThenInclude(s => s.Category).Where(s=>s.Id==id).AsNoTracking().FirstOrDefaultAsync(cancellationToken);
+        }
 
         public override async Task<PagedList<Movie>> GetPagedAsync(MovieSearchObject searchObject, CancellationToken cancellationToken = default)
         {

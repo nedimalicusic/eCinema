@@ -16,8 +16,10 @@ class _LoginScreenState extends State<LoginScreen> {
   late LoginProvider loginUserProvider;
 
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _emailController =
+      TextEditingController(text: 'admin@eCinema.com');
+  final TextEditingController _passwordController =
+      TextEditingController(text: 'test');
   bool _obscurePassword = true;
 
   @override

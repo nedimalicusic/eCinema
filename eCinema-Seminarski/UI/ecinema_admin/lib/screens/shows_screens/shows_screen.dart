@@ -10,7 +10,6 @@ import 'package:ecinema_admin/providers/reccuring_show_provider.dart';
 import 'package:ecinema_admin/providers/show_provider.dart';
 import 'package:ecinema_admin/providers/show_type_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -103,9 +102,11 @@ class _ShowsScreenState extends State<ShowsScreen> {
   void loadCinema() async {
     try {
       var cinemasResponse = await _cinemaProvider.get(null);
-      setState(() {
-        cinemaList = cinemasResponse;
-      });
+      if (mounted) {
+        setState(() {
+          cinemaList = cinemasResponse;
+        });
+      }
     } on Exception catch (e) {
       showErrorDialog(context, e.toString().substring(11));
     }
@@ -115,10 +116,12 @@ class _ShowsScreenState extends State<ShowsScreen> {
     try {
       var showResponse =
           await _showProvider.getPaged(searchObject: searchObject);
-      setState(() {
-        shows = showResponse;
-        hasNextPage = shows.length;
-      });
+      if (mounted) {
+        setState(() {
+          shows = showResponse;
+          hasNextPage = shows.length;
+        });
+      }
     } on Exception catch (e) {
       showErrorDialog(context, e.toString().substring(11));
     }
@@ -127,9 +130,11 @@ class _ShowsScreenState extends State<ShowsScreen> {
   void loadWeekDays() async {
     try {
       var weekDayResponse = await _weekDayProvider.get(null);
-      setState(() {
-        weekDays = weekDayResponse;
-      });
+      if (mounted) {
+        setState(() {
+          weekDays = weekDayResponse;
+        });
+      }
     } on Exception catch (e) {
       showErrorDialog(context, e.toString().substring(11));
     }
@@ -138,9 +143,11 @@ class _ShowsScreenState extends State<ShowsScreen> {
   void loadShowTypes() async {
     try {
       var showtypesResponse = await _showTypeProvider.get(null);
-      setState(() {
-        showtypes = showtypesResponse;
-      });
+      if (mounted) {
+        setState(() {
+          showtypes = showtypesResponse;
+        });
+      }
     } on Exception catch (e) {
       showErrorDialog(context, e.toString().substring(11));
     }
@@ -149,9 +156,11 @@ class _ShowsScreenState extends State<ShowsScreen> {
   void loadMovies() async {
     try {
       var moviesResponse = await _movieProvider.get(null);
-      setState(() {
-        movies = moviesResponse;
-      });
+      if (mounted) {
+        setState(() {
+          movies = moviesResponse;
+        });
+      }
     } on Exception catch (e) {
       showErrorDialog(context, e.toString().substring(11));
     }

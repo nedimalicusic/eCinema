@@ -100,6 +100,13 @@ class _MoviesScreenState extends State<MoviesScreen> {
     });
   }
 
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _pickedFileNotifier.dispose();
+    super.dispose();
+  }
+
   Future<void> _pickImage() async {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -272,9 +279,10 @@ class _MoviesScreenState extends State<MoviesScreen> {
         'ReleaseYear': _relaseYearController.text,
         'Duration': _durationController.text,
         'LanguageId': selectedLanguageId,
-        'GenreIds': selectedGenresId,
-        'ActorIds': selectedActorsId,
-        'CategoryIds': selectedCategoriesId,
+        'ProductionId': selectedProductionId,
+        'GenreIds': selectedGenresId.toList(),
+        'ActorIds': selectedActorsId.toList(),
+        'CategoryIds': selectedCategoriesId.toList(),
       };
       if (_pickedFile != null) {
         movieData['photo'] = http.MultipartFile.fromBytes(
@@ -613,6 +621,9 @@ class _MoviesScreenState extends State<MoviesScreen> {
       selectedProductionId = movieToEdit.productionId;
       selectedLanguageId = movieToEdit.languageId;
       _pickedFile = null;
+      selectedActorsId = movieToEdit.actors.map((e) => e.id).toList();
+      selectedCategoriesId = movieToEdit.categories.map((e) => e.id).toList();
+      selectedGenresId = movieToEdit.genres.map((e) => e.id).toList();
     } else {
       _titleController.text = '';
       _descriptionController.text = '';

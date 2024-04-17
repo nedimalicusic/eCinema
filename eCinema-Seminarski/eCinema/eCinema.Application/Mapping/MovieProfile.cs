@@ -16,9 +16,15 @@ namespace eCinema.Application
 
             CreateMap<MovieUpsertDto, Movie>();
 
-            CreateMap<MovieUpsertDto, MovieUpsertModel>().ReverseMap();
-          
+            CreateMap<MovieUpsertDto, MovieUpsertModel>()
+              .ForMember(dest => dest.GenreIds, opt => opt.Ignore())
+              .ForMember(dest => dest.ActorIds, opt => opt.Ignore())
+              .ForMember(dest => dest.CategoryIds, opt => opt.Ignore());
 
+              CreateMap<MovieUpsertModel, MovieUpsertDto>()
+              .ForMember(dest => dest.GenreIds, opt => opt.Ignore())
+              .ForMember(dest => dest.ActorIds, opt => opt.Ignore())
+              .ForMember(dest => dest.CategoryIds, opt => opt.Ignore());
         }
     }
 }

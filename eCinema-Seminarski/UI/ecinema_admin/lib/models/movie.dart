@@ -12,7 +12,6 @@ class Movie {
   String description;
   String author;
   int releaseYear;
-  int numberOfViews;
   int photoId;
   Photo photo;
   int productionId;
@@ -31,7 +30,6 @@ class Movie {
     required this.description,
     required this.author,
     required this.releaseYear,
-    required this.numberOfViews,
     required this.photoId,
     required this.photo,
     required this.categories,
@@ -52,7 +50,6 @@ class Movie {
       description: json['description'],
       author: json['author'],
       releaseYear: json['releaseYear'],
-      numberOfViews: json['numberOfViews'],
       photoId: json['photoId'],
       categories: (json['categories'] as List<dynamic>)
           .map((categoryJson) => Category.fromJson(categoryJson))
@@ -79,7 +76,6 @@ class Movie {
     data['description'] = description;
     data['author'] = author;
     data['releaseYear'] = releaseYear;
-    data['numberOfViews'] = numberOfViews;
     data['photoId'] = photoId;
     data['categories'] = categories;
     data['genres'] = genres;

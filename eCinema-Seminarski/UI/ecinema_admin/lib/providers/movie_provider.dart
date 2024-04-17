@@ -67,10 +67,8 @@ class MovieProvider extends BaseProvider<Movie> {
         var multipartFile = movieData['photo'] as http.MultipartFile;
         request.files.add(multipartFile);
       }
-      print(request.fields);
       var streamedResponse = await request.send();
       var response = await http.Response.fromStream(streamedResponse);
-      print(response.body);
 
       if (response.statusCode == 200) {
         return "OK";
@@ -85,13 +83,15 @@ class MovieProvider extends BaseProvider<Movie> {
   Future<dynamic> updateMovie(Map<String, dynamic> updatedUserData) async {
     try {
       var uri = Uri.parse('$apiUrl/Movie/updateMovie');
-
       var request = http.MultipartRequest('PUT', uri);
 
-      var stringUpdatedUserData =
-          updatedUserData.map((key, value) => MapEntry(key, value.toString()));
-
-      request.fields.addAll(stringUpdatedUserData);
+      updatedUserData.forEach((key, value) {
+        if (value is List<int>) {
+          request.fields[key] = value.map((e) => e.toString()).join(',');
+        } else {
+          request.fields[key] = value.toString();
+        }
+      });
 
       if (updatedUserData.containsKey('photo')) {
         request.files.add(updatedUserData['photo']);

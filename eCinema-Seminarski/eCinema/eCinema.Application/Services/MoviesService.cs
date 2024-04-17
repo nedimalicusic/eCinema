@@ -9,6 +9,7 @@ using eCinema.Common.Service;
 using eCinema.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 
 namespace eCinema.Application
 {
@@ -42,6 +43,8 @@ namespace eCinema.Application
             var entity = Mapper.Map<Movie>(dto);
 
             await CurrentRepository.AddAsync(entity, cancellationToken);
+
+            await UnitOfWork.SaveChangesAsync(cancellationToken);
 
             InsertRelatedEntities(dto, entity.Id);
 
@@ -102,25 +105,29 @@ namespace eCinema.Application
             if (movie == null)
                 throw new UserNotFoundException();
 
+            await ValidateAsync(dto, cancellationToken);
+
             Mapper.Map(dto, movie);
 
+            var entity = Mapper.Map<Movie>(dto);
+            CurrentRepository.Update(entity);
 
-            CurrentRepository.Update(movie);
-            await UnitOfWork.SaveChangesAsync(cancellationToken);
 
-            if (!movie!.MovieCategories.Select(x => x.CategoryId).SequenceEqual(dto.CategoryIds))
+            if (!movie.MovieCategories.Select(x => x.CategoryId).SequenceEqual(dto.CategoryIds))
             {
                 foreach (var item in movie.MovieCategories)
                 {
+                    UnitOfWork.MovieCategoryRepository.DetachEntity(item);
                     UnitOfWork.MovieCategoryRepository.Remove(item);
                 }
-                
+
                 InsertRelatedCategories(dto, movie.Id);
             }
             if (!movie.MovieActors.Select(x => x.ActorId).SequenceEqual(dto.ActorIds))
             {
                 foreach (var item in movie.MovieActors)
                 {
+                    UnitOfWork.MovieActorsRepository.DetachEntity(item);
                     UnitOfWork.MovieActorsRepository.Remove(item);
                 }
 
@@ -130,12 +137,14 @@ namespace eCinema.Application
             {
                 foreach (var item in movie.MovieGenres)
                 {
+                    UnitOfWork.MovieGenresRepository.DetachEntity(item);
                     UnitOfWork.MovieGenresRepository.Remove(item);
                 }
 
                 InsertRelatedGenres(dto, movie.Id);
             }
 
+            await UnitOfWork.SaveChangesAsync(cancellationToken);
             return Mapper.Map<MovieDto>(movie);
         }
     }
