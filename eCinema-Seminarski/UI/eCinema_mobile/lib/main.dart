@@ -1,5 +1,6 @@
 import 'package:ecinema_mobile/models/shows.dart';
 import 'package:ecinema_mobile/models/loginUser.dart';
+import 'package:ecinema_mobile/providers/category_provider.dart';
 import 'package:ecinema_mobile/providers/cinema_provider.dart';
 import 'package:ecinema_mobile/providers/genre_provider.dart';
 import 'package:ecinema_mobile/providers/login_provider.dart';
@@ -48,6 +49,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ReservationProvider()),
         ChangeNotifierProvider(create: (_) => PhotoProvider()),
         ChangeNotifierProvider(create: (_) => UserLoginProvider()),
+        ChangeNotifierProvider(create: (_) => CategoryProvider()),
       ],
       child: MaterialApp(
           theme: ThemeData(primarySwatch: Colors.teal),

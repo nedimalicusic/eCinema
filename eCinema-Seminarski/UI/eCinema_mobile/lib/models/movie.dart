@@ -1,3 +1,7 @@
+import 'package:ecinema_mobile/models/actors.dart';
+import 'package:ecinema_mobile/models/category.dart';
+import 'package:ecinema_mobile/models/genre.dart';
+import 'package:ecinema_mobile/models/language.dart';
 import 'package:ecinema_mobile/models/photo.dart';
 import 'package:ecinema_mobile/models/production.dart';
 
@@ -8,12 +12,15 @@ class Movie {
   String description;
   String author;
   int releaseYear;
-  int numberOfViews;
   int photoId;
   Photo photo;
   int productionId;
-  int languageId;
   Production production;
+  Language language;
+  int languageId;
+  List<Category> categories;
+  List<Genre> genres;
+  List<Actors> actors;
   late bool isSelected = false;
 
   Movie({
@@ -23,9 +30,12 @@ class Movie {
     required this.description,
     required this.author,
     required this.releaseYear,
-    required this.numberOfViews,
     required this.photoId,
     required this.photo,
+    required this.categories,
+    required this.genres,
+    required this.actors,
+    required this.language,
     required this.productionId,
     required this.languageId,
     required this.production,
@@ -40,11 +50,20 @@ class Movie {
       description: json['description'],
       author: json['author'],
       releaseYear: json['releaseYear'],
-      numberOfViews: json['numberOfViews'],
       photoId: json['photoId'],
+      categories: (json['categories'] as List<dynamic>)
+          .map((categoryJson) => Category.fromJson(categoryJson))
+          .toList(),
+      genres: (json['genres'] as List<dynamic>)
+          .map((genreJson) => Genre.fromJson(genreJson))
+          .toList(),
+      actors: (json['actors'] as List<dynamic>)
+          .map((actorJson) => Actors.fromJson(actorJson))
+          .toList(),
       productionId: json['productionId'],
       languageId: json['languageId'],
       production: Production.fromJson(json['production']),
+      language: Language.fromJson(json['language']),
     );
   }
 
@@ -57,11 +76,14 @@ class Movie {
     data['description'] = description;
     data['author'] = author;
     data['releaseYear'] = releaseYear;
-    data['numberOfViews'] = numberOfViews;
     data['photoId'] = photoId;
+    data['categories'] = categories;
+    data['genres'] = genres;
+    data['actors'] = actors;
     data['productionId'] = productionId;
     data['production'] = production;
     data['languageId'] = languageId;
+    data['language'] = language;
     return data;
   }
 }

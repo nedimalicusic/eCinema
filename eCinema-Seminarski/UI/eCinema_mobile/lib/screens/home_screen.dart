@@ -1,12 +1,14 @@
-import 'package:ecinema_mobile/models/cinema.dart';
-import 'package:ecinema_mobile/models/shows.dart';
-import 'package:ecinema_mobile/providers/cinema_provider.dart';
-import 'package:ecinema_mobile/providers/show_provider.dart';
+import 'package:ecinema_mobile/helpers/constants.dart';
+import 'package:ecinema_mobile/models/category.dart';
+import 'package:ecinema_mobile/models/movie.dart';
+import 'package:ecinema_mobile/providers/category_provider.dart';
+import 'package:ecinema_mobile/providers/login_provider.dart';
+import 'package:ecinema_mobile/providers/movie_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:simple_shadow/simple_shadow.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-import '../providers/photo_provider.dart';
 import '../utils/authorization.dart';
 import '../utils/error_dialog.dart';
 import 'movie_detail_screen.dart';
@@ -18,182 +20,245 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool loading = false;
-  late ShowProvider _showProvider;
-  late CinemaProvider _cinemaProvider;
-  List<Shows> showMostWatched = <Shows>[];
-  List<Shows> showLastAdd = <Shows>[];
-  late PhotoProvider _photoProvider;
+  late Future<List<Movie>> futureMovies;
+  late Future<List<Category>> futureCategories;
 
-  late Cinema cinema;
+  late CategoryProvider _categoryProvider;
+  late MovieProvider _movieProvider;
+  late UserLoginProvider _userLoginProvider;
+
+  Future<List<Movie>> fetchMovies() async {
+    try {
+      return await _movieProvider
+          .recommend(int.parse(_userLoginProvider.user!.Id));
+    } catch (e) {
+      showErrorDialog(context, e.toString().substring(11));
+
+      return <Movie>[];
+    }
+  }
+
+  Future<List<Category>> fetchByCategories() async {
+    try {
+      var params = <String, String>{
+        'includeMoviesWithData': 'true',
+        'isDisplayed': 'true'
+      };
+      return await _categoryProvider.get(params);
+    } on Exception catch (e) {
+      showErrorDialog(context, e.toString().substring(11));
+
+      return <Category>[];
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    _showProvider = context.read<ShowProvider>();
-    _cinemaProvider = context.read<CinemaProvider>();
-    _photoProvider = context.read<PhotoProvider>();
-    cinema = _cinemaProvider.getSelectCinema();
-    loadLastAddShows();
-    loadMostWatchedShows();
-  }
 
-  void loadLastAddShows() async {
-    loading = true;
-    try {
-      var data = await _showProvider.getLastAddShows(3, 1);
-      setState(() {
-        showLastAdd = data;
-      });
-      loading = false;
-    } on Exception catch (e) {
-      showErrorDialog(context, e.toString().substring(11));
-    }
-  }
+    _categoryProvider = context.read<CategoryProvider>();
+    _movieProvider = context.read<MovieProvider>();
+    _userLoginProvider = context.read<UserLoginProvider>();
 
-  void loadMostWatchedShows() async {
-    loading = true;
-    try {
-      var data = await _showProvider.getMostWatchedShows(3, 1);
-      setState(() {
-        showMostWatched = data;
-      });
-      loading = false;
-    } on Exception catch (e) {
-      showErrorDialog(context, e.toString().substring(11));
-    }
-  }
-
-  Future<String> loadPhoto(String guidId) async {
-    return await _photoProvider.getPhoto(guidId);
+    // futureMovies = fetchMovies();
+    futureCategories = fetchByCategories();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: Text(
-            cinema.name.toString(),
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+      appBar: AppBar(
+        title: const Text(
+          "eCinema",
+          style: TextStyle(fontSize: 24),
         ),
-        body: Column(
+        centerTitle: true,
+      ),
+      body: SingleChildScrollView(
+        child: Column(
           children: [
-            Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: TextFormField(
-                  keyboardType: TextInputType.name,
-                  decoration: InputDecoration(
-                    labelText: "Search",
-                    border: InputBorder.none,
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.teal),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.teal),
+            // Container(
+            //   height: 350,
+            //   padding: const EdgeInsets.fromLTRB(0, 30, 0, 30),
+            //   child: FutureBuilder(
+            //     future: futureMovies,
+            //     builder: (context, snapshot) {
+            //       if (snapshot.hasData) {
+            //         return GridView(
+            //           gridDelegate:
+            //               const SliverGridDelegateWithFixedCrossAxisCount(
+            //             crossAxisCount: 1,
+            //             childAspectRatio: 4 / 3,
+            //             mainAxisSpacing: 0,
+            //           ),
+            //           scrollDirection: Axis.horizontal,
+            //           children: _buildMovieList(snapshot.data!),
+            //         );
+            //       } else if (snapshot.hasError) {
+            //         return Text('${snapshot.error}');
+            //       }
+            //       return Center(
+            //         child: CircularProgressIndicator(
+            //           color: Colors.lightBlue[300],
+            //         ),
+            //       );
+            //     },
+            //   ),
+            // ),
+            FutureBuilder(
+              future: futureCategories,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return _buildCategories(snapshot.data!);
+                } else if (snapshot.hasError) {
+                  return Text('${snapshot.error}');
+                }
+                return SizedBox(
+                  height: 350,
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.lightBlue[300],
                     ),
                   ),
-                )),
-            const SizedBox(
-              height: 20,
-            ),
-            const Text(
-              "Najgledaniji filmovi",
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.teal,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 10),
-            _buildShowList(showMostWatched),
-            const Text(
-              "Posljednje dodani filmovi",
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.teal,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 10),
-            _buildShowList(showLastAdd)
+                );
+              },
+            )
           ],
-        ));
-  }
-
-  Widget _buildShowList(List<Shows> shows) {
-    return Expanded(
-      child: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          childAspectRatio: 0.7,
         ),
-        padding: const EdgeInsets.all(8),
-        itemCount: shows.length,
-        itemBuilder: (context, index) {
-          return _buildShow(context, shows[index]);
-        },
       ),
     );
   }
 
-  Widget _buildShow(BuildContext context, Shows shows) {
-    return GestureDetector(
-      onTap: () => Navigator.pushNamed(
-        context,
-        MovieDetailScreen.routeName,
-        arguments: shows,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: FutureBuilder<String>(
-          future: loadPhoto(shows.movie.photo.guidId ?? ''),
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                  child: CircularProgressIndicator(
-                value: 16,
-              ));
-            } else if (snapshot.hasError) {
-              return const Text('Greška prilikom učitavanja slike');
-            } else {
-              final imageUrl = snapshot.data;
+  List<Widget> _buildMovieList(List<Movie> movies) {
+    return movies
+        .map((movie) => Column(
+              children: [
+                InkWell(
+                  onTap: () => Navigator.pushNamed(
+                    context,
+                    MovieDetailScreen.routeName,
+                    arguments: movie,
+                  ),
+                  child: movie.photoId != null
+                      ? SimpleShadow(
+                          sigma: 4,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(6),
+                            child: FadeInImage(
+                              image: NetworkImage(
+                                '$apiUrl/Photo/${movie.photoId}',
+                                headers: Authorization.createHeaders(),
+                              ),
+                              placeholder: MemoryImage(kTransparentImage),
+                              height: 210,
+                              fadeInDuration: const Duration(milliseconds: 300),
+                            ),
+                          ),
+                        )
+                      : const Placeholder(
+                          fallbackHeight: 210,
+                        ),
+                ),
+                const SizedBox(
+                  height: 12,
+                ),
+                Text(
+                  movie.title,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ))
+        .toList();
+  }
 
-              if (imageUrl != null && imageUrl.isNotEmpty) {
-                return ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: FadeInImage(
-                    image: NetworkImage(
-                      imageUrl,
-                      headers: Authorization.createHeaders(),
+  Widget _buildCategories(List<Category> categories) {
+    var categoriesToShow = [];
+    // categories.where((c) => c.movieCategories.isNotEmpty);
+
+    return Column(
+      children: categoriesToShow
+          .map(
+            (c) => Container(
+              height: 190,
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
+              decoration: const BoxDecoration(
+                border: Border(
+                  top: BorderSide(
+                    color: Colors.lightBlueAccent,
+                    width: 0.2,
+                  ),
+                ),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(c.name,
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium!
+                              .copyWith(fontSize: 18)),
+                      TextButton(
+                        onPressed: () => openMoviesScreen(c),
+                        child: const Text(
+                          'Pogledaj sve',
+                          style: TextStyle(color: Colors.lightBlueAccent),
+                        ),
+                      )
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 12, 12, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: c.movieCategories.take(4).map((m) {
+                        return InkWell(
+                            onTap: () => Navigator.pushNamed(
+                                  context,
+                                  MovieDetailScreen.routeName,
+                                  arguments: m,
+                                ),
+                            child: SizedBox(
+                              width: 70,
+                              height: 90,
+                              child: m.photoId != null
+                                  ? ClipRRect(
+                                      borderRadius: BorderRadius.circular(6),
+                                      child: FadeInImage(
+                                        image: NetworkImage(
+                                          '$apiUrl/Photo/${m.photoId}',
+                                          headers:
+                                              Authorization.createHeaders(),
+                                        ),
+                                        placeholder:
+                                            MemoryImage(kTransparentImage),
+                                        fit: BoxFit.fill,
+                                        fadeInDuration:
+                                            const Duration(milliseconds: 300),
+                                      ),
+                                    )
+                                  : const Placeholder(),
+                            ));
+                      }).toList(),
                     ),
-                    placeholder: MemoryImage(kTransparentImage),
-                    fadeInDuration: const Duration(milliseconds: 300),
-                    fit: BoxFit.fill,
-                    width: 80,
-                    height: 105,
-                  ),
-                );
-              } else {
-                return Container(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Image.asset(
-                    'assets/images/user2.png',
-                    width: 80,
-                    height: 105,
-                    fit: BoxFit.fill,
-                  ),
-                );
-              }
-            }
-          },
-        ),
-      ),
+                  )
+                ],
+              ),
+            ),
+          )
+          .toList(),
     );
+  }
+
+  openMoviesScreen(Category category) {
+    _movieProvider.setCategory(category);
+
+    Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false,
+        arguments: 1);
   }
 }

@@ -1,9 +1,12 @@
-import 'package:ecinema_mobile/models/shows.dart';
-import 'package:ecinema_mobile/providers/show_provider.dart';
+import 'package:ecinema_mobile/models/movie.dart';
+import 'package:ecinema_mobile/models/searchObject/movie_search.dart';
+import 'package:ecinema_mobile/providers/movie_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
+import '../models/category.dart';
 import '../models/genre.dart';
+import '../providers/category_provider.dart';
 import '../providers/genre_provider.dart';
 import '../providers/photo_provider.dart';
 import '../utils/authorization.dart';
@@ -19,72 +22,59 @@ class MoviesScreen extends StatefulWidget {
 
 class _MoviesScreenState extends State<MoviesScreen> {
   late GenreProvider _genreProvider;
-  late ShowProvider _showProvider;
+  late MovieProvider _movieProvider;
+  late CategoryProvider _categoryProvider;
   late PhotoProvider _photoProvider;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   List<Genre> genres = <Genre>[];
-  List<Shows> shows = <Shows>[];
-  int? selectedGenre;
+  List<Category> categories = <Category>[];
+  List<Movie> movies = <Movie>[];
+  Category? selectedCategory;
+  Genre? selectedGenre;
   bool loading = false;
 
   @override
   void initState() {
     super.initState();
-    _showProvider = context.read<ShowProvider>();
+    _movieProvider = context.read<MovieProvider>();
     _genreProvider = context.read<GenreProvider>();
+    _categoryProvider = context.read<CategoryProvider>();
     _photoProvider = context.read<PhotoProvider>();
     loadData();
   }
 
   void loadData() async {
-    loadGenres();
-    loadShows();
+    loadMovies(MovieSearchObject(name: null, genreId: null, categoryId: null));
+    await loadGenres();
+    await loadCategories();
+  }
+
+  void loadMovies(MovieSearchObject searchObject) async {
+    loading = true;
+    try {
+      var data = await _movieProvider.getPaged(searchObject: searchObject);
+      setState(() {
+        movies = data;
+      });
+
+      loading = false;
+    } on Exception catch (e) {
+      showErrorDialog(context, e.toString().substring(11));
+    }
   }
 
   Future loadGenres() async {
     try {
-      var data = await _genreProvider.get(null);
-      setState(() {
-        genres = data;
-      });
+      genres = await _genreProvider.get(null);
     } on Exception catch (e) {
       showErrorDialog(context, e.toString().substring(11));
     }
   }
 
-  void loadShows() async {
-    loading = true;
+  Future loadCategories() async {
     try {
-      var data = await _showProvider.getByGenreId(selectedGenre, 1);
-      setState(() {
-        shows = data;
-      });
-      loading = false;
-    } on Exception catch (e) {
-      showErrorDialog(context, e.toString().substring(11));
-    }
-  }
-
-  void loadMostWatchedShows() async {
-    loading = true;
-    try {
-      var data = await _showProvider.getMostWatchedShows(9999, 1);
-      setState(() {
-        shows = data;
-      });
-      loading = false;
-    } on Exception catch (e) {
-      showErrorDialog(context, e.toString().substring(11));
-    }
-  }
-
-  void loadLastAddShows() async {
-    loading = true;
-    try {
-      var data = await _showProvider.getLastAddShows(9999, 1);
-      setState(() {
-        shows = data;
-      });
-      loading = false;
+      categories = await _categoryProvider.get(null);
     } on Exception catch (e) {
       showErrorDialog(context, e.toString().substring(11));
     }
@@ -97,71 +87,288 @@ class _MoviesScreenState extends State<MoviesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Filmovi"),
-        ),
-        drawer: Drawer(
-          child: ListView(
-            children: [
-              ListTile(
-                title: const Text("Najgledaniji filmovi"),
-                onTap: () {
-                  loadMostWatchedShows();
-                },
-              ),
-              ListTile(
-                title: const Text("Posljednje dodani filmovi"),
-                onTap: () {
-                  loadLastAddShows();
-                },
-              ),
-              ...genres.map((e) => ListTile(
-                    title: Text(e.name),
-                    onTap: () {
-                      setState(() {
-                        selectedGenre = e.id;
-                      });
-                      loadShows();
-                    },
-                  )),
-            ],
-          ),
-        ),
-        body: Column(
-          children: [
-            const SizedBox(height: 5.0),
-            _buildShowList(shows),
-          ],
-        ));
+      appBar: AppBar(
+        title: const Text('Filmovi'),
+        actions: [
+          IconButton(
+              onPressed: () =>
+                  showSearch(context: context, delegate: MovieSearchDelegate()),
+              icon: const Icon(Icons.search))
+        ],
+      ),
+      body: Column(
+        children: [
+          _buildFilterList(),
+          _buildMovieList(),
+        ],
+      ),
+      drawer: _buildFilterDrawer(),
+      key: _scaffoldKey,
+    );
   }
 
-  Widget _buildShowList(List<Shows> shows) {
+  Widget _buildFilterList() {
+    if (selectedCategory == null && selectedGenre == null) {
+      return Container();
+    }
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(8, 20, 8, 0),
+      child: Row(
+        children: [
+          if (selectedCategory != null)
+            Container(
+              padding: const EdgeInsets.all(8),
+              margin: const EdgeInsets.only(right: 12),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Text(selectedCategory!.name),
+            ),
+          if (selectedGenre != null)
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Text(selectedGenre!.name),
+            )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilterDrawer() {
+    return Drawer(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+              color: Colors.teal,
+              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
+              margin: const EdgeInsets.only(bottom: 20),
+              child: Row(
+                children: [
+                  Text(
+                    'Filtriraj rezultate',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium!
+                        .copyWith(color: Colors.white),
+                  ),
+                ],
+              )),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Kategorija',
+                    style: TextStyle(fontSize: 18, color: Colors.teal),
+                  ),
+                  _buildCategoryDropdown(),
+                  const Text(
+                    'Žanr',
+                    style: TextStyle(fontSize: 18, color: Colors.teal),
+                  ),
+                  _buildGenreDropdown(),
+                ],
+              ),
+            ),
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: TextButton(
+                    style: TextButton.styleFrom(
+                      minimumSize: const Size.fromHeight(50),
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.white,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        selectedCategory = null;
+                        selectedGenre = null;
+                      });
+                      loadMovies(MovieSearchObject(
+                          name: null, genreId: null, categoryId: null));
+                    },
+                    child: const Text(
+                      'Poništi',
+                      style: TextStyle(color: Colors.teal),
+                    )),
+              ),
+              Expanded(
+                child: TextButton(
+                    style: TextButton.styleFrom(
+                      minimumSize: const Size.fromHeight(50),
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.white,
+                    ),
+                    onPressed: () {
+                      _scaffoldKey.currentState!.closeDrawer();
+                    },
+                    child: const Text(
+                      'Zatvori',
+                      style: TextStyle(color: Colors.teal),
+                    )),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCategoryDropdown() {
+    return Container(
+        margin: const EdgeInsets.only(top: 6, bottom: 20),
+        child: categories.isNotEmpty
+            ? DropdownButton<Category>(
+                isExpanded: true,
+                value: selectedCategory,
+                icon: const Icon(
+                  Icons.arrow_drop_down,
+                  color: Colors.grey,
+                ),
+                elevation: 16,
+                hint: const Text(
+                  'Odaberi kategoriju...',
+                  style: TextStyle(color: Colors.grey),
+                ),
+                onChanged: (Category? value) {
+                  setState(() {
+                    selectedCategory = value;
+                  });
+                  loadMovies(MovieSearchObject(
+                      name: null,
+                      genreId: null,
+                      categoryId: selectedCategory!.id));
+                },
+                items: categories
+                    .map<DropdownMenuItem<Category>>(
+                        (c) => DropdownMenuItem<Category>(
+                              value: c,
+                              child: Text(
+                                c.name,
+                              ),
+                            ))
+                    .toList(),
+                selectedItemBuilder: (_) {
+                  return categories
+                      .map((c) => Container(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              c.name,
+                              style: const TextStyle(color: Colors.teal),
+                            ),
+                          ))
+                      .toList();
+                },
+              )
+            : Container());
+  }
+
+  Widget _buildGenreDropdown() {
+    return Container(
+        margin: const EdgeInsets.only(top: 6, bottom: 20),
+        child: genres.isNotEmpty
+            ? DropdownButton<Genre>(
+                isExpanded: true,
+                value: selectedGenre,
+                icon: const Icon(
+                  Icons.arrow_drop_down,
+                  color: Colors.grey,
+                ),
+                elevation: 16,
+                hint: const Text(
+                  'Odaberi žanr...',
+                  style: TextStyle(color: Colors.grey),
+                ),
+                onChanged: (Genre? value) {
+                  setState(() {
+                    selectedGenre = value;
+                  });
+                  loadMovies(MovieSearchObject(
+                      name: null,
+                      genreId: selectedGenre!.id,
+                      categoryId: null));
+                },
+                items: genres
+                    .map<DropdownMenuItem<Genre>>(
+                        (c) => DropdownMenuItem<Genre>(
+                              value: c,
+                              child: Text(
+                                c.name,
+                              ),
+                            ))
+                    .toList(),
+                selectedItemBuilder: (_) {
+                  return genres
+                      .map((c) => Container(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              c.name,
+                              style: const TextStyle(color: Colors.teal),
+                            ),
+                          ))
+                      .toList();
+                },
+              )
+            : Container());
+  }
+
+  Widget _buildMovieListView(List<Movie> movies) {
     return Expanded(
       child: GridView.builder(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
-          childAspectRatio: 0.7,
+          childAspectRatio: 0.8,
         ),
         padding: const EdgeInsets.all(4.0),
-        itemCount: shows.length,
+        itemCount: movies.length,
         itemBuilder: (context, index) {
-          return _buildShow(context, shows[index]);
+          return _buildMovie(context, movies[index]);
         },
       ),
     );
   }
 
-  Widget _buildShow(BuildContext context, Shows shows) {
+  Widget _buildMovieList() {
+    if (loading) {
+      return Column(
+        children: const [
+          SizedBox(
+            height: 130,
+          ),
+          Center(
+            child: CircularProgressIndicator(
+              color: Colors.teal,
+            ),
+          ),
+        ],
+      );
+    } else if (movies.isEmpty) {
+      return const Center(child: Text('Nema filmova.'));
+    }
+    return _buildMovieListView(movies);
+  }
+
+  Widget _buildMovie(BuildContext context, Movie movie) {
     return GestureDetector(
       onTap: () => Navigator.pushNamed(
         context,
         MovieDetailScreen.routeName,
-        arguments: shows,
+        arguments: movie,
       ),
       child: Padding(
         padding: const EdgeInsets.all(8),
         child: FutureBuilder<String>(
-          future: loadPhoto(shows.movie.photo.guidId ?? ''),
+          future: loadPhoto(movie.photo.guidId ?? ''),
           builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
@@ -185,7 +392,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
                     fadeInDuration: const Duration(milliseconds: 300),
                     fit: BoxFit.fill,
                     width: 80,
-                    height: 105,
+                    height: 80,
                   ),
                 );
               } else {
@@ -194,7 +401,150 @@ class _MoviesScreenState extends State<MoviesScreen> {
                   child: Image.asset(
                     'assets/images/user2.png',
                     width: 80,
-                    height: 105,
+                    height: 90,
+                    fit: BoxFit.fill,
+                  ),
+                );
+              }
+            }
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class MovieSearchDelegate extends SearchDelegate {
+  MovieSearchDelegate() : super(searchFieldLabel: 'Pretraži naslove...');
+
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    return Theme.of(context).copyWith(
+      inputDecorationTheme: const InputDecorationTheme(
+        hintStyle: TextStyle(color: Colors.grey, fontSize: 15),
+      ),
+    );
+  }
+
+  @override
+  List<Widget>? buildActions(BuildContext context) => [
+        IconButton(
+            onPressed: () {
+              if (query.isEmpty) {
+                close(context, null);
+              } else {
+                query = '';
+              }
+            },
+            icon: const Icon(Icons.clear))
+      ];
+
+  @override
+  Widget? buildLeading(BuildContext context) => IconButton(
+        onPressed: () => close(context, null),
+        icon: const Icon(Icons.arrow_back),
+      );
+
+  @override
+  Widget buildResults(BuildContext context) {
+    return getMovieResults(context);
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return getMovieResults(context);
+  }
+
+  Widget getMovieResults(BuildContext context) {
+    var movieProvider = Provider.of<MovieProvider>(context);
+    var search =
+        MovieSearchObject(name: query, categoryId: null, genreId: null);
+    Future<List<Movie>> moviesFuture =
+        movieProvider.getPaged(searchObject: search);
+
+    return FutureBuilder(
+      future: moviesFuture,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return _buildMovieListView(snapshot.data!);
+        } else if (snapshot.hasError) {
+          return Text('${snapshot.error}');
+        }
+        return const SizedBox(
+          height: 350,
+          child: Center(
+            child: CircularProgressIndicator(
+              color: Colors.teal,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildMovieListView(List<Movie> movies) {
+    return GridView.builder(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        childAspectRatio: 0.8,
+      ),
+      padding: const EdgeInsets.all(4.0),
+      itemCount: movies.length,
+      itemBuilder: (context, index) {
+        return _buildMovie(context, movies[index]);
+      },
+    );
+  }
+
+  Widget _buildMovie(BuildContext context, Movie movie) {
+    Future<String> loadPhoto(String guidId) async {
+      var photoProvider = Provider.of<PhotoProvider>(context);
+      return await photoProvider.getPhoto(guidId);
+    }
+
+    return GestureDetector(
+      onTap: () => Navigator.pushNamed(
+        context,
+        MovieDetailScreen.routeName,
+        arguments: movie,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: FutureBuilder<String>(
+          future: loadPhoto(movie.photo.guidId ?? ''),
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                  child: CircularProgressIndicator(
+                value: 16,
+              ));
+            } else if (snapshot.hasError) {
+              return const Text('Greška prilikom učitavanja slike');
+            } else {
+              final imageUrl = snapshot.data;
+
+              if (imageUrl != null && imageUrl.isNotEmpty) {
+                return ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: FadeInImage(
+                    image: NetworkImage(
+                      imageUrl,
+                      headers: Authorization.createHeaders(),
+                    ),
+                    placeholder: MemoryImage(kTransparentImage),
+                    fadeInDuration: const Duration(milliseconds: 300),
+                    fit: BoxFit.fill,
+                    width: 80,
+                    height: 80,
+                  ),
+                );
+              } else {
+                return Container(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Image.asset(
+                    'assets/images/user2.png',
+                    width: 80,
+                    height: 90,
                     fit: BoxFit.fill,
                   ),
                 );

@@ -153,7 +153,8 @@ class _TicketsScreenState extends State<TicketsScreen> {
                     ),
                     const SizedBox(height: 15),
                     Text(
-                      DateFormat('dd.MM.yyyy').format(reservation.show.date),
+                      DateFormat('dd.MM.yyyy')
+                          .format(reservation.show.startsAt),
                       style: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
@@ -161,7 +162,7 @@ class _TicketsScreenState extends State<TicketsScreen> {
                     ),
                     const SizedBox(height: 15),
                     Text(
-                      DateFormat.Hm().format(reservation.show.startTime),
+                      DateFormat.Hm().format(reservation.show.endsAt),
                       style: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,

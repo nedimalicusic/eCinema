@@ -24,9 +24,9 @@ namespace eCinema.Infrastructure
                 .Include(s=>s.MovieActors).ThenInclude(s => s.Actors)
                 .AsQueryable();
 
-            if (searchObject.name != null)
+            if (searchObject.Name != null)
             {
-                query = query.Where(s => searchObject.name == null || s.Title.ToLower().Contains(searchObject.name.ToLower()));
+                query = query.Where(s => searchObject.Name == null || s.Title.ToLower().Contains(searchObject.Name.ToLower()));
             }
             if (searchObject.GenreId != null)
             {

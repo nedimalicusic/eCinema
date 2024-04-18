@@ -1,51 +1,65 @@
+import 'package:ecinema_mobile/models/reccuring_show.dart';
+import 'package:ecinema_mobile/models/show_type.dart';
+
 import 'cinema.dart';
 import 'movie.dart';
 
 class Shows {
   late int id;
-  late DateTime date;
-  late DateTime startTime;
-  late String format;
+  late DateTime startsAt;
+  late DateTime endsAt;
+  late int price;
   late int cinemaId;
+  late Cinema cinema;
   late int movieId;
   late Movie movie;
-  late Cinema cinema;
-  late int price;
+  late int showTypeId;
+  late ShowType showType;
+  late int? recurringShowId;
+  late ReccuringShow? reccuringShow;
   late bool isSelected = false;
 
   Shows(
       {required this.id,
-      required this.date,
-      required this.startTime,
-      required this.format,
+      required this.startsAt,
+      required this.endsAt,
+      required this.price,
       required this.cinemaId,
+      required this.cinema,
       required this.movieId,
       required this.movie,
-      required this.price,
-      required this.cinema,
+      required this.showTypeId,
+      required this.showType,
+      this.recurringShowId,
+      this.reccuringShow,
       required this.isSelected});
 
   Shows.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    date = DateTime.parse(json['date']);
-    startTime = DateTime.parse(json['startTime']);
-    format = json['format'];
-    cinemaId = json['cinemaId'];
-    movieId = json['movieId'];
+    startsAt = DateTime.parse(json['startsAt']);
+    endsAt = DateTime.parse(json['endsAt']);
     price = json['price'];
-    movie = Movie.fromJson(json['movie']);
+    cinemaId = json['cinemaId'];
     cinema = Cinema.fromJson(json['cinema']);
+    movieId = json['movieId'];
+    movie = Movie.fromJson(json['movie']);
+    recurringShowId = json['recurringShowId'];
+    reccuringShow = json['reccuringShow'] == null
+        ? null
+        : ReccuringShow.fromJson(json['reccuringShow']);
+    showTypeId = json['showTypeId'];
+    showType = ShowType.fromJson(json['showType']);
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
-    data['date'] = date;
-    data['startTime'] = startTime;
-    data['format'] = format;
+    data['startsAt'] = startsAt;
+    data['endsAt'] = endsAt;
+    data['price'] = price;
     data['cinemaId'] = cinemaId;
     data['movieId'] = movieId;
-    data['price'] = price;
+    data['recurringShowId'] = recurringShowId;
     return data;
   }
 }

@@ -221,7 +221,7 @@ class _SeatsScreenState extends State<SeatsScreen> {
             ),
             child: Center(
               child: Text(
-                DateFormat('MMMM d').format(s.date),
+                DateFormat('MMMM d').format(s.startsAt),
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 13,
@@ -248,7 +248,7 @@ class _SeatsScreenState extends State<SeatsScreen> {
             ),
             child: Center(
               child: Text(
-                DateFormat.Hm().format(s.startTime),
+                DateFormat.Hm().format(s.startsAt),
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 15,

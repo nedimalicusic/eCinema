@@ -6,7 +6,7 @@ namespace eCinema.Infrastructure
     {
         public int? GenreId { get; set; }
         public int? CategoryId { get; set; }
-        public string? name { get; set; }
+        public string? Name { get; set; }
 
     }
 }
