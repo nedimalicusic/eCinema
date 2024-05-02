@@ -10,5 +10,7 @@ namespace eCinema.Application.Interfaces
         Task<List<int>> GetCountByMonthAsync(BarChartSearchObject searchObject, CancellationToken cancellationToken = default);
 
         Task<IEnumerable<ReservationDto>> GetByShowId(int showId, CancellationToken cancellationToken);
+
+        Task<IEnumerable<ReservationDto>> InsertAsync(IEnumerable<ReservationUpsertDto> reservations, CancellationToken cancellationToken);
     }
 }

@@ -7,9 +7,8 @@ using eCinema.Infrastructure;
 using eCinema.Infrastructure.Interfaces;
 using eCinema.Common.Service;
 using eCinema.Core.Entities;
-using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
+using eCinema.Core.Dtos.Category;
+using eCinema.Infrastructure.Interfaces.SearchObjects;
 
 namespace eCinema.Application
 {
@@ -22,19 +21,24 @@ namespace eCinema.Application
             _cryptoService = cryptoService;
         }
 
-        public async Task<IEnumerable<MovieDto>> GetLastAddMovies(int size, CancellationToken cancellationToken)
+        public async Task<List<CategoryMoviesDto>> GetCategoryAndMovies(CancellationToken cancellationToken)
         {
-            var movies=await CurrentRepository.GetLastAddMovies(size,cancellationToken);
+            var list = new List<CategoryMoviesDto>();
+            var search = new CategorySearchObject() { IsDisplayed = true };
+            var categories = await UnitOfWork.CategoryRepository.GetPagedAsync(search);
 
-            return Mapper.Map<IEnumerable<MovieDto>>(movies);
+            foreach (var category in categories.Items)
+            {
+                var movies = await UnitOfWork.MoviesRepository.GetMoviesByCategoryId(category.Id, cancellationToken);
+                var mapperMovies = await Task.Run(() => Mapper.Map<IEnumerable<MovieDto>>(movies));
+                var mapperCategory = Mapper.Map<CategoryDto>(category);
+
+                var item = new CategoryMoviesDto() { Category = mapperCategory, Movies = mapperMovies };
+                list.Add(item);
+            }
+            return list;
         }
 
-        public async Task<IEnumerable<MovieDto>> GetMostWatchedMovies(int size, CancellationToken cancellationToken)
-        {
-            var movies = await CurrentRepository.GetMostWatchedMovies(size,cancellationToken);
-
-            return Mapper.Map<IEnumerable<MovieDto>>(movies);
-        }
 
         public override async Task<MovieDto> AddAsync(MovieUpsertDto dto, CancellationToken cancellationToken = default)
         {

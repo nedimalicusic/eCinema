@@ -1,6 +1,5 @@
 import 'package:ecinema_mobile/models/register.dart';
 import 'package:ecinema_mobile/providers/login_provider.dart';
-import 'package:ecinema_mobile/providers/user_provider.dart';
 import 'package:ecinema_mobile/screens/login_screen.dart';
 import 'package:ecinema_mobile/utils/error_dialog.dart';
 import 'package:flutter/material.dart';

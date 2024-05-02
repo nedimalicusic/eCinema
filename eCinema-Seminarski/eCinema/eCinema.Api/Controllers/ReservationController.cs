@@ -1,4 +1,5 @@
-﻿using eCinema.Application.Interfaces;
+﻿using AutoMapper;
+using eCinema.Application.Interfaces;
 using eCinema.Core;
 using eCinema.Infrastructure.Interfaces;
 using eCinema.Infrastructure.Interfaces.SearchObjects;
@@ -55,6 +56,14 @@ namespace eCinema.Api.Controllers
                 Logger.LogError(e, "Error while trying to get reservations!");
                 return BadRequest();
             }
+        }
+
+        [HttpPost("PostAsync")]
+        public async Task<IActionResult> PostAsync(ReservationUpsertDto[] upsertDtos, CancellationToken cancellationToken = default)
+        {
+            var inserted = await Service.InsertAsync(upsertDtos, cancellationToken);
+
+            return Ok(inserted);
         }
 
     }

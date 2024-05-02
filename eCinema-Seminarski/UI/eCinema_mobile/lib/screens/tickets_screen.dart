@@ -1,11 +1,12 @@
 import 'package:ecinema_mobile/models/reservation.dart';
+import 'package:ecinema_mobile/models/searchObject/reservation_search.dart';
 import 'package:ecinema_mobile/providers/reservation_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-import '../providers/photo_provider.dart';
+import '../helpers/constants.dart';
 import '../utils/authorization.dart';
 import '../utils/error_dialog.dart';
 
@@ -18,20 +19,19 @@ class TicketsScreen extends StatefulWidget {
 
 class _TicketsScreenState extends State<TicketsScreen> {
   late ReservationProvider _reservationProvider;
-  late PhotoProvider _photoProvider;
   List<Reservation> reservations = <Reservation>[];
 
   @override
   void initState() {
     super.initState();
     _reservationProvider = context.read<ReservationProvider>();
-    _photoProvider = context.read<PhotoProvider>();
     loadReservations();
   }
 
   Future loadReservations() async {
     try {
-      var data = await _reservationProvider.getByUserId(1);
+      var search = ReservationObjectModel(userId: 1);
+      var data = await _reservationProvider.getPaged(searchObject: search);
       setState(() {
         reservations = data;
       });
@@ -40,15 +40,11 @@ class _TicketsScreenState extends State<TicketsScreen> {
     }
   }
 
-  Future<String> loadPhoto(String guidId) async {
-    return await _photoProvider.getPhoto(guidId);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Tickets"),
+        title: const Text("Rezervacije"),
       ),
       body: Column(
         children: [
@@ -82,47 +78,23 @@ class _TicketsScreenState extends State<TicketsScreen> {
         children: [
           Expanded(
             flex: 1,
-            child: FutureBuilder<String>(
-              future: loadPhoto(reservation.show.movie.photo.guidId ?? ''),
-              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                      child: CircularProgressIndicator(
-                    value: 16,
-                  ));
-                } else if (snapshot.hasError) {
-                  return const Text('Greška prilikom učitavanja slike');
-                } else {
-                  final imageUrl = snapshot.data;
-
-                  if (imageUrl != null && imageUrl.isNotEmpty) {
-                    return ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
+            child: SizedBox(
+              width: 70,
+              height: 115,
+              child: reservation.show.movie.photo.guidId != null
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(12.0),
                       child: FadeInImage(
+                        placeholder: MemoryImage(kTransparentImage),
                         image: NetworkImage(
-                          imageUrl,
+                          '$apiUrl/Photo/GetById?id=${reservation.show.movie.photo.guidId}&original=true',
                           headers: Authorization.createHeaders(),
                         ),
-                        placeholder: MemoryImage(kTransparentImage),
                         fadeInDuration: const Duration(milliseconds: 300),
                         fit: BoxFit.fill,
-                        width: 70,
-                        height: 115,
                       ),
-                    );
-                  } else {
-                    return Container(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: Image.asset(
-                        'assets/images/user2.png',
-                        width: 70,
-                        height: 115,
-                        fit: BoxFit.fill,
-                      ),
-                    );
-                  }
-                }
-              },
+                    )
+                  : const Placeholder(),
             ),
           ),
           const SizedBox(width: 10),

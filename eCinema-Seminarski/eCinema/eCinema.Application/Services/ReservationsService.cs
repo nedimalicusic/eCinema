@@ -6,6 +6,8 @@ using eCinema.Core;
 using eCinema.Infrastructure;
 using eCinema.Infrastructure.Interfaces;
 using eCinema.Infrastructure.Interfaces.SearchObjects;
+using Microsoft.EntityFrameworkCore;
+using System.Net.Sockets;
 
 namespace eCinema.Application
 {
@@ -33,6 +35,27 @@ namespace eCinema.Application
         {
 
             return await CurrentRepository.GetCountByMonthAsync(searchObject, cancellationToken);
+        }
+
+        public async Task<IEnumerable<ReservationDto>> InsertAsync(IEnumerable<ReservationUpsertDto> reservations, CancellationToken cancellationToken)
+        {
+            var entities = new List<Reservation>();
+            foreach (var reservation in reservations)
+            {
+                entities.Add(new Reservation
+                {
+                    isActive = true,
+                    isConfirm = true,
+                    SeatId = reservation.SeatId,
+                    UserId = reservation.UserId,
+                    ShowId = reservation.ShowId,
+                });
+            }
+            await CurrentRepository.AddRangeAsync(entities);
+
+            await UnitOfWork.SaveChangesAsync(cancellationToken);
+
+            return Mapper.Map<IEnumerable<ReservationDto>>(entities);
         }
     }
 }

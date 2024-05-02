@@ -29,19 +29,19 @@ namespace eCinema.Infrastructure
             return await DbSet
                  .Where(u =>
                      (searchObject.name == null || u.Show.Movie.Title.Contains(searchObject.name)) &&
-                     (searchObject.cinemaId == null || u.Show.CinemaId == searchObject.cinemaId))
+                     (searchObject.cinemaId == null || u.Show.CinemaId == searchObject.cinemaId) &&
+                     (searchObject.showId == null || u.ShowId == searchObject.showId))
                  .Include(s => s.Seat)
-                 .Include(s => s.Show)
-                     .ThenInclude(s => s.Cinema)
-                         .ThenInclude(s => s.City)
-                             .ThenInclude(s => s.Country)
+                 .Include(s => s.Show.Cinema.City.Country)
+                 .Include(s => s.Show.ShowType)
+                 .Include(s => s.Show.ReccuringShow)
                  .Include(s => s.User)
-                 .Include(s => s.Show)
-                     .ThenInclude(s => s.Movie)
-                         .ThenInclude(s => s.Production)
-                 .Include(s => s.Show)
-                     .ThenInclude(s => s.Movie)
-                         .ThenInclude(s => s.Photo)
+                 .Include(s => s.Show.Movie.Production.Country)
+                 .Include(s => s.Show.Movie.Photo)
+                 .Include(s => s.Show.Movie.Language)
+                 .Include(s => s.Show.Movie.MovieGenres).ThenInclude(s => s.Genre)
+                 .Include(s => s.Show.Movie.MovieCategories).ThenInclude(s => s.Category)
+                 .Include(s => s.Show.Movie.MovieActors).ThenInclude(s => s.Actors)
                  .ToPagedListAsync(searchObject, cancellationToken);
 
         }
@@ -72,10 +72,12 @@ namespace eCinema.Infrastructure
 
         public async Task<IEnumerable<Reservation>> GetByShowId(int showId, CancellationToken cancellationToken)
         {
-            return await DbSet.Include(s=>s.Seat).Include(s=>s.Show).ThenInclude(s=>s.Movie).ThenInclude(s=>s.Production).ThenInclude(s=>s.Country)
-                .Include(s => s.Show).ThenInclude(s => s.Movie).ThenInclude(s => s.Photo)
-                   .Include(s => s.Show).ThenInclude(s => s.Movie).ThenInclude(s => s.Language)
-                   .Include(s => s.Show).ThenInclude(s=>s.Cinema).ThenInclude(s=>s.City).ThenInclude(s=>s.Country)
+            return await DbSet.Include(s=>s.Seat)
+                    .Include(s=>s.Show.Movie.Production.Country)
+                    .Include(s => s.Show.Movie.Photo)
+                    .Include(s => s.User.ProfilePhoto)
+                   .Include(s => s.Show.Movie.Language)
+                   .Include(s => s.Show.Cinema.City.Country)
                 .Where(s=>s.ShowId==showId).ToListAsync(cancellationToken);
         }
     }

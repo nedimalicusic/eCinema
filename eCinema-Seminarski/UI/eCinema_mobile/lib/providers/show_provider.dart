@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:ecinema_mobile/models/searchObject/show_search.dart';
 import 'package:ecinema_mobile/models/shows.dart';
 
 import '../helpers/constants.dart';
@@ -60,6 +61,40 @@ class ShowProvider extends BaseProvider<Shows> {
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
       return data.map((d) => fromJson(d)).cast<Shows>().toList();
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
+  Future<List<Shows>> getPaged({ShowSearchObject? searchObject}) async {
+    var uri = Uri.parse('$apiUrl/Show/GetPaged');
+    var headers = Authorization.createHeaders();
+    final Map<String, String> queryParameters = {};
+
+    if (searchObject != null) {
+      if (searchObject.date != null) {
+        queryParameters['date'] = searchObject.date.toString();
+      }
+      if (searchObject.cinemaId != null) {
+        queryParameters['cinemaId'] = searchObject.cinemaId.toString();
+      }
+      if (searchObject.movieId != null) {
+        queryParameters['movieId'] = searchObject.movieId.toString();
+      }
+      if (searchObject.pageNumber != null) {
+        queryParameters['pageNumber'] = searchObject.pageNumber.toString();
+      }
+      if (searchObject.pageSize != null) {
+        queryParameters['pageSize'] = searchObject.pageSize.toString();
+      }
+    }
+
+    uri = uri.replace(queryParameters: queryParameters);
+    final response = await http.get(uri, headers: headers);
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      var items = data['items'];
+      return items.map((d) => fromJson(d)).cast<Shows>().toList();
     } else {
       throw Exception('Failed to load data');
     }

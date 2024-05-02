@@ -3,23 +3,24 @@
 import 'package:ecinema_mobile/models/cinema.dart';
 import 'package:ecinema_mobile/models/reservation.dart';
 import 'package:ecinema_mobile/models/shows.dart';
-import 'package:ecinema_mobile/providers/cinema_provider.dart';
+import 'package:ecinema_mobile/providers/login_provider.dart';
 import 'package:ecinema_mobile/providers/reservation_provider.dart';
-import 'package:ecinema_mobile/providers/show_provider.dart';
 import 'package:ecinema_mobile/screens/payment_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:transparent_image/transparent_image.dart';
+import '../helpers/constants.dart';
+import '../models/searchObject/reservation_search.dart';
 import '../models/seats.dart';
 import '../providers/seats_provider.dart';
-import '../providers/user_provider.dart';
-import '../utils/error_dialog.dart';
-import 'package:intl/intl.dart';
+import '../utils/authorization.dart';
 
 class SeatsScreen extends StatefulWidget {
+  final Shows shows;
   const SeatsScreen({super.key, required this.shows});
 
   static const String routeName = '/seats';
-  final Shows shows;
 
   @override
   State<SeatsScreen> createState() => _SeatsScreenState();
@@ -29,27 +30,30 @@ class _SeatsScreenState extends State<SeatsScreen> {
   var seats = <Seats>[];
   var takenSeatIds = <int>[];
   var selectedSeats = <Seats>[];
-  var shows = <Shows>[];
   var reservations = <Reservation>[];
   late Cinema cinema;
 
   late SeatsProvider seatProvider;
-  late UserProvider userProvider;
-  late CinemaProvider cinemaProvider;
-  late ShowProvider showProvider;
+  late UserLoginProvider userProvider;
   late ReservationProvider reservationProvider;
 
   @override
   void initState() {
     super.initState();
     seatProvider = context.read<SeatsProvider>();
-    userProvider = context.read<UserProvider>();
-    showProvider = context.read<ShowProvider>();
-    cinemaProvider = context.read<CinemaProvider>();
+    userProvider = context.read<UserLoginProvider>();
     reservationProvider = context.read<ReservationProvider>();
-    loadReservation();
+
+    takenSeats();
+  }
+
+  void takenSeats() async {
+    var search = ReservationObjectModel(showId: widget.shows.id);
+    reservations = await reservationProvider.getPaged(searchObject: search);
+    setState(() {
+      takenSeatIds = reservations.map((r) => r.seatId).toList();
+    });
     load();
-    loadShows();
   }
 
   updateTicketProvider() {
@@ -57,119 +61,70 @@ class _SeatsScreenState extends State<SeatsScreen> {
     reservationProvider.setProjection(widget.shows);
   }
 
-  void loadReservation() async {
-    try {
-      var reservationsResponse =
-          await reservationProvider.getByShowId(widget.shows.id);
-      setState(() {
-        reservations = reservationsResponse;
-        takenSeatIds =
-            reservations.map((reservation) => reservation.seatId).toList();
-      });
-    } on Exception catch (e) {
-      showErrorDialog(context, e.toString().substring(11));
-    }
-  }
-
-  void loadShows() async {
-    try {
-      var showsData = await showProvider.getByMovieId(widget.shows.movie.id);
-      setState(() {
-        shows = showsData;
-      });
-    } on Exception catch (e) {
-      showErrorDialog(context, e.toString().substring(11));
-    }
-  }
-
   void load() async {
-    cinema = cinemaProvider.getSelectCinema();
-    var data = await seatProvider.getbyCinemaId(cinema.id);
+    var data = await seatProvider.getPaged();
     var seatsData = data.map<Seats>(
       (s) {
         var seat = Seats(id: s.id, column: s.column, row: s.row);
-        if (takenSeatIds.contains(s.id)) {
+        if (takenSeatIds.any((id) => id == s.id)) {
           seat.isReserved = true;
         }
         return seat;
       },
     ).toList();
-    setState(() {
-      seats = seatsData;
-    });
+    if (mounted) {
+      setState(() {
+        seats = seatsData;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Select Seats',
-          textAlign: TextAlign.center,
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            'Select Seats',
+            textAlign: TextAlign.center,
+          ),
         ),
-      ),
-      body: Column(
-        children: [
-          const Divider(
-            height: 2,
-            color: Colors.grey,
-          ),
-          const SizedBox(
-            height: 30,
-          ),
-          _buildCinemaScreen(),
-          Container(
-            constraints: const BoxConstraints(minHeight: 30),
-            margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-            child: seats.isNotEmpty
-                ? GridView.count(
-                    shrinkWrap: true,
-                    crossAxisCount: 10,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 20,
-                    children: _buildSeats(),
-                  )
-                : const Center(
-                    child: CircularProgressIndicator(
-                      color: Colors.lightBlueAccent,
+        body: Column(
+          children: [
+            _buildShowHeader(),
+            const Divider(
+              height: 2,
+              color: Colors.grey,
+            ),
+            const SizedBox(
+              height: 40,
+            ),
+            _buildCinemaScreen(),
+            Container(
+              constraints: const BoxConstraints(minHeight: 30),
+              margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+              child: seats.isNotEmpty
+                  ? GridView.count(
+                      shrinkWrap: true,
+                      crossAxisCount: 10,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 20,
+                      children: _buildSeats(),
+                    )
+                  : const Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.teal,
+                      ),
                     ),
-                  ),
-          ),
-          _buildInfoBoxes(),
-          const Center(
-            child: Text(
-              "Select date and time",
-              style: TextStyle(fontSize: 18, color: Colors.teal),
             ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: _buildDate(),
+            const Divider(
+              height: 2,
+              color: Colors.grey,
             ),
-          ),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: _buildTime(),
-            ),
-          ),
-          const Spacer(),
-          Stack(
-            children: [
-              _buildBottomBar(),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: _buildBottomBar(),
-              ),
-            ],
-          ),
-        ],
+            _buildInfoBoxes(),
+            _buildBottomBar(),
+          ],
+        ),
       ),
     );
   }
@@ -207,58 +162,53 @@ class _SeatsScreenState extends State<SeatsScreen> {
     }).toList();
   }
 
-  List<Widget> _buildDate() {
-    return shows.map((s) {
-      return Column(
+  Widget _buildShowHeader() {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            height: 50,
-            width: 80,
-            margin: const EdgeInsets.all(10.0),
-            decoration: BoxDecoration(
-              color: Colors.teal,
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            child: Center(
-              child: Text(
-                DateFormat('MMMM d').format(s.startsAt),
+            margin: const EdgeInsets.only(right: 20),
+            width: 90,
+            height: 120,
+            child: widget.shows.movie.photo.guidId != null
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(12.0),
+                    child: FadeInImage(
+                      placeholder: MemoryImage(kTransparentImage),
+                      image: NetworkImage(
+                        '$apiUrl/Photo/GetById?id=${widget.shows.movie.photo.guidId}&original=true',
+                        headers: Authorization.createHeaders(),
+                      ),
+                      fadeInDuration: const Duration(milliseconds: 300),
+                      fit: BoxFit.fill,
+                    ),
+                  )
+                : const Placeholder(),
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.shows.movie.title,
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              ),
+              Text(
+                '${DateFormat.Hm().format(widget.shows.startsAt)} - ${DateFormat.Hm().format(widget.shows.endsAt)}  |  ${DateFormat.MMMMEEEEd('bs').format(widget.shows.startsAt)}',
                 style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 13,
+                  color: Colors.grey,
                 ),
               ),
-            ),
+            ],
           ),
         ],
-      );
-    }).toList();
-  }
-
-  List<Widget> _buildTime() {
-    return shows.map((s) {
-      return Row(
-        children: [
-          Container(
-            height: 35,
-            width: 75,
-            margin: const EdgeInsets.all(10.0),
-            decoration: BoxDecoration(
-              color: Colors.teal,
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            child: Center(
-              child: Text(
-                DateFormat.Hm().format(s.startsAt),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 15,
-                ),
-              ),
-            ),
-          )
-        ],
-      );
-    }).toList();
+      ),
+    );
   }
 
   Widget _buildInfoBoxes() {
@@ -360,23 +310,29 @@ class _SeatsScreenState extends State<SeatsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
-                  'Sjedište: ${selectedSeats.join(', ')}'.toUpperCase(),
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.grey,
+                if (selectedSeats.isNotEmpty)
+                  Text(
+                    'Sjedište: ${selectedSeats.join(', ')}'.toUpperCase(),
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.grey,
+                    ),
                   ),
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
+                if (selectedSeats.isNotEmpty)
+                  const SizedBox(
+                    height: 8,
+                  ),
+                if (!selectedSeats.isNotEmpty)
+                  const SizedBox(
+                    height: 16,
+                  ),
                 Text(
-                  "${widget.shows.price}KM",
+                  "${widget.shows.price * (selectedSeats.isNotEmpty ? selectedSeats.length : 1)}KM",
                   style: const TextStyle(
                       color: Colors.teal,
                       fontWeight: FontWeight.bold,
-                      fontSize: 18),
+                      fontSize: 22),
                 ),
               ],
             ),
@@ -386,8 +342,29 @@ class _SeatsScreenState extends State<SeatsScreen> {
             height: 50,
             child: ElevatedButton(
               onPressed: () {
-                updateTicketProvider();
-                Navigator.pushNamed(context, PaymentScreen.routeName);
+                if (selectedSeats.isNotEmpty) {
+                  updateTicketProvider();
+                  Navigator.pushNamed(context, PaymentScreen.routeName);
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text("Upozorenje"),
+                        content: const Text(
+                            "Molimo odaberite minimalno jedno sjedalo prije plaćanja."),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text("OK"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
               },
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(Colors.teal),

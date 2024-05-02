@@ -9,6 +9,7 @@ import 'package:ecinema_mobile/screens/change_password.dart';
 import 'package:ecinema_mobile/screens/edit_profile.dart';
 import 'package:transparent_image/transparent_image.dart';
 
+import '../helpers/constants.dart';
 import '../providers/photo_provider.dart';
 import '../utils/authorization.dart';
 
@@ -104,146 +105,95 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget ProfilePicture() {
-    return Column(
-      children: [
-        FutureBuilder<String>(
-          future: loadPhoto(user?.GuidId ?? ''),
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
-            } else if (snapshot.hasError) {
-              return const Text('Greška prilikom učitavanja slike');
-            } else {
-              final imageUrl = snapshot.data;
-
-              if (imageUrl != null && imageUrl.isNotEmpty) {
-                return ClipRRect(
-                  borderRadius: BorderRadius.circular(100.0),
-                  child: FadeInImage(
-                    image: NetworkImage(
-                      imageUrl,
-                      headers: Authorization.createHeaders(),
-                    ),
-                    placeholder: MemoryImage(kTransparentImage),
-                    fadeInDuration: const Duration(milliseconds: 300),
-                    fit: BoxFit.fill,
-                    width: 110,
-                    height: 110,
-                  ),
-                );
-              } else {
-                return Container(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Image.asset(
-                    'assets/images/user2.png',
-                    width: 110,
-                    height: 110,
-                    fit: BoxFit.fill,
-                  ),
-                );
-              }
-            }
-          },
-        ),
-      ],
+    return SizedBox(
+      width: 110,
+      height: 110,
+      child: user!.GuidId != null
+          ? ClipRRect(
+              borderRadius: BorderRadius.circular(100.0),
+              child: FadeInImage(
+                placeholder: MemoryImage(kTransparentImage),
+                image: NetworkImage(
+                  '$apiUrl/Photo/GetById?id=${user!.GuidId}&original=true',
+                  headers: Authorization.createHeaders(),
+                ),
+                fadeInDuration: const Duration(milliseconds: 300),
+                fit: BoxFit.fill,
+              ),
+            )
+          : const Placeholder(),
     );
   }
 
   Widget ProfileInformation() {
     return Container(
       width: 400,
-      margin: const EdgeInsets.all(24),
-      child: Column(children: [
-        TextFormField(
-          initialValue: user!.FirstName,
-          decoration: InputDecoration(
-            labelText: "FirstName",
-            border:
-                OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
-            disabledBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: Colors.grey, width: 2.0),
-              borderRadius: BorderRadius.circular(10.0),
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildInfoItem("First Name", user!.FirstName),
+          _buildInfoItem("Last Name", user!.LastName),
+          _buildInfoItem("Email", user!.Email),
+          _buildInfoItem("Phone Number", user!.PhoneNumber.toString()),
+          const SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildButton("Edit profile", EditProfileScreen.routeName),
+              const SizedBox(width: 5),
+              _buildButton("Change password", ChangePasswordScreen.routeName),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoItem(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 100,
+            child: Text(
+              "$label:",
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
             ),
           ),
-          enabled: false,
-        ),
-        const SizedBox(height: 10),
-        TextFormField(
-          initialValue: user!.LastName,
-          decoration: InputDecoration(
-            labelText: "LastName",
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            disabledBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: Colors.grey, width: 2.0),
-              borderRadius: BorderRadius.circular(10.0),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(fontSize: 16),
+              textAlign: TextAlign.right,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
-          enabled: false,
-        ),
-        const SizedBox(height: 10),
-        TextFormField(
-          initialValue: user!.Email,
-          decoration: InputDecoration(
-            labelText: "Email",
-            border:
-                OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
-            disabledBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: Colors.grey, width: 2.0),
-              borderRadius: BorderRadius.circular(10.0),
-            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildButton(String text, String routeName) {
+    return Expanded(
+      child: ElevatedButton(
+        onPressed: () {
+          Navigator.pushNamed(context, routeName);
+        },
+        style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.all(8.0),
+          backgroundColor: Colors.teal,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
           ),
-          enabled: false,
         ),
-        const SizedBox(height: 10),
-        TextFormField(
-          initialValue: user!.PhoneNumber,
-          decoration: InputDecoration(
-            labelText: "PhoneNumber",
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            disabledBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: Colors.grey, width: 2.0),
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-          ),
-          enabled: false,
+        child: Text(
+          text,
+          style: const TextStyle(fontSize: 16),
         ),
-        const SizedBox(
-          height: 10,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Expanded(
-              child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(37),
-                  ),
-                  onPressed: () {
-                    Navigator.pushNamed(context, EditProfileScreen.routeName);
-                  },
-                  child: const Text("Edit profile")),
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            Expanded(
-              child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(37),
-                  ),
-                  onPressed: () {
-                    Navigator.pushNamed(
-                        context, ChangePasswordScreen.routeName);
-                  },
-                  child: const Text("Change password")),
-            ),
-          ],
-        ),
-      ]),
+      ),
     );
   }
 }

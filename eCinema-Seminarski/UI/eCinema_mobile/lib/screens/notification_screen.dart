@@ -44,7 +44,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Notification"),
+          title: const Text("Notifikacije"),
         ),
         body: Column(
           children: [Expanded(child: _buildNotificationsList())],

@@ -1,9 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.ecinema_mobile">
+    <uses-permission android:name="android.permission.INTERNET" android:enableOnBackInvokedCallback="true" android:usesCleartextTraffic="true"/>
    <application
         android:label="ecinema_mobile"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher" 
+        android:enableOnBackInvokedCallback="true"
+        >
         <activity
             android:name=".MainActivity"
             android:exported="true"

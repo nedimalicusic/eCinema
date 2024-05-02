@@ -19,5 +19,6 @@ namespace eCinema.Core
 
         public int MovieId { get; set; }
         public MovieDto Movie { get; set; } = null!;
+        public ICollection<ReservationDto> Reservations { get; set; } = null!;
     }
 }

@@ -4,11 +4,11 @@ import 'package:ecinema_mobile/providers/movie_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
+import '../helpers/constants.dart';
 import '../models/category.dart';
 import '../models/genre.dart';
 import '../providers/category_provider.dart';
 import '../providers/genre_provider.dart';
-import '../providers/photo_provider.dart';
 import '../utils/authorization.dart';
 import '../utils/error_dialog.dart';
 import 'movie_detail_screen.dart';
@@ -24,9 +24,8 @@ class _MoviesScreenState extends State<MoviesScreen> {
   late GenreProvider _genreProvider;
   late MovieProvider _movieProvider;
   late CategoryProvider _categoryProvider;
-  late PhotoProvider _photoProvider;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
+  bool _isMounted = false;
   List<Genre> genres = <Genre>[];
   List<Category> categories = <Category>[];
   List<Movie> movies = <Movie>[];
@@ -37,15 +36,21 @@ class _MoviesScreenState extends State<MoviesScreen> {
   @override
   void initState() {
     super.initState();
+    _isMounted = true;
     _movieProvider = context.read<MovieProvider>();
     _genreProvider = context.read<GenreProvider>();
     _categoryProvider = context.read<CategoryProvider>();
-    _photoProvider = context.read<PhotoProvider>();
+
+    // selectedCategory = _movieProvider.category;
+    // categories = _categoryProvider.categories;
     loadData();
   }
 
   void loadData() async {
-    loadMovies(MovieSearchObject(name: null, genreId: null, categoryId: null));
+    loadMovies(MovieSearchObject(
+        name: null,
+        genreId: selectedGenre?.id,
+        categoryId: selectedCategory?.id));
     await loadGenres();
     await loadCategories();
   }
@@ -54,10 +59,11 @@ class _MoviesScreenState extends State<MoviesScreen> {
     loading = true;
     try {
       var data = await _movieProvider.getPaged(searchObject: searchObject);
-      setState(() {
-        movies = data;
-      });
-
+      if (_isMounted) {
+        setState(() {
+          movies = data;
+        });
+      }
       loading = false;
     } on Exception catch (e) {
       showErrorDialog(context, e.toString().substring(11));
@@ -80,8 +86,11 @@ class _MoviesScreenState extends State<MoviesScreen> {
     }
   }
 
-  Future<String> loadPhoto(String guidId) async {
-    return await _photoProvider.getPhoto(guidId);
+  @override
+  void dispose() {
+    _isMounted = false;
+    _movieProvider.setCategory(null);
+    super.dispose();
   }
 
   @override
@@ -258,17 +267,6 @@ class _MoviesScreenState extends State<MoviesScreen> {
                               ),
                             ))
                     .toList(),
-                selectedItemBuilder: (_) {
-                  return categories
-                      .map((c) => Container(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              c.name,
-                              style: const TextStyle(color: Colors.teal),
-                            ),
-                          ))
-                      .toList();
-                },
               )
             : Container());
   }
@@ -367,47 +365,23 @@ class _MoviesScreenState extends State<MoviesScreen> {
       ),
       child: Padding(
         padding: const EdgeInsets.all(8),
-        child: FutureBuilder<String>(
-          future: loadPhoto(movie.photo.guidId ?? ''),
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                  child: CircularProgressIndicator(
-                value: 16,
-              ));
-            } else if (snapshot.hasError) {
-              return const Text('Greška prilikom učitavanja slike');
-            } else {
-              final imageUrl = snapshot.data;
-
-              if (imageUrl != null && imageUrl.isNotEmpty) {
-                return ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
+        child: SizedBox(
+          width: 80,
+          height: 90,
+          child: movie.photo.guidId != null
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(12.0),
                   child: FadeInImage(
+                    placeholder: MemoryImage(kTransparentImage),
                     image: NetworkImage(
-                      imageUrl,
+                      '$apiUrl/Photo/GetById?id=${movie.photo.guidId}&original=true',
                       headers: Authorization.createHeaders(),
                     ),
-                    placeholder: MemoryImage(kTransparentImage),
                     fadeInDuration: const Duration(milliseconds: 300),
                     fit: BoxFit.fill,
-                    width: 80,
-                    height: 80,
                   ),
-                );
-              } else {
-                return Container(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Image.asset(
-                    'assets/images/user2.png',
-                    width: 80,
-                    height: 90,
-                    fit: BoxFit.fill,
-                  ),
-                );
-              }
-            }
-          },
+                )
+              : const Placeholder(),
         ),
       ),
     );
@@ -421,8 +395,8 @@ class MovieSearchDelegate extends SearchDelegate {
   ThemeData appBarTheme(BuildContext context) {
     return Theme.of(context).copyWith(
       inputDecorationTheme: const InputDecorationTheme(
-        hintStyle: TextStyle(color: Colors.grey, fontSize: 15),
-      ),
+          hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
+          labelStyle: TextStyle(color: Colors.white, fontSize: 14)),
     );
   }
 
@@ -497,11 +471,6 @@ class MovieSearchDelegate extends SearchDelegate {
   }
 
   Widget _buildMovie(BuildContext context, Movie movie) {
-    Future<String> loadPhoto(String guidId) async {
-      var photoProvider = Provider.of<PhotoProvider>(context);
-      return await photoProvider.getPhoto(guidId);
-    }
-
     return GestureDetector(
       onTap: () => Navigator.pushNamed(
         context,
@@ -510,47 +479,23 @@ class MovieSearchDelegate extends SearchDelegate {
       ),
       child: Padding(
         padding: const EdgeInsets.all(8),
-        child: FutureBuilder<String>(
-          future: loadPhoto(movie.photo.guidId ?? ''),
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                  child: CircularProgressIndicator(
-                value: 16,
-              ));
-            } else if (snapshot.hasError) {
-              return const Text('Greška prilikom učitavanja slike');
-            } else {
-              final imageUrl = snapshot.data;
-
-              if (imageUrl != null && imageUrl.isNotEmpty) {
-                return ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
+        child: SizedBox(
+          width: 80,
+          height: 90,
+          child: movie.photo.guidId != null
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(12.0),
                   child: FadeInImage(
+                    placeholder: MemoryImage(kTransparentImage),
                     image: NetworkImage(
-                      imageUrl,
+                      '$apiUrl/Photo/GetById?id=${movie.photo.guidId}&original=true',
                       headers: Authorization.createHeaders(),
                     ),
-                    placeholder: MemoryImage(kTransparentImage),
                     fadeInDuration: const Duration(milliseconds: 300),
                     fit: BoxFit.fill,
-                    width: 80,
-                    height: 80,
                   ),
-                );
-              } else {
-                return Container(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Image.asset(
-                    'assets/images/user2.png',
-                    width: 80,
-                    height: 90,
-                    fit: BoxFit.fill,
-                  ),
-                );
-              }
-            }
-          },
+                )
+              : const Placeholder(),
         ),
       ),
     );

@@ -17,6 +17,7 @@ class Shows {
   late ShowType showType;
   late int? recurringShowId;
   late ReccuringShow? reccuringShow;
+
   late bool isSelected = false;
 
   Shows(

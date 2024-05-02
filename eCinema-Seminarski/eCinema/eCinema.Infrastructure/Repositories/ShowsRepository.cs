@@ -59,8 +59,10 @@ namespace eCinema.Infrastructure
         {
             return await DbSet
                 .Where(u =>
-                    (searchObject.name == null || u.Movie.Title.ToLower().Contains(searchObject.name.ToLower())) &&
-                    (searchObject.cinemaId == null || u.CinemaId == searchObject.cinemaId)
+                    (searchObject.Name == null || u.Movie.Title.ToLower().Contains(searchObject.Name.ToLower())) &&
+                    (searchObject.CinemaId == null || u.CinemaId == searchObject.CinemaId) &&
+                    (searchObject.MovieId == null || u.MovieId == searchObject.MovieId) &&
+                    (searchObject.Date == null || u.StartsAt.Date == searchObject.Date.Value.Date)
                 ).Include(s => s.Movie.Production.Country)
                  .Include(s=>s.Movie.Language)
                  .Include(s=>s.Movie.MovieGenres).ThenInclude(s=>s.Genre)

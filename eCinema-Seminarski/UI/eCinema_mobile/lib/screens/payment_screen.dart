@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:ecinema_mobile/providers/login_provider.dart';
 import 'package:ecinema_mobile/providers/reservation_provider.dart';
-import 'package:ecinema_mobile/providers/user_provider.dart';
 import 'package:ecinema_mobile/screens/profile_screen.dart';
 import 'package:ecinema_mobile/screens/reservation_success.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +17,7 @@ import '../utils/authorization.dart';
 import '../utils/error_dialog.dart';
 
 class PaymentScreen extends StatefulWidget {
-  static const String routeName = 'payment';
+  static const String routeName = '/payment';
 
   const PaymentScreen({super.key});
 
@@ -43,11 +42,21 @@ class _PaymentScreenState extends State<PaymentScreen> {
     var paymentIntentData = await createPaymentIntent(
         (reservationProvider.selectedTicketTotalPrice * 100).round().toString(),
         'BAM');
+
     await Stripe.instance
         .initPaymentSheet(
-            paymentSheetParameters: SetupPaymentSheetParameters(
-                paymentIntentClientSecret: paymentIntentData!['client_secret'],
-                merchantDisplayName: 'eCinema'))
+          paymentSheetParameters: SetupPaymentSheetParameters(
+            paymentIntentClientSecret: paymentIntentData!['client_secret'],
+            merchantDisplayName: 'eCinema',
+            style: ThemeMode.dark,
+            appearance: const PaymentSheetAppearance(
+              primaryButton: PaymentSheetPrimaryButtonAppearance(
+                  colors: PaymentSheetPrimaryButtonTheme(
+                      light: PaymentSheetPrimaryButtonThemeColors(
+                          background: Colors.teal))),
+            ),
+          ),
+        )
         .then((value) {})
         .onError((error, stackTrace) {
       showDialog(
@@ -60,7 +69,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
     try {
       await Stripe.instance.presentPaymentSheet();
       await reservate();
-    } catch (e) {}
+    } catch (e) {
+      //silent
+    }
   }
 
   createPaymentIntent(String amount, String currency) async {
@@ -80,7 +91,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
           });
       return jsonDecode(response.body);
     } catch (err) {
-      print('err charging user: ${err.toString()}');
+      throw Exception(err.toString());
     }
   }
 
@@ -94,16 +105,18 @@ class _PaymentScreenState extends State<PaymentScreen> {
       for (var seat in reservationProvider.selectedSeats) {
         reservations.add({
           'userId': userProvider.user!.Id,
-          'projectionId': reservationProvider.shows!.id,
+          'showId': reservationProvider.shows!.id,
           'seatId': seat.id
         });
       }
-      await reservationProvider.insert(reservations);
-
-      userProvider.refreshUser();
-      if (mounted) {
-        Navigator.pushNamedAndRemoveUntil(
-            context, ReservationSuccessScreen.routeName, (route) => false);
+      var response = await reservationProvider.insert(reservations);
+      if (response == "OK") {
+        if (mounted) {
+          Navigator.pushNamedAndRemoveUntil(
+              context, ReservationSuccessScreen.routeName, (route) => false);
+        }
+      } else {
+        throw Exception("Greska prilikom kreiranja rezervacije");
       }
     } on Exception catch (e) {
       showErrorDialog(context, e.toString().substring(11));
@@ -115,7 +128,134 @@ class _PaymentScreenState extends State<PaymentScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Plaćanje'),
+          title: const Text('Kupovina'),
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                    padding: const EdgeInsets.all(16),
+                    margin: const EdgeInsets.symmetric(
+                        vertical: 15, horizontal: 12),
+                    decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(6))),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: 100,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(6),
+                            child: FadeInImage(
+                              placeholder: MemoryImage(kTransparentImage),
+                              image: NetworkImage(
+                                '$apiUrl/Photo/GetById?id=${reservationProvider.shows!.movie.photo.guidId}&original=true',
+                                headers: Authorization.createHeaders(),
+                              ),
+                              fadeInDuration: const Duration(milliseconds: 300),
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(top: 8),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                reservationProvider.shows!.movie.title,
+                                style: const TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w600),
+                              ),
+                              const SizedBox(
+                                height: 12,
+                              ),
+                              Text(
+                                '${reservationProvider.shows!.cinema.name} - ${reservationProvider.shows!.showType.name}',
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 6,
+                              ),
+                              Text(
+                                '${DateFormat.Hm().format(reservationProvider.shows!.startsAt)} - ${DateFormat.Hm().format(reservationProvider.shows!.endsAt)}',
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 6,
+                              ),
+                              Text(
+                                DateFormat.MMMMEEEEd('bs').format(
+                                    reservationProvider.shows!.startsAt),
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 6,
+                              ),
+                              Text(
+                                'Sjedište ${reservationProvider.selectedSeats.join(', ').toString()}',
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    )),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Ukupno',
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    NumberFormat.currency(locale: 'bs')
+                        .format(reservationProvider.selectedTicketTotalPrice),
+                    style: const TextStyle(
+                        color: Colors.amber,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 20),
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                  onPressed: () async => await showPaymentSheet(),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFE51937)),
+                  child: const Text(
+                    'Plaćanje',
+                    style: TextStyle(fontSize: 18),
+                  )),
+            )
+          ],
         ),
       ),
     );

@@ -6,6 +6,6 @@ namespace eCinema.Core
     {
         public string Name { get; set; } = null!;
         public bool IsDisplayed { get; set; }
-        public ICollection<MovieCategoryDto> MovieCategories { get; set; } = null!;
+        public ICollection<MovieDto> Movies { get; set; } = null!;
     }
 }

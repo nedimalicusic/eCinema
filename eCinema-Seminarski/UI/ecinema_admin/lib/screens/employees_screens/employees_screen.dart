@@ -92,10 +92,12 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
     try {
       var employeeResponse =
           await _employeeProvider.getPaged(searchObject: searchObject);
-      setState(() {
-        employees = employeeResponse;
-        hasNextPage = employees.length;
-      });
+      if (mounted) {
+        setState(() {
+          employees = employeeResponse;
+          hasNextPage = employees.length;
+        });
+      }
     } on Exception catch (e) {
       showErrorDialog(context, e.toString().substring(11));
     }

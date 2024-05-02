@@ -1,7 +1,6 @@
 // ignore_for_file: use_key_in_widget_constructors
 
 import 'package:ecinema_mobile/providers/login_provider.dart';
-import 'package:ecinema_mobile/providers/user_provider.dart';
 import 'package:ecinema_mobile/screens/register_screen.dart';
 import 'package:ecinema_mobile/utils/error_dialog.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
       await userProvider.loginAsync(
           _emailController.text, _passwordController.text);
       if (context.mounted) {
-        Navigator.pushNamedAndRemoveUntil(context, '/cinema', (route) => false);
+        Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
       }
     } on Exception catch (e) {
       showErrorDialog(context, e.toString().substring(11));

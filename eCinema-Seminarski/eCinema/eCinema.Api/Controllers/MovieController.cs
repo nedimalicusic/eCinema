@@ -20,13 +20,12 @@ namespace eCinema.Api.Controllers
             _photosService = photosService;
         }
 
-        [HttpGet("GetLastAddMovies")]
-        public async Task<IActionResult> GetLastAddMovies(int size,CancellationToken cancellationToken = default)
+        [HttpGet("GetCategoryAndMovies")]
+        public async Task<IActionResult> GetCategoryAndMovies(CancellationToken cancellationToken = default)
         {
             try
             {
-
-                var movies = await Service.GetLastAddMovies(size,cancellationToken);
+                var movies = await Service.GetCategoryAndMovies(cancellationToken);
                 return Ok(movies);
             }
             catch (Exception e)
@@ -35,36 +34,19 @@ namespace eCinema.Api.Controllers
                 return BadRequest();
             }
         }
-
-        [HttpGet("GetMostWatchedMovies")]
-        public async Task<IActionResult> GetMostWatchedMovies(int size,CancellationToken cancellationToken = default)
-        {
-            try
-            {
-
-                var movies = await Service.GetMostWatchedMovies(size,cancellationToken);
-                return Ok(movies);
-            }
-            catch (Exception e)
-            {
-                Logger.LogError(e, "Error while trying to get movies");
-                return BadRequest();
-            }
-        }
-
 
         [HttpPost("insertMovie")]
         public async Task<IActionResult> InsertMovie([FromForm] MovieUpsertModel model, CancellationToken cancellationToken = default)
         {
             try
             {
-               var genreIds = model.GenreIds.Split(',').Select(int.Parse).ToList();
-               var actorsIds= model.ActorIds.Split(',').Select(int.Parse).ToList();
-               var categoriesIds = model.CategoryIds.Split(',').Select(int.Parse).ToList();
-               var upsertDto = _mapper.Map<MovieUpsertDto>(model);
-               upsertDto.ActorIds = actorsIds.ToArray();
-               upsertDto.CategoryIds = categoriesIds.ToArray();
-               upsertDto.GenreIds = genreIds.ToArray();
+                var genreIds = model.GenreIds.Split(',').Select(int.Parse).ToList();
+                var actorsIds = model.ActorIds.Split(',').Select(int.Parse).ToList();
+                var categoriesIds = model.CategoryIds.Split(',').Select(int.Parse).ToList();
+                var upsertDto = _mapper.Map<MovieUpsertDto>(model);
+                upsertDto.ActorIds = actorsIds.ToArray();
+                upsertDto.CategoryIds = categoriesIds.ToArray();
+                upsertDto.GenreIds = genreIds.ToArray();
 
 
                 if (model.Photo != null && model.Photo.Length > 0)
@@ -106,13 +88,13 @@ namespace eCinema.Api.Controllers
         {
             try
             {
-                var genreIds = model.GenreIds.Split(',').Select(int.Parse).ToList();
-                var actorsIds = model.ActorIds.Split(',').Select(int.Parse).ToList();
-                var categoriesIds = model.CategoryIds.Split(',').Select(int.Parse).ToList();
+                var genreIds = model.GenreIds != null ? model.GenreIds.Split(',').Select(int.Parse).ToList() : null;
+                var actorsIds = model.ActorIds != null ? model.ActorIds.Split(',').Select(int.Parse).ToList() : null;
+                var categoriesIds = model.CategoryIds != null ? model.CategoryIds.Split(',').Select(int.Parse).ToList() : null;
                 var upsertDto = _mapper.Map<MovieUpsertDto>(model);
-                upsertDto.ActorIds = actorsIds.ToArray();
-                upsertDto.CategoryIds = categoriesIds.ToArray();
-                upsertDto.GenreIds = genreIds.ToArray();
+                upsertDto.ActorIds = actorsIds?.ToArray();
+                upsertDto.CategoryIds = categoriesIds?.ToArray();
+                upsertDto.GenreIds = genreIds?.ToArray();
 
 
                 if (model.Photo != null && model.Photo.Length > 0)

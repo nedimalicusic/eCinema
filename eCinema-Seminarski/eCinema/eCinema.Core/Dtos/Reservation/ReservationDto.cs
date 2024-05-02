@@ -9,7 +9,7 @@
         public ShowDto Show { get; set; } = null!;
 
         public int SeatId { get; set; }
-        public Seat Seat { get; set; } = null!;
+        public SeatDto Seat { get; set; } = null!;
 
         public int UserId { get; set; }
         public UserDto User { get; set; } = null!;

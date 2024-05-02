@@ -10,5 +10,6 @@ namespace eCinema.Infrastructure.Interfaces.SearchObjects
     {
         public string? name { get; set; }
         public int? cinemaId { get; set; }
+        public int? showId { get; set; }
     }
 }
