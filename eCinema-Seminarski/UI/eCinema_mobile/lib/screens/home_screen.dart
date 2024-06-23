@@ -79,34 +79,6 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Container(
-            //   height: 350,
-            //   padding: const EdgeInsets.fromLTRB(0, 30, 0, 30),
-            //   child: FutureBuilder(
-            //     future: futureMovies,
-            //     builder: (context, snapshot) {
-            //       if (snapshot.hasData) {
-            //         return GridView(
-            //           gridDelegate:
-            //               const SliverGridDelegateWithFixedCrossAxisCount(
-            //             crossAxisCount: 1,
-            //             childAspectRatio: 4 / 3,
-            //             mainAxisSpacing: 0,
-            //           ),
-            //           scrollDirection: Axis.horizontal,
-            //           children: _buildMovieList(snapshot.data!),
-            //         );
-            //       } else if (snapshot.hasError) {
-            //         return Text('${snapshot.error}');
-            //       }
-            //       return Center(
-            //         child: CircularProgressIndicator(
-            //           color: Colors.lightBlue[300],
-            //         ),
-            //       );
-            //     },
-            //   ),
-            // ),
             FutureBuilder(
               future: futureCategories,
               builder: (context, snapshot) {
@@ -129,52 +101,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
-  }
-
-  List<Widget> _buildMovieList(List<Movie> movies) {
-    return movies
-        .map((movie) => Column(
-              children: [
-                InkWell(
-                  onTap: () => Navigator.pushNamed(
-                    context,
-                    MovieDetailScreen.routeName,
-                    arguments: movie,
-                  ),
-                  child: Container(
-                    margin: const EdgeInsets.only(right: 20),
-                    width: 80,
-                    height: 90,
-                    child: movie.photo.guidId != null
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(12.0),
-                            child: FadeInImage(
-                              placeholder: MemoryImage(kTransparentImage),
-                              image: NetworkImage(
-                                '$apiUrl/Photo/GetById?id=${movie.photo.guidId}&original=true',
-                                headers: Authorization.createHeaders(),
-                              ),
-                              fadeInDuration: const Duration(milliseconds: 300),
-                              fit: BoxFit.fill,
-                            ),
-                          )
-                        : const Placeholder(),
-                  ),
-                ),
-                const SizedBox(
-                  height: 12,
-                ),
-                Text(
-                  movie.title,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w400,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ))
-        .toList();
   }
 
   Widget _buildCategories(List<CategoryMovies> movies) {

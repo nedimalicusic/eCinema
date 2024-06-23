@@ -76,13 +76,13 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           textAlign: TextAlign.center,
         ),
       ),
-      body: Column(
-        children: [
-          const SizedBox(
-            height: 20,
-          ),
-          Center(child: ChangePasswordWidget()),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(height: 20),
+            Center(child: ChangePasswordWidget()),
+          ],
+        ),
       ),
     );
   }
