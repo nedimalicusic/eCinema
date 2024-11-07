@@ -2,8 +2,15 @@ class MovieSearchObject {
   String? name;
   int? pageNumber;
   int? pageSize;
+  int? genreId;
+  int? categoryId;
 
-  MovieSearchObject({this.name, this.pageNumber, this.pageSize});
+  MovieSearchObject(
+      {this.name,
+      this.pageNumber,
+      this.pageSize,
+      this.categoryId,
+      this.genreId});
 
   MovieSearchObject.fromJson(Map<String, dynamic> json) {
     name = json['name'];

@@ -32,6 +32,7 @@ namespace eCinema.Infrastructure
                 .Include(s => s.MovieGenres).ThenInclude(s => s.Genre)
                 .Include(s => s.MovieCategories).ThenInclude(s => s.Category)
                 .Include(s => s.MovieActors).ThenInclude(s => s.Actors).AsNoTracking()
+                
                 .AsQueryable();
 
             if (searchObject.Name != null)
@@ -46,6 +47,8 @@ namespace eCinema.Infrastructure
             {
                 query = query.Where(s => s.MovieCategories.Any(d => d.CategoryId == searchObject.CategoryId));
             }
+
+           
 
             var result = await query.ToPagedListAsync(searchObject, cancellationToken);
 

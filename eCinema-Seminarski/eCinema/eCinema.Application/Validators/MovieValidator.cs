@@ -14,7 +14,6 @@ namespace eCinema.Application
             RuleFor(c => c.Duration).NotNull().WithErrorCode(ErrorCodes.NotNull);
             RuleFor(c => c.LanguageId).NotNull().WithErrorCode(ErrorCodes.NotNull);
             RuleFor(c => c.ProductionId).NotNull().WithErrorCode(ErrorCodes.NotNull);
-            RuleFor(c => c.PhotoId).NotNull().WithErrorCode(ErrorCodes.NotNull);
         }
     }
 }

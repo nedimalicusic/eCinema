@@ -17,8 +17,8 @@ namespace eCinema.Core
         public int ProductionId { get; set; }
         public ProductionDto Production { get; set; } = null!;
 
-        public int PhotoId { get; set; }
-        public PhotoDto Photo { get; set; } = null!;
+        public int? PhotoId { get; set; }
+        public PhotoDto? Photo { get; set; } = null!;
 
         public List<GenreDto> Genres { get; set; } = null!;
         public List<CategoryDto> Categories { get; set; } = null!;

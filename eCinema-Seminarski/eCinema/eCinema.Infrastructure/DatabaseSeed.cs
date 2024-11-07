@@ -20,6 +20,8 @@ namespace eCinema.Infrastructure
             SeedWeekDay(modelBuilder);
             SeedShowType(modelBuilder);
             SeedCategory(modelBuilder);
+            SeedMovies(modelBuilder);
+            SeedMovieGenres(modelBuilder);
         }
 
         private void SeedCategory(ModelBuilder modelBuilder)
@@ -467,5 +469,88 @@ namespace eCinema.Infrastructure
                    ModifiedAt = null
                });
         }
+
+
+        private void SeedMovies(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Movie>().HasData(
+                new Movie
+                {
+                    Id = 1,
+                    CreatedAt = _dateTime,
+                    ModifiedAt = null,
+                    Title = "Coming Soon",
+                    Description = "A teaser for an upcoming movie.",
+                    Author = "Director Name",
+                    ReleaseYear = 2024,
+                    Duration = 120,
+                    NumberOfViews = null,
+                    LanguageId = 1,
+                    ProductionId = 1,
+                    PhotoId = null
+                    
+
+
+
+                }, new Movie
+                {
+                    Id = 2,
+                    CreatedAt = _dateTime,
+                    ModifiedAt = null,
+                    Title = "Venom 3",
+                    Description = "A teaser for an upcoming movie.",
+                    Author = "Name",
+                    ReleaseYear = 2024,
+                    Duration = 120,
+                    NumberOfViews = null,
+                    LanguageId = 1,
+                    ProductionId = 1,
+                    PhotoId = null
+
+
+
+
+                }
+
+            );
+        }
+
+       private void SeedMovieGenres(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<MovieGenre>().HasData(
+       new MovieGenre
+       {
+           Id = 1,
+           CreatedAt = _dateTime,
+           ModifiedAt = null,
+           MovieId = 1,
+           GenreId = 1
+       }, 
+       new MovieGenre
+       {
+           Id = 2,
+           CreatedAt = _dateTime,
+           ModifiedAt = null,
+           MovieId = 1,
+           GenreId = 2
+       },
+       new MovieGenre
+       {
+           Id = 3,
+           CreatedAt = _dateTime,
+           ModifiedAt = null,
+           MovieId = 2,
+           GenreId = 1
+       }, 
+       new MovieGenre
+       {
+           Id = 4,
+           CreatedAt = _dateTime,
+           ModifiedAt = null,
+           MovieId = 2,
+           GenreId = 3
+       }
+       );
+       }
     }
 }

@@ -16,6 +16,6 @@ namespace eCinema.Core.Dtos.Movie
         public string GenreIds { get; set; }
         public string ActorIds { get; set; }
         public string CategoryIds { get; set; }
-        public IFormFile Photo { get; set; } = null!;
+        public IFormFile? Photo { get; set; } = null!;
     }
 }

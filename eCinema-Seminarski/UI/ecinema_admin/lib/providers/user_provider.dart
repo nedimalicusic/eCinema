@@ -3,6 +3,7 @@ import 'dart:convert';
 import '../helpers/constants.dart';
 import '../models/searchObject/user_search.dart';
 import '../models/user.dart';
+import '../models/user_for_selection.dart';
 import '../utils/authorzation.dart';
 import 'base_provider.dart';
 
@@ -179,6 +180,25 @@ class UserProvider extends BaseProvider<User> {
       }
     } catch (e) {
       throw Exception('Error updating user: $e');
+    }
+  }
+
+  Future<List<UserForSelection>> getusersForSelection(
+      {UserSearchObject? searchObject}) async {
+    var uri = Uri.parse('$apiUrl/User/GetUsersForSelection');
+    var headers = Authorization.createHeaders();
+
+    var response = await http.get(uri, headers: headers);
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      if (data is List) {
+        return data.map((d) => UserForSelection.fromJson(d)).toList();
+      } else {
+        throw Exception('Invalid data format');
+      }
+    } else {
+      throw Exception('Failed to load data');
     }
   }
 

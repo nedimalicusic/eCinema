@@ -6,21 +6,21 @@ import 'package:ecinema_admin/models/photo.dart';
 import 'package:ecinema_admin/models/production.dart';
 
 class Movie {
-  int id;
-  String title;
-  int duration;
-  String description;
-  String author;
-  int releaseYear;
-  int photoId;
-  Photo photo;
-  int productionId;
-  Production production;
-  Language language;
-  int languageId;
-  List<Category> categories;
-  List<Genre> genres;
-  List<Actor> actors;
+  late int id;
+  late String title;
+  late int duration;
+  late String description;
+  late String author;
+  late int? releaseYear;
+  late int? photoId;
+  late Photo? photo;
+  late int? productionId;
+  late Production? production;
+  late Language language;
+  late int languageId;
+  late List<Category>? categories;
+  late List<Genre>? genres;
+  late List<Actor> actors;
   late bool isSelected = false;
 
   Movie({
@@ -29,42 +29,67 @@ class Movie {
     required this.duration,
     required this.description,
     required this.author,
-    required this.releaseYear,
-    required this.photoId,
-    required this.photo,
-    required this.categories,
-    required this.genres,
+    this.releaseYear,
+    this.photoId,
+    this.photo,
+    this.categories,
+    this.genres,
     required this.actors,
     required this.language,
-    required this.productionId,
+    this.productionId,
     required this.languageId,
     required this.production,
   });
 
-  factory Movie.fromJson(Map<String, dynamic> json) {
-    return Movie(
-      id: json['id'],
-      title: json['title'],
-      duration: json['duration'],
-      photo: Photo.fromJson(json['photo']),
-      description: json['description'],
-      author: json['author'],
-      releaseYear: json['releaseYear'],
-      photoId: json['photoId'],
-      categories: (json['categories'] as List<dynamic>)
+  Movie.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    author = json['author'];
+    title = json['title'];
+    duration = json['duration'];
+    if (json['photo'] != null) {
+      photo = Photo.fromJson(json['photo']);
+    } else {
+      photo = null;
+    }
+    description = json['description'];
+    author = json['author'];
+    releaseYear = json['releaseYear'];
+    photoId = json['photoId'];
+    if (json['categories'] != null) {
+      categories = (json['categories'] as List<dynamic>)
           .map((categoryJson) => Category.fromJson(categoryJson))
-          .toList(),
-      genres: (json['genres'] as List<dynamic>)
+          .toList();
+    } else {
+      categories = null;
+    }
+    if (json['genres'] != null) {
+      genres = (json['genres'] as List<dynamic>)
           .map((genreJson) => Genre.fromJson(genreJson))
-          .toList(),
-      actors: (json['actors'] as List<dynamic>)
+          .toList();
+    } else {
+      genres = null;
+    }
+
+    if (json['actors'] != null) {
+      actors = (json['actors'] as List<dynamic>)
           .map((actorJson) => Actor.fromJson(actorJson))
-          .toList(),
-      productionId: json['productionId'],
-      languageId: json['languageId'],
-      production: Production.fromJson(json['production']),
-      language: Language.fromJson(json['language']),
-    );
+          .toList();
+    } else {
+      genres = null;
+    }
+
+    productionId = json['productionId'];
+    languageId = json['languageId'];
+    if (json['production'] != null) {
+      production = Production.fromJson(json['production']);
+    } else {
+      production = null;
+    }
+    if (json['language'] != null) {
+      language = Language.fromJson(json['production']);
+    } else {
+      production = null;
+    }
   }
 
   Map<String, dynamic> toJson() {

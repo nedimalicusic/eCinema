@@ -7,5 +7,7 @@ namespace eCinema.Application.Interfaces
     {
         Task<UserSensitiveDto?> GetByEmailAsync(string email, CancellationToken cancellationToken = default);
         Task ChangePassword(UserChangePasswordDto dto, CancellationToken cancellationToken);
+
+        Task<List<UserForSelectionDto?>> GetUserForSelectionAsync(CancellationToken cancellationToken = default);
     }
 }

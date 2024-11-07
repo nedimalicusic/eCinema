@@ -316,7 +316,7 @@ namespace eCinema.Infrastructure.Migrations
                     NumberOfViews = table.Column<int>(type: "int", nullable: true),
                     LanguageId = table.Column<int>(type: "int", nullable: false),
                     ProductionId = table.Column<int>(type: "int", nullable: false),
-                    PhotoId = table.Column<int>(type: "int", nullable: false),
+                    PhotoId = table.Column<int>(type: "int", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -334,8 +334,7 @@ namespace eCinema.Infrastructure.Migrations
                         name: "FK_Movies_Photos_PhotoId",
                         column: x => x.PhotoId,
                         principalTable: "Photos",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Movies_Productions_ProductionId",
                         column: x => x.ProductionId,
@@ -685,6 +684,26 @@ namespace eCinema.Infrastructure.Migrations
                     { 1, "Bisce Polje bb", 1, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), "Opis1", "plazamostar@gmail.com", null, "Cineplexx Plaza Mostar", 30, 60100100 },
                     { 2, "Zenica bb", 4, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), "Opis2", "plazazenica@gmail.com", null, "Cineplexx Plaza Zenica", 20, 60200200 },
                     { 3, "Dzemala Bijedica St", 2, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), "Opis3", "srajevocinestar@gmail.com", null, "CineStar Sarajevo", 40, 60300300 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Movies",
+                columns: new[] { "Id", "Author", "CreatedAt", "Description", "Duration", "LanguageId", "ModifiedAt", "NumberOfViews", "PhotoId", "ProductionId", "ReleaseYear", "Title" },
+                values: new object[,]
+                {
+                    { 1, "Director Name", new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), "A teaser for an upcoming movie.", 120, 1, null, null, null, 1, 2024, "Coming Soon" },
+                    { 2, "Name", new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), "A teaser for an upcoming movie.", 120, 1, null, null, null, 1, 2024, "Venom 3" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "MovieGenres",
+                columns: new[] { "Id", "CreatedAt", "GenreId", "ModifiedAt", "MovieId" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), 1, null, 1 },
+                    { 2, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), 2, null, 1 },
+                    { 3, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), 1, null, 2 },
+                    { 4, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), 3, null, 2 }
                 });
 
             migrationBuilder.CreateIndex(

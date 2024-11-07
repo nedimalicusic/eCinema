@@ -622,8 +622,10 @@ class _MoviesScreenState extends State<MoviesScreen> {
       selectedLanguageId = movieToEdit.languageId;
       _pickedFile = null;
       selectedActorsId = movieToEdit.actors.map((e) => e.id).toList();
-      selectedCategoriesId = movieToEdit.categories.map((e) => e.id).toList();
-      selectedGenresId = movieToEdit.genres.map((e) => e.id).toList();
+      selectedCategoriesId =
+          movieToEdit.categories?.map((e) => e.id).toList() ?? List.empty();
+      selectedGenresId =
+          movieToEdit.genres?.map((e) => e.id).toList() ?? List.empty();
     } else {
       _titleController.text = '';
       _descriptionController.text = '';
@@ -662,7 +664,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
                             future: _pickedFile != null
                                 ? Future.value(_pickedFile!.path)
                                 : loadPhoto(isEditing
-                                    ? (movieToEdit?.photo.guidId ?? '')
+                                    ? (movieToEdit?.photo?.guidId ?? '')
                                     : ''),
                             builder: (BuildContext context,
                                 AsyncSnapshot<String> snapshot) {
@@ -990,8 +992,8 @@ class _MoviesScreenState extends State<MoviesScreen> {
                                 Padding(
                                   padding: const EdgeInsets.only(right: 8.0),
                                   child: FutureBuilder<String>(
-                                    future:
-                                        loadPhoto(movieItem.photo.guidId ?? ''),
+                                    future: loadPhoto(
+                                        movieItem.photo?.guidId ?? ''),
                                     builder: (BuildContext context,
                                         AsyncSnapshot<String> snapshot) {
                                       if (snapshot.connectionState ==
@@ -1047,7 +1049,8 @@ class _MoviesScreenState extends State<MoviesScreen> {
                           )),
                           DataCell(Text(movieItem.releaseYear.toString())),
                           DataCell(Text(movieItem.duration.toString())),
-                          DataCell(Text(movieItem.production.name.toString())),
+                          DataCell(Text(
+                              movieItem.production?.name.toString() ?? '')),
                         ]))
                     .toList()),
           ),

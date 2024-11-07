@@ -25,6 +25,10 @@ namespace eCinema.Infrastructure
             return DbSet.Where(s => s.IsActive == true).AsNoTracking().Count();
 
         }
+        public async Task<List<User>> GetUsersForSelection(CancellationToken cancellationToken = default)
+        {
+            return await DbSet.Where(u => u.Role == Role.User).ToListAsync(cancellationToken);
+        }
 
         public int getCountOfUsersInactive(CancellationToken cancellationToken = default)
         {

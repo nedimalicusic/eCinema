@@ -866,7 +866,7 @@ namespace eCinema.Infrastructure.Migrations
                     b.Property<int?>("NumberOfViews")
                         .HasColumnType("int");
 
-                    b.Property<int>("PhotoId")
+                    b.Property<int?>("PhotoId")
                         .HasColumnType("int");
 
                     b.Property<int>("ProductionId")
@@ -888,6 +888,34 @@ namespace eCinema.Infrastructure.Migrations
                     b.HasIndex("ProductionId");
 
                     b.ToTable("Movies");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Author = "Director Name",
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            Description = "A teaser for an upcoming movie.",
+                            Duration = 120,
+                            IsDeleted = false,
+                            LanguageId = 1,
+                            ProductionId = 1,
+                            ReleaseYear = 2024,
+                            Title = "Coming Soon"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Author = "Name",
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            Description = "A teaser for an upcoming movie.",
+                            Duration = 120,
+                            IsDeleted = false,
+                            LanguageId = 1,
+                            ProductionId = 1,
+                            ReleaseYear = 2024,
+                            Title = "Venom 3"
+                        });
                 });
 
             modelBuilder.Entity("eCinema.Core.MovieActors", b =>
@@ -956,6 +984,40 @@ namespace eCinema.Infrastructure.Migrations
                     b.HasIndex("MovieId");
 
                     b.ToTable("MovieGenres");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            GenreId = 1,
+                            IsDeleted = false,
+                            MovieId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            GenreId = 2,
+                            IsDeleted = false,
+                            MovieId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            GenreId = 1,
+                            IsDeleted = false,
+                            MovieId = 2
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            GenreId = 3,
+                            IsDeleted = false,
+                            MovieId = 2
+                        });
                 });
 
             modelBuilder.Entity("eCinema.Core.Notification", b =>
@@ -1410,9 +1472,7 @@ namespace eCinema.Infrastructure.Migrations
 
                     b.HasOne("eCinema.Core.Photo", "Photo")
                         .WithMany("Movies")
-                        .HasForeignKey("PhotoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("PhotoId");
 
                     b.HasOne("eCinema.Core.Production", "Production")
                         .WithMany("Movies")

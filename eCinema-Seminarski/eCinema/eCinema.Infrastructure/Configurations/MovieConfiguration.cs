@@ -40,7 +40,7 @@ namespace eCinema.Infrastructure
             builder.HasOne(e => e.Photo)
                    .WithMany(e => e.Movies)
                    .HasForeignKey(e => e.PhotoId)
-                   .IsRequired();
+                   .IsRequired(false);
         }
     }
 }

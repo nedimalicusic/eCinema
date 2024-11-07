@@ -3,6 +3,7 @@ using eCinema.Application.Interfaces;
 using eCinema.Core;
 using eCinema.Core.Dtos.Photo;
 using eCinema.Infrastructure.Interfaces.SearchObjects;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eCinema.Api.Controllers
@@ -22,6 +23,22 @@ namespace eCinema.Api.Controllers
 
         [NonAction]
         public override Task<IActionResult> Put(UserUpsertDto upsertDto, CancellationToken cancellationToken = default) => base.Put(upsertDto, cancellationToken);
+
+        [Authorize]
+        [HttpGet("GetUsersForSelection")]
+        public async Task<IActionResult> GetUsersForSelection(CancellationToken cancellationToken)
+        {
+            try
+            {
+                var dto = await Service.GetUserForSelectionAsync(cancellationToken);
+                return Ok(dto);
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e, "Problem with getting resources");
+                return BadRequest();
+            }
+        }
 
         [HttpPost]
         public async Task<IActionResult> Post([FromForm] UserUpsertModel model, CancellationToken cancellationToken = default)

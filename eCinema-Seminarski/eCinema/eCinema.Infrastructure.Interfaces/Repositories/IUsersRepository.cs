@@ -9,5 +9,7 @@ namespace eCinema.Infrastructure.Interfaces
        int getCountOfUsers(CancellationToken cancellationToken = default);
        int getCountOfUsersActive(CancellationToken cancellationToken = default);
        int getCountOfUsersInactive(CancellationToken cancellationToken = default);
+        Task<List<User?>> GetUsersForSelection(CancellationToken cancellationToken = default);
+
     }
 }

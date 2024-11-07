@@ -40,6 +40,13 @@ namespace eCinema.Application
             return Mapper.Map<UserDto>(entity);
         }
 
+        public async Task<List<UserForSelectionDto?>> GetUserForSelectionAsync(CancellationToken cancellationToken = default)
+        {
+            var users = await CurrentRepository.GetUsersForSelection(cancellationToken);
+
+            return Mapper.Map<List<UserForSelectionDto?>>(users);
+        }
+
         public override async Task<UserDto> UpdateAsync(UserUpsertDto dto, CancellationToken cancellationToken = default)
         {
             var user = await CurrentRepository.GetByIdAsync(dto.Id.Value, cancellationToken);
