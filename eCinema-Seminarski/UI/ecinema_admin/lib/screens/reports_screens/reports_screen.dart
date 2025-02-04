@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:io';
 import 'package:ecinema_admin/helpers/constants.dart';
 import 'package:ecinema_admin/models/cinema.dart';
@@ -6,7 +8,6 @@ import 'package:ecinema_admin/providers/cinema_provider.dart';
 import 'package:ecinema_admin/providers/reservation_provider.dart';
 import 'package:ecinema_admin/providers/user_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:printing/printing.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:provider/provider.dart';
@@ -15,7 +16,6 @@ import '../../models/movie.dart';
 import '../../models/searchObject/cinema_search.dart';
 import '../../models/searchObject/genre_search.dart';
 import '../../models/searchObject/movie_search.dart';
-import '../../models/searchObject/reservation_search.dart';
 import '../../models/searchObject/user_search.dart';
 import '../../models/user.dart';
 import '../../models/user_for_selection.dart';
@@ -145,7 +145,7 @@ class _ReportScreenState extends State<ReportScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Rezervacije"),
+        title: const Text("Izvjestaji"),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -165,7 +165,7 @@ class _ReportScreenState extends State<ReportScreen> {
                       Row(
                         children: [
                           buildUsersReport(),
-                          SizedBox(
+                          const SizedBox(
                             width: 20,
                           ),
                           buildMoviesReport(),
@@ -194,7 +194,7 @@ class _ReportScreenState extends State<ReportScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               "Izvještaj o klijentima",
               style: TextStyle(fontSize: 20, color: white),
             ),
@@ -248,7 +248,7 @@ class _ReportScreenState extends State<ReportScreen> {
                     ),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 const Text(
@@ -262,7 +262,7 @@ class _ReportScreenState extends State<ReportScreen> {
                   ),
                   child: DropdownButton<String>(
                     isExpanded: true,
-                    hint: Text(
+                    hint: const Text(
                       "Aktivni računi",
                       style: TextStyle(color: Colors.white),
                     ),
@@ -303,7 +303,7 @@ class _ReportScreenState extends State<ReportScreen> {
                     underline: const SizedBox(),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 Center(
@@ -311,7 +311,7 @@ class _ReportScreenState extends State<ReportScreen> {
                     style:
                         ElevatedButton.styleFrom(backgroundColor: primaryColor),
                     onPressed: _displayUserPdf,
-                    child: Text(
+                    child: const Text(
                       'Prikaži PDF',
                       style: TextStyle(color: white),
                     ),
@@ -337,7 +337,7 @@ class _ReportScreenState extends State<ReportScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               "Izvještaj o filmovima",
               style: TextStyle(fontSize: 20, color: white),
             ),
@@ -403,7 +403,7 @@ class _ReportScreenState extends State<ReportScreen> {
                         )),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 const Text(
@@ -417,7 +417,7 @@ class _ReportScreenState extends State<ReportScreen> {
                   ),
                   child: DropdownButton<String>(
                     isExpanded: true,
-                    hint: Text(
+                    hint: const Text(
                       "Aktivni jezici",
                       style: TextStyle(color: Colors.white),
                     ),
@@ -458,7 +458,7 @@ class _ReportScreenState extends State<ReportScreen> {
                     underline: const SizedBox(),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 Center(
@@ -466,7 +466,7 @@ class _ReportScreenState extends State<ReportScreen> {
                     style:
                         ElevatedButton.styleFrom(backgroundColor: primaryColor),
                     onPressed: _displayCinemaPdf,
-                    child: Text(
+                    child: const Text(
                       'Prikaži PDF',
                       style: TextStyle(color: white),
                     ),
@@ -488,7 +488,7 @@ class _ReportScreenState extends State<ReportScreen> {
 
     final doc = pw.Document();
 
-    final maxsPerPage = 20;
+    const maxsPerPage = 20;
 
     for (var i = 0; i < users1.length; i += maxsPerPage) {
       final endIndex =
@@ -514,21 +514,21 @@ class _ReportScreenState extends State<ReportScreen> {
                         width: 80,
                         height: 80,
                       ),
-                      margin: pw.EdgeInsets.only(right: 20),
+                      margin: const pw.EdgeInsets.only(right: 20),
                     ),
                     pw.Column(
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
                       children: [
                         pw.Text(
                           'Cinema Name: ${cinema?.name ?? ""}',
-                          style: pw.TextStyle(fontSize: 12),
+                          style: const pw.TextStyle(fontSize: 12),
                         ),
                         pw.Text('Address: ${cinema?.address ?? ""}',
-                            style: pw.TextStyle(fontSize: 10)),
+                            style: const pw.TextStyle(fontSize: 10)),
                         pw.Text('Phone Number: ${cinema?.phoneNumber ?? ""}',
-                            style: pw.TextStyle(fontSize: 10)),
+                            style: const pw.TextStyle(fontSize: 10)),
                         pw.Text('Email: ${cinema?.email ?? ""}',
-                            style: pw.TextStyle(fontSize: 10)),
+                            style: const pw.TextStyle(fontSize: 10)),
                       ],
                     ),
                   ],
@@ -539,17 +539,17 @@ class _ReportScreenState extends State<ReportScreen> {
                 pw.Center(
                   child: pw.Text(
                     'Izvjestaj o klijentima',
-                    style: pw.TextStyle(fontSize: 20),
+                    style: const pw.TextStyle(fontSize: 20),
                   ),
                 ),
                 pw.SizedBox(height: 10),
                 pw.Text(
                   'Aktivnost: ${_selectedIsActive}',
-                  style: pw.TextStyle(fontSize: 12),
+                  style: const pw.TextStyle(fontSize: 12),
                 ),
                 pw.Text(
                   'Spol: ${selectedGender == null ? 'Svi' : selectedGender == 0 ? 'Muski' : 'Zenski'}',
-                  style: pw.TextStyle(fontSize: 12),
+                  style: const pw.TextStyle(fontSize: 12),
                 ),
                 pw.Table.fromTextArray(
                   context: context,
@@ -571,7 +571,7 @@ class _ReportScreenState extends State<ReportScreen> {
                     4: pw.Alignment.center,
                   },
                   border: pw.TableBorder.all(),
-                  headerDecoration: pw.BoxDecoration(
+                  headerDecoration: const pw.BoxDecoration(
                     color: PdfColors.grey,
                   ),
                   headerHeight: 25,
@@ -614,7 +614,7 @@ class _ReportScreenState extends State<ReportScreen> {
 
     final doc = pw.Document();
 
-    final maxsPerPage = 20;
+    const maxsPerPage = 20;
 
     for (var i = 0; i < users1.length; i += maxsPerPage) {
       final endIndex =
@@ -640,21 +640,21 @@ class _ReportScreenState extends State<ReportScreen> {
                         width: 80,
                         height: 80,
                       ),
-                      margin: pw.EdgeInsets.only(right: 20),
+                      margin: const pw.EdgeInsets.only(right: 20),
                     ),
                     pw.Column(
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
                       children: [
                         pw.Text(
                           'Cinema Name: ${cinema?.name ?? ""}',
-                          style: pw.TextStyle(fontSize: 12),
+                          style: const pw.TextStyle(fontSize: 12),
                         ),
                         pw.Text('Address: ${cinema?.address ?? ""}',
-                            style: pw.TextStyle(fontSize: 10)),
+                            style: const pw.TextStyle(fontSize: 10)),
                         pw.Text('Phone Number: ${cinema?.phoneNumber ?? ""}',
-                            style: pw.TextStyle(fontSize: 10)),
+                            style: const pw.TextStyle(fontSize: 10)),
                         pw.Text('Email: ${cinema?.email ?? ""}',
-                            style: pw.TextStyle(fontSize: 10)),
+                            style: const pw.TextStyle(fontSize: 10)),
                       ],
                     ),
                   ],
@@ -665,17 +665,17 @@ class _ReportScreenState extends State<ReportScreen> {
                 pw.Center(
                   child: pw.Text(
                     'Izvjestaj o klijentima',
-                    style: pw.TextStyle(fontSize: 20),
+                    style: const pw.TextStyle(fontSize: 20),
                   ),
                 ),
                 pw.SizedBox(height: 10),
                 pw.Text(
-                  'Aktivnost: ${_selectedIsActive}',
-                  style: pw.TextStyle(fontSize: 12),
+                  'Aktivnost: $_selectedIsActive',
+                  style: const pw.TextStyle(fontSize: 12),
                 ),
                 pw.Text(
                   'Spol: ${selectedGender == null ? 'Svi' : selectedGender == 0 ? 'Muski' : 'Zenski'}',
-                  style: pw.TextStyle(fontSize: 12),
+                  style: const pw.TextStyle(fontSize: 12),
                 ),
                 pw.Table.fromTextArray(
                   context: context,
@@ -697,7 +697,7 @@ class _ReportScreenState extends State<ReportScreen> {
                     4: pw.Alignment.center,
                   },
                   border: pw.TableBorder.all(),
-                  headerDecoration: pw.BoxDecoration(
+                  headerDecoration: const pw.BoxDecoration(
                     color: PdfColors.grey,
                   ),
                   headerHeight: 25,
@@ -731,11 +731,6 @@ class _ReportScreenState extends State<ReportScreen> {
       ),
     );
   }
-
-  String _formatCurrency(double amount) {
-    final formatter = NumberFormat.currency(locale: 'en_US', symbol: 'BAM ');
-    return formatter.format(amount);
-  }
 }
 
 class PreviewScreen extends StatelessWidget {
@@ -753,10 +748,10 @@ class PreviewScreen extends StatelessWidget {
         backgroundColor: primaryColor,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.arrow_back_outlined),
+          icon: const Icon(Icons.arrow_back_outlined),
         ),
         centerTitle: true,
-        title: Text("Pregled"),
+        title: const Text("Pregled"),
       ),
       body: PdfPreview(
         build: (format) => doc.save(),
