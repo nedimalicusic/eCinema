@@ -1,8 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
-import 'package:ecinema_mobile/models/loginUser.dart';
+import 'package:ecinema_mobile/models/login_user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -27,30 +28,27 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   late final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  List<User> users = <User>[];
-  List<User> selectedUsers = <User>[];
-  late MediaQueryData mediaQueryData;
+
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _birthDateController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final ValueNotifier<File?> _pickedFileNotifier = ValueNotifier(null);
 
-  final int userId = 0;
+  ValueNotifier<File?> _pickedFileNotifier = ValueNotifier(null);
+
   User? user;
   UserLogin? loginUser;
   DateTime selectedDate = DateTime.now();
+
   late UserProvider _userProvider;
   late UserLoginProvider _loginProvider;
-  bool isEditing = false;
+  late PhotoProvider _photoProvider;
+
   int? selectedGender;
   int? selectedRole;
   File? _pickedFile;
-
-  File? selectedImage;
-  late PhotoProvider _photoProvider;
 
   @override
   void initState() {
@@ -58,7 +56,36 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _userProvider = context.read<UserProvider>();
     _loginProvider = context.read<UserLoginProvider>();
     _photoProvider = context.read<PhotoProvider>();
-    loadUser();
+    _pickedFileNotifier = ValueNotifier<File?>(_pickedFile);
+    _loadUser();
+  }
+
+  Future<void> _loadUser() async {
+    final id = _loginProvider.getUserId();
+    loginUser = _loginProvider.user;
+
+    try {
+      final fetchedUser = await _userProvider.getById(id!);
+      setState(() {
+        user = fetchedUser;
+        _firstNameController.text = fetchedUser.firstName;
+        _lastNameController.text = fetchedUser.lastName;
+        _emailController.text = fetchedUser.email;
+        _phoneNumberController.text = fetchedUser.phoneNumber ?? '';
+        selectedGender = fetchedUser.gender;
+        selectedRole = fetchedUser.role;
+
+        if (fetchedUser.birthDate != null && fetchedUser.birthDate!.isNotEmpty) {
+          final parsedDate = DateTime.tryParse(fetchedUser.birthDate!)?.toLocal();
+          if (parsedDate != null) {
+            _birthDateController.text = DateFormat('yyyy-MM-dd').format(parsedDate);
+            selectedDate = parsedDate;
+          }
+        }
+      });
+    } catch (e) {
+      showErrorDialog(context, e.toString());
+    }
   }
 
   Future<String> loadPhoto(String guidId) async {
@@ -66,43 +93,30 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> _pickImage() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
+      _pickedFileNotifier.value = File(pickedFile.path);
       _pickedFile = File(pickedFile.path);
     }
   }
 
-  void loadUser() async {
-    var id = _loginProvider.getUserId();
-    loginUser = _loginProvider.user;
-    try {
-      var usersResponse = await _userProvider.getById(id!);
-      setState(() {
-        user = usersResponse;
-      });
-    } on Exception catch (e) {
-      showErrorDialog(context, e.toString().substring(11));
-    }
-  }
-
-  void editUser(int id) async {
+  void _editUser() async {
+    if (user == null) return;
     try {
       Map<String, dynamic> userData = {
-        "Id": id.toString(),
+        "Id": user!.id.toString(),
         'FirstName': _firstNameController.text,
         'LastName': _lastNameController.text,
         'Email': _emailController.text,
         'Password': _passwordController.text,
         'PhoneNumber': _phoneNumberController.text,
         'Gender': selectedGender.toString(),
-        'DateOfBirth':
-            DateTime.parse(_birthDateController.text).toUtc().toIso8601String(),
-        'Role': '1',
+        'BirthDate': DateTime.parse(_birthDateController.text).toUtc().toIso8601String(),
+        'Role': user!.role.toString(),
         'IsVerified': true.toString(),
         'IsActive': true.toString(),
       };
+
       if (_pickedFile != null) {
         userData['ProfilePhoto'] = http.MultipartFile.fromBytes(
           'ProfilePhoto',
@@ -110,9 +124,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           filename: 'profile_photo.jpg',
         );
       }
-      if (_pickedFile == null && user!.photo == null) {
-        final ByteData data =
-            await rootBundle.load('assets/images/notFound.png');
+
+      if (_pickedFile == null && user!.profilePhoto == null) {
+        final ByteData data = await rootBundle.load('assets/images/notFound.png');
         List<int> bytes = data.buffer.asUint8List();
 
         userData['ProfilePhoto'] = http.MultipartFile.fromBytes(
@@ -121,17 +135,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           filename: 'notFound.png',
         );
       }
+
       var response = await _userProvider.updateUser(userData);
 
       if (response == "OK") {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-              backgroundColor: Color(0XFF12B422),
-              content: Text('Uspješno uređen profil.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                  ))),
+            backgroundColor: Colors.teal,
+            content: Text(
+              'Uspješno uređen profil.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
         );
       } else {
         showErrorDialog(context, 'Greška prilikom uređivanja');
@@ -144,252 +160,223 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     if (user == null) {
-      return _buildLoadingIndicator();
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator(color: Colors.teal)),
+      );
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Edit profile',
-          textAlign: TextAlign.center,
+        title: const Text('Edit profile', textAlign: TextAlign.center),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context, true),
         ),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 20),
-            _buildForm(isEditing: true, userToEdit: user),
-          ],
-        ),
-      ),
-    );
-  }
+        child: Form(
+          key: _formKey,
+          child: Container(
+            width: 400,
+            margin: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                ValueListenableBuilder<File?>(
+                  valueListenable: _pickedFileNotifier,
+                  builder: (context, pickedFile, _) {
+                    if (pickedFile != null) {
+                      return ClipOval(
+                        child: Image.file(
+                          pickedFile,
+                          width: 110,
+                          height: 110,
+                          fit: BoxFit.cover,
+                        ),
+                      );
+                    }
 
-  Widget _buildLoadingIndicator() {
-    return const Center(
-      child: CircularProgressIndicator(color: Colors.teal),
-    );
-  }
+                    if (user?.profilePhoto?.guidId == null || user!.profilePhoto!.guidId!.isEmpty) {
+                      return Image.asset('assets/images/user2.jpg', width: 110, height: 110);
+                    }
 
-  _setDate(DateTime date) {
-    _birthDateController.text = DateFormat('yyyy-MM-dd').format(date);
-  }
-
-  Widget _buildForm({bool isEditing = false, User? userToEdit}) {
-    if (userToEdit != null) {
-      _firstNameController.text = userToEdit.firstName;
-      _lastNameController.text = userToEdit.lastName;
-      _emailController.text = userToEdit.email;
-      _phoneNumberController.text = userToEdit.phoneNumber ?? '';
-      _birthDateController.text = userToEdit.dateOfBirth ?? '';
-      selectedRole = userToEdit.role;
-      selectedGender = userToEdit.gender;
-      _pickedFile = null;
-    }
-    return Form(
-      key: _formKey,
-      child: Container(
-        width: 400,
-        margin: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            ValueListenableBuilder<File?>(
-              valueListenable: _pickedFileNotifier,
-              builder: (context, pickedFile, _) {
-                return Container(
-                  alignment: Alignment.center,
-                  width: 140,
-                  height: 140,
-                  child: FutureBuilder<String>(
-                    future: loginUser?.GuidId != null
-                        ? loadPhoto(loginUser!.GuidId!)
-                        : null,
-                    builder:
-                        (BuildContext context, AsyncSnapshot<String> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const CircularProgressIndicator();
-                      } else if (snapshot.hasError) {
-                        return const Text('Please select an image');
-                      } else {
-                        final imageUrl = snapshot.data;
-
-                        if (imageUrl != null && imageUrl.isNotEmpty) {
-                          return ClipRRect(
-                            borderRadius: BorderRadius.circular(100.0),
+                    return FutureBuilder<String>(
+                      future: loadPhoto(user!.profilePhoto!.guidId!),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
+                        } else if (snapshot.hasError || snapshot.data!.isEmpty) {
+                          return Image.asset('assets/images/user2.jpg', width: 110, height: 110);
+                        } else {
+                          final imageUrl = '${snapshot.data}?v=${DateTime.now().millisecondsSinceEpoch}';
+                          return ClipOval(
                             child: FadeInImage(
-                              image: _pickedFile != null
-                                  ? FileImage(_pickedFile!)
-                                  : NetworkImage(
-                                      imageUrl,
-                                      headers: Authorization.createHeaders(),
-                                    ) as ImageProvider<Object>,
                               placeholder: MemoryImage(kTransparentImage),
-                              fadeInDuration: const Duration(milliseconds: 300),
+                              image: NetworkImage(
+                                imageUrl,
+                                headers: Authorization.createHeaders(),
+                              ),
                               fit: BoxFit.cover,
-                              width: 230,
-                              height: 200,
+                              width: 110,
+                              height: 110,
                             ),
                           );
-                        } else {
-                          return const Text('Please select an image');
                         }
-                      }
-                    },
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 35),
-            Center(
-              child: SizedBox(
-                width: 150,
-                height: 35,
-                child: ElevatedButton(
-                  onPressed: () => _pickImage(),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
+                      },
+                    );
+                  },
+                ),
+                const SizedBox(height: 35),
+                Center(
+                  child: SizedBox(
+                    width: 150,
+                    height: 35,
+                    child: ElevatedButton(
+                      onPressed: () => _pickImage(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.teal,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                      ),
+                      child: const Text('Select An Image', style: TextStyle(fontSize: 11, color: Colors.white)),
                     ),
                   ),
-                  child: const Text('Select An Image',
-                      style: TextStyle(fontSize: 11, color: Colors.white)),
                 ),
-              ),
-            ),
-            const SizedBox(height: 5),
-            TextFormField(
-              controller: _firstNameController,
-              decoration: const InputDecoration(
-                labelText: 'Ime',
-              ),
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Unesite ime!';
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _lastNameController,
-              decoration: const InputDecoration(
-                labelText: 'Prezime',
-              ),
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Unesite prezime!';
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _emailController,
-              decoration: const InputDecoration(
-                labelText: 'Email',
-              ),
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Unesite email!';
-                }
-                final emailPattern = RegExp(r'^\w+@[\w-]+(\.[\w-]+)+$');
-                if (!emailPattern.hasMatch(value)) {
-                  return 'Unesite ispravan gmail email!';
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _phoneNumberController,
-              decoration: const InputDecoration(
-                labelText: 'Broj',
-              ),
-            ),
-            TextFormField(
-              controller: _birthDateController,
-              decoration: const InputDecoration(
-                labelText: 'Datum',
-                hintText: 'Odaberite datum',
-              ),
-              onTap: () async {
-                showDatePicker(
-                  context: context,
-                  initialDate: selectedDate,
-                  firstDate: DateTime(1950),
-                  lastDate: DateTime(2101),
-                ).then((date) {
-                  if (date != null) {
-                    selectedDate = date;
-
-                    _setDate(date);
-                  }
-                });
-              },
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Unesite datum!';
-                }
-                return null;
-              },
-            ),
-            DropdownButtonFormField<int>(
-              value: user!.gender,
-              onChanged: (newValue) {
-                setState(() {
-                  user!.gender = newValue!;
-                });
-              },
-              items: const [
-                DropdownMenuItem<int>(
-                  value: null,
-                  child: Text(
-                    'Odaberi spol',
-                  ),
-                ),
-                DropdownMenuItem<int>(
-                  value: 0,
-                  child: Text(
-                    'Muški',
-                  ),
-                ),
-                DropdownMenuItem<int>(
-                  value: 1,
-                  child: Text('Ženski'),
-                ),
+                const SizedBox(height: 5),
+                _buildTextFields(),
               ],
-              decoration: const InputDecoration(
-                labelText: 'Spol',
-              ),
-              validator: (value) {
-                if (value == null) {
-                  return 'Unesite spol!';
-                }
-                return null;
-              },
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  editUser(user!.id);
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal,
-                minimumSize: const Size.fromHeight(50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              child: const Padding(
-                padding: EdgeInsets.all(2.0),
-                child: Text("Save changes"),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTextFields() {
+    return Column(
+      children: [
+        TextFormField(
+          controller: _firstNameController,
+          decoration: const InputDecoration(labelText: 'Ime'),
+          validator: (value) {
+            if (value == null || value.trim().isEmpty) {
+              return 'Unesite ime!';
+            }
+            if (value.length < 2) {
+              return 'Ime mora imati najmanje 2 slova!';
+            }
+            return null;
+          },
+        ),
+        TextFormField(
+          controller: _lastNameController,
+          decoration: const InputDecoration(labelText: 'Prezime'),
+          validator: (value) {
+            if (value == null || value.trim().isEmpty) {
+              return 'Unesite prezime!';
+            }
+            if (value.length < 2) {
+              return 'Prezime mora imati najmanje 2 slova!';
+            }
+            return null;
+          },
+        ),
+        TextFormField(
+          controller: _emailController,
+          decoration: const InputDecoration(labelText: 'Email'),
+          validator: (value) {
+            if (value == null || value.trim().isEmpty) {
+              return 'Unesite email!';
+            }
+            final emailPattern = RegExp(r'^[\w\.-]+@[\w\.-]+\.\w+$');
+            if (!emailPattern.hasMatch(value)) {
+              return 'Unesite ispravan email!';
+            }
+            return null;
+          },
+        ),
+        TextFormField(
+          controller: _phoneNumberController,
+          decoration: const InputDecoration(labelText: 'Broj telefona'),
+          keyboardType: TextInputType.phone,
+          validator: (value) {
+            if (value == null || value.trim().isEmpty) {
+              return 'Unesite broj telefona!';
+            }
+            final phonePattern = RegExp(r'^[0-9 +()-]{6,15}$');
+            if (!phonePattern.hasMatch(value)) {
+              return 'Unesite ispravan broj telefona!';
+            }
+            return null;
+          },
+        ),
+        TextFormField(
+          controller: _birthDateController,
+          readOnly: true,
+          decoration: const InputDecoration(
+            labelText: 'Datum rođenja',
+            hintText: 'Odaberite datum',
+          ),
+          onTap: () async {
+            FocusScope.of(context).requestFocus(FocusNode());
+
+            final safeInitialDate = selectedDate.isBefore(DateTime(1950)) ? DateTime(2000) : selectedDate;
+
+            final date = await showDatePicker(
+              context: context,
+              initialDate: safeInitialDate,
+              firstDate: DateTime(1950),
+              lastDate: DateTime(2101),
+            );
+
+            if (date != null) {
+              setState(() {
+                selectedDate = date;
+                _birthDateController.text = DateFormat('yyyy-MM-dd').format(date);
+              });
+            }
+          },
+          validator: (value) {
+            if (value == null || value.trim().isEmpty) {
+              return 'Odaberite datum rođenja!';
+            }
+            return null;
+          },
+        ),
+        DropdownButtonFormField<int>(
+          value: selectedGender,
+          onChanged: (newValue) => setState(() => selectedGender = newValue),
+          items: const [
+            DropdownMenuItem(value: 0, child: Text('Muški')),
+            DropdownMenuItem(value: 1, child: Text('Ženski')),
+          ],
+          decoration: const InputDecoration(labelText: 'Spol'),
+          validator: (value) {
+            if (value == null) {
+              return 'Odaberite spol!';
+            }
+            return null;
+          },
+        ),
+        const SizedBox(height: 20),
+        ElevatedButton(
+          onPressed: () {
+            if (_formKey.currentState!.validate()) {
+              _editUser();
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.teal,
+            minimumSize: const Size.fromHeight(50),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+          child: const Padding(
+            padding: EdgeInsets.all(2.0),
+            child: Text("Save changes"),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:ecinema_mobile/models/movie.dart';
 import 'package:ecinema_mobile/models/shows.dart';
-import 'package:ecinema_mobile/models/loginUser.dart';
+import 'package:ecinema_mobile/models/login_user.dart';
 import 'package:ecinema_mobile/providers/category_provider.dart';
 import 'package:ecinema_mobile/providers/cinema_provider.dart';
 import 'package:ecinema_mobile/providers/date_provider.dart';
@@ -62,7 +62,6 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => MovieProvider()),
         ChangeNotifierProvider(create: (_) => GenreProvider()),
         ChangeNotifierProvider(create: (_) => SeatsProvider()),
-        ChangeNotifierProvider(create: (_) => GenreProvider()),
         ChangeNotifierProvider(create: (_) => ShowProvider()),
         ChangeNotifierProvider(create: (_) => CinemaProvider()),
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
@@ -73,39 +72,30 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => DateProvider()),
       ],
       child: MaterialApp(
-          theme: ThemeData(primarySwatch: Colors.teal),
-          routes: {
-            LoginScreen.routeName: (context) => const LoginScreen(),
-            RegisterScreen.routeName: (context) => const RegisterScreen(),
-            PaymentScreen.routeName: (context) => const PaymentScreen(),
-            ChangePasswordScreen.routeName: (context) =>
-                const ChangePasswordScreen(),
-            EditProfileScreen.routeName: (context) => const EditProfileScreen()
-          },
-          onGenerateRoute: (settings) {
-            if (settings.name == SeatsScreen.routeName) {
-              return MaterialPageRoute(
-                  builder: (context) =>
-                      SeatsScreen(shows: settings.arguments as Shows));
-            }
-            if (settings.name == ReservationSuccessScreen.routeName) {
-              return MaterialPageRoute(
-                  builder: (context) => const ReservationSuccessScreen());
-            }
-            if (settings.name == MovieDetailScreen.routeName) {
-              return MaterialPageRoute(
-                  builder: (context) =>
-                      MovieDetailScreen(movie: settings.arguments as Movie));
-            }
-            if (settings.name == '/') {
-              return MaterialPageRoute(
-                  builder: (context) => Main(
-                      index: settings.arguments != null
-                          ? settings.arguments as int
-                          : 0));
-            }
-            return null;
-          }),
+        theme: ThemeData(primarySwatch: Colors.teal),
+        routes: {
+          LoginScreen.routeName: (context) => const LoginScreen(),
+          RegisterScreen.routeName: (context) => const RegisterScreen(),
+          PaymentScreen.routeName: (context) => const PaymentScreen(),
+          ChangePasswordScreen.routeName: (context) => const ChangePasswordScreen(),
+          EditProfileScreen.routeName: (context) => const EditProfileScreen(),
+        },
+        onGenerateRoute: (settings) {
+          if (settings.name == SeatsScreen.routeName) {
+            return MaterialPageRoute(builder: (context) => SeatsScreen(shows: settings.arguments as Shows));
+          }
+          if (settings.name == ReservationSuccessScreen.routeName) {
+            return MaterialPageRoute(builder: (context) => const ReservationSuccessScreen());
+          }
+          if (settings.name == MovieDetailScreen.routeName) {
+            return MaterialPageRoute(builder: (context) => MovieDetailScreen(movie: settings.arguments as Movie));
+          }
+          if (settings.name == '/') {
+            return MaterialPageRoute(builder: (context) => Main(index: settings.arguments != null ? settings.arguments as int : 0));
+          }
+          return null;
+        },
+      ),
     );
   }
 }
@@ -135,8 +125,14 @@ class _MainState extends State<Main> {
   void initState() {
     super.initState();
     _selectedIndex = widget.index;
-
     userProvider = context.read<UserLoginProvider>();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final notificationProvider = context.read<NotificationProvider>();
+      if (userProvider.user != null) {
+        notificationProvider.loadByUserId(int.parse(userProvider.user!.id));
+      }
+    });
   }
 
   void _onItemTapped(int index) {
@@ -151,45 +147,66 @@ class _MainState extends State<Main> {
     if (user == null) {
       return const LoginScreen();
     }
+
     return SafeArea(
       child: Scaffold(
         body: screens.elementAt(_selectedIndex),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.home_filled,
-              ),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.theaters,
-              ),
-              label: 'Movie',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.local_activity,
-              ),
-              label: 'Ticket',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.notifications),
-              label: 'Notification',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: 'Profile',
-            ),
-          ],
-          currentIndex: _selectedIndex,
-          selectedItemColor: Colors.teal,
-          unselectedItemColor: Colors.grey,
-          onTap: _onItemTapped,
-          showSelectedLabels: true,
-          showUnselectedLabels: true,
-          type: BottomNavigationBarType.fixed,
+        bottomNavigationBar: Consumer<NotificationProvider>(
+          builder: (context, notifier, child) {
+            return BottomNavigationBar(
+              items: <BottomNavigationBarItem>[
+                const BottomNavigationBarItem(
+                  icon: Icon(Icons.home_filled),
+                  label: 'Home',
+                ),
+                const BottomNavigationBarItem(
+                  icon: Icon(Icons.theaters),
+                  label: 'Movie',
+                ),
+                const BottomNavigationBarItem(
+                  icon: Icon(Icons.local_activity),
+                  label: 'Ticket',
+                ),
+                BottomNavigationBarItem(
+                  icon: Stack(
+                    children: [
+                      const Icon(Icons.notifications),
+                      if (notifier.unreadCount > 0)
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          child: Container(
+                            padding: const EdgeInsets.all(2),
+                            decoration: const BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
+                            constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                            child: Text(
+                              notifier.unreadCount.toString(),
+                              style: const TextStyle(color: Colors.white, fontSize: 10),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                  label: 'Notification',
+                ),
+                const BottomNavigationBarItem(
+                  icon: Icon(Icons.person),
+                  label: 'Profile',
+                ),
+              ],
+              currentIndex: _selectedIndex,
+              selectedItemColor: Colors.teal,
+              unselectedItemColor: Colors.grey,
+              onTap: _onItemTapped,
+              showSelectedLabels: true,
+              showUnselectedLabels: true,
+              type: BottomNavigationBarType.fixed,
+            );
+          },
         ),
       ),
     );

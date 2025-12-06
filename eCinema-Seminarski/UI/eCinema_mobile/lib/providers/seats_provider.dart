@@ -15,7 +15,7 @@ class SeatsProvider extends BaseProvider<Seats> {
     final Map<String, String> queryParameters = {};
 
     var pageNumber = 1;
-    var pageSize = 9999;
+    var pageSize = 100;
     queryParameters['pageNumber'] = pageNumber.toString();
     queryParameters['pageSize'] = pageSize.toString();
 

@@ -20,20 +20,21 @@ class Shows {
 
   late bool isSelected = false;
 
-  Shows(
-      {required this.id,
-      required this.startsAt,
-      required this.endsAt,
-      required this.price,
-      required this.cinemaId,
-      required this.cinema,
-      required this.movieId,
-      required this.movie,
-      required this.showTypeId,
-      required this.showType,
-      this.recurringShowId,
-      this.reccuringShow,
-      required this.isSelected});
+  Shows({
+    required this.id,
+    required this.startsAt,
+    required this.endsAt,
+    required this.price,
+    required this.cinemaId,
+    required this.cinema,
+    required this.movieId,
+    required this.movie,
+    required this.showTypeId,
+    required this.showType,
+    this.recurringShowId,
+    this.reccuringShow,
+    required this.isSelected,
+  });
 
   Shows.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -45,9 +46,7 @@ class Shows {
     movieId = json['movieId'];
     movie = Movie.fromJson(json['movie']);
     recurringShowId = json['recurringShowId'];
-    reccuringShow = json['reccuringShow'] == null
-        ? null
-        : ReccuringShow.fromJson(json['reccuringShow']);
+    reccuringShow = json['reccuringShow'] == null ? null : ReccuringShow.fromJson(json['reccuringShow']);
     showTypeId = json['showTypeId'];
     showType = ShowType.fromJson(json['showType']);
   }

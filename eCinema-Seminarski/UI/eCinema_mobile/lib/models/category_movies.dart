@@ -13,9 +13,7 @@ class CategoryMovies {
   factory CategoryMovies.fromJson(Map<String, dynamic> json) {
     return CategoryMovies(
       category: Category.fromJson(json['category']),
-      movies: (json['movies'] as List<dynamic>)
-          .map((movieJson) => Movie.fromJson(movieJson))
-          .toList(),
+      movies: (json['movies'] as List<dynamic>).map((movieJson) => Movie.fromJson(movieJson)).toList(),
     );
   }
 }

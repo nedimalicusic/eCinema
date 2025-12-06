@@ -37,6 +37,14 @@ class MovieProvider extends BaseProvider<Movie> {
       if (searchObject.pageSize != null) {
         queryParameters['pageSize'] = searchObject.pageSize.toString();
       }
+
+      if (searchObject.genreId != null) {
+        queryParameters['genreId'] = searchObject.genreId.toString();
+      }
+
+      if (searchObject.categoryId != null) {
+        queryParameters['categoryId'] = searchObject.categoryId.toString();
+      }
     }
 
     uri = uri.replace(queryParameters: queryParameters);

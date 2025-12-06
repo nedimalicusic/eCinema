@@ -37,22 +37,17 @@ class _CountryScreenState extends State<CountryScreen> {
     super.initState();
     _countryProvider = context.read<CountryProvider>();
     _isActiveNotifier = ValueNotifier<bool>(_countryIsActive);
-    loadCountries(CountrySearchObject(
-        name: _searchController.text,
-        pageSize: pageSize,
-        pageNumber: currentPage));
+    loadCountries(CountrySearchObject(name: _searchController.text, pageSize: pageSize, pageNumber: currentPage));
 
     _searchController.addListener(() {
       final searchQuery = _searchController.text;
-      loadCountries(CountrySearchObject(
-          name: searchQuery, pageNumber: currentPage, pageSize: pageSize));
+      loadCountries(CountrySearchObject(name: searchQuery, pageNumber: currentPage, pageSize: pageSize));
     });
   }
 
   void loadCountries(CountrySearchObject searchObject) async {
     try {
-      var countriesResponse =
-          await _countryProvider.getPaged(searchObject: searchObject);
+      var countriesResponse = await _countryProvider.getPaged(searchObject: searchObject);
       setState(() {
         countries = countriesResponse;
         hasNextPage = countries.length;
@@ -134,8 +129,7 @@ class _CountryScreenState extends State<CountryScreen> {
         ),
         body: Padding(
             padding: const EdgeInsets.all(16.0),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               BuildSearchField(context),
               const SizedBox(
                 height: 10,
@@ -152,39 +146,40 @@ class _CountryScreenState extends State<CountryScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.teal),
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            width: 350,
-            height: 40,
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.only(top: 4.0, left: 10.0),
-                hintText: "Pretraga",
-                border: const OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                ),
-                suffixIcon: InkWell(
-                  onTap: () {},
-                  child: Container(
-                    padding: const EdgeInsets.all(defaultPadding * 0.75),
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: defaultPadding / 2),
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                    child: SvgPicture.asset(
-                      "assets/icons/Search.svg",
-                      color: Colors.teal,
+        Expanded(
+          child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.teal),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              width: 350,
+              height: 40,
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.only(top: 4.0, left: 10.0),
+                  hintText: "Pretraga",
+                  border: const OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                  suffixIcon: InkWell(
+                    onTap: () {},
+                    child: Container(
+                      padding: const EdgeInsets.all(defaultPadding * 0.75),
+                      margin: const EdgeInsets.symmetric(horizontal: defaultPadding / 2),
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child: SvgPicture.asset(
+                        "assets/icons/Search.svg",
+                        color: Colors.teal,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            )),
+              )),
+        ),
         const SizedBox(
           width: 20,
         ),
@@ -193,157 +188,165 @@ class _CountryScreenState extends State<CountryScreen> {
     );
   }
 
-  Row buildButtons(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: primaryColor,
-            minimumSize: const Size(40, 40),
-          ),
-          onPressed: () {
-            showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    backgroundColor: Colors.white,
-                    title: const Text("Dodaj državu"),
-                    content: SingleChildScrollView(
-                      child: AddCountryForm(),
-                    ),
-                    actions: <Widget>[
-                      ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: primaryColor,
-                          ),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: const Text("Zatvori",
-                              style: TextStyle(color: white))),
-                      ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: primaryColor,
-                          ),
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              InsertCountry();
-                            }
-                          },
-                          child: const Text("Spremi",
-                              style: TextStyle(color: white)))
-                    ],
-                  );
-                });
-          },
-          child: const Icon(
-            Icons.add_outlined,
-            color: Colors.white,
-          ),
-        ),
-        const SizedBox(width: 10.0),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: primaryColor,
-            minimumSize: const Size(40, 40),
-          ),
-          onPressed: () {
-            if (selectedCountry.isEmpty) {
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text("Upozorenje"),
-                      content: const Text(
-                          "Morate odabrati barem jednu državu za uređivanje"),
-                      actions: <Widget>[
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: primaryColor),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child:
-                              const Text("OK", style: TextStyle(color: white)),
-                        ),
-                      ],
-                    );
-                  });
-            } else if (selectedCountry.length > 1) {
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text("Upozorenje"),
-                      content: const Text(
-                          "Odaberite samo jednu državu koji želite urediti"),
-                      actions: <Widget>[
-                        ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text("Ok",
-                                style: TextStyle(color: white)))
-                      ],
-                    );
-                  });
-            } else {
+  Expanded buildButtons(BuildContext context) {
+    return Expanded(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: primaryColor,
+              minimumSize: const Size(40, 40),
+            ),
+            onPressed: () {
               showDialog(
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
                       backgroundColor: Colors.white,
-                      title: const Text("Uredi državu"),
-                      content: AddCountryForm(
-                          isEditing: true, countryToEdit: selectedCountry[0]),
+                      title: const Text("Dodaj državu"),
+                      content: SingleChildScrollView(
+                        child: AddCountryForm(),
+                      ),
                       actions: <Widget>[
                         ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor),
+                              backgroundColor: primaryColor,
+                            ),
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            child: const Text("Zatvori",
-                                style: TextStyle(color: white))),
+                            child: const Text("Zatvori", style: TextStyle(color: white))),
                         ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor),
+                              backgroundColor: primaryColor,
+                            ),
                             onPressed: () {
-                              EditCountry(selectedCountry[0].id);
-                              setState(() {
-                                selectedCountry = [];
-                              });
+                              if (_formKey.currentState!.validate()) {
+                                InsertCountry();
+                              }
                             },
-                            child: const Text("Spremi",
-                                style: TextStyle(color: white))),
+                            child: const Text("Spremi", style: TextStyle(color: white)))
                       ],
                     );
                   });
-            }
-          },
-          child: const Icon(
-            Icons.edit_outlined,
-            color: Colors.white,
+            },
+            child: const Icon(
+              Icons.add_outlined,
+              color: Colors.white,
+            ),
           ),
-        ),
-        const SizedBox(width: 10.0),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: primaryColor,
-            minimumSize: const Size(40, 40),
+          const SizedBox(width: 10.0),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: primaryColor,
+              minimumSize: const Size(40, 40),
+            ),
+            onPressed: () {
+              if (selectedCountry.isEmpty) {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text("Upozorenje"),
+                        content: const Text("Morate odabrati barem jednu državu za uređivanje"),
+                        actions: <Widget>[
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text("OK", style: TextStyle(color: white)),
+                          ),
+                        ],
+                      );
+                    });
+              } else if (selectedCountry.length > 1) {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text("Upozorenje"),
+                        content: const Text("Odaberite samo jednu državu koji želite urediti"),
+                        actions: <Widget>[
+                          ElevatedButton(
+                              style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text("Ok", style: TextStyle(color: white)))
+                        ],
+                      );
+                    });
+              } else {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        backgroundColor: Colors.white,
+                        title: const Text("Uredi državu"),
+                        content: AddCountryForm(isEditing: true, countryToEdit: selectedCountry[0]),
+                        actions: <Widget>[
+                          ElevatedButton(
+                              style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text("Zatvori", style: TextStyle(color: white))),
+                          ElevatedButton(
+                              style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  EditCountry(selectedCountry[0].id);
+                                  setState(() {
+                                    selectedCountry = [];
+                                  });
+                                }
+                              },
+                              child: const Text("Spremi", style: TextStyle(color: white))),
+                        ],
+                      );
+                    });
+              }
+            },
+            child: const Icon(
+              Icons.edit_outlined,
+              color: Colors.white,
+            ),
           ),
-          onPressed: selectedCountry.isEmpty
-              ? () {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                            title: const Text("Upozorenje"),
-                            content: const Text(
-                                "Morate odabrati državu koju želite obrisati."),
+          const SizedBox(width: 10.0),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: primaryColor,
+              minimumSize: const Size(40, 40),
+            ),
+            onPressed: selectedCountry.isEmpty
+                ? () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(title: const Text("Upozorenje"), content: const Text("Morate odabrati državu koju želite obrisati."), actions: <Widget>[
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: primaryColor,
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text("OK", style: TextStyle(color: white)),
+                            ),
+                          ]);
+                        });
+                  }
+                : () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text("Izbriši državu!"),
+                            content: const SingleChildScrollView(
+                              child: Text("Da li ste sigurni da želite obrisati državu?"),
+                            ),
                             actions: <Widget>[
                               ElevatedButton(
                                 style: ElevatedButton.styleFrom(
@@ -352,56 +355,31 @@ class _CountryScreenState extends State<CountryScreen> {
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
-                                child: const Text("OK",
-                                    style: TextStyle(color: white)),
+                                child: const Text("Odustani", style: TextStyle(color: white)),
                               ),
-                            ]);
-                      });
-                }
-              : () {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text("Izbriši državu!"),
-                          content: const SingleChildScrollView(
-                            child: Text(
-                                "Da li ste sigurni da želite obrisati državu?"),
-                          ),
-                          actions: <Widget>[
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor,
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                ),
+                                onPressed: () {
+                                  for (Country n in selectedCountry) {
+                                    DeleteCounty(n.id);
+                                  }
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text("Obriši", style: TextStyle(color: white)),
                               ),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text("Odustani",
-                                  style: TextStyle(color: white)),
-                            ),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red,
-                              ),
-                              onPressed: () {
-                                for (Country n in selectedCountry) {
-                                  DeleteCounty(n.id);
-                                }
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text("Obriši",
-                                  style: TextStyle(color: white)),
-                            ),
-                          ],
-                        );
-                      });
-                },
-          child: const Icon(
-            Icons.delete_forever_outlined,
-            color: Colors.white,
+                            ],
+                          );
+                        });
+                  },
+            child: const Icon(
+              Icons.delete_forever_outlined,
+              color: Colors.white,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -475,8 +453,7 @@ class _CountryScreenState extends State<CountryScreen> {
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: ConstrainedBox(
-          constraints:
-              BoxConstraints(minWidth: MediaQuery.of(context).size.width),
+          constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width),
           child: Container(
             decoration: BoxDecoration(
               border: Border.all(color: Colors.teal, style: BorderStyle.solid),
@@ -484,8 +461,7 @@ class _CountryScreenState extends State<CountryScreen> {
             ),
             child: DataTable(
                 dataRowHeight: 50,
-                dataRowColor: MaterialStateProperty.all(
-                    const Color.fromARGB(42, 241, 241, 241)),
+                dataRowColor: MaterialStateProperty.all(const Color.fromARGB(42, 241, 241, 241)),
                 columns: [
                   DataColumn(
                       label: Checkbox(
@@ -526,8 +502,7 @@ class _CountryScreenState extends State<CountryScreen> {
                                   } else {
                                     selectedCountry.remove(countryItem);
                                   }
-                                  isAllSelected =
-                                      countries.every((u) => u.isSelected);
+                                  isAllSelected = countries.every((u) => u.isSelected);
                                 });
                               },
                             ),
@@ -576,10 +551,7 @@ class _CountryScreenState extends State<CountryScreen> {
             });
             if (hasNextPage == pageSize) {
               loadCountries(
-                CountrySearchObject(
-                    pageNumber: currentPage,
-                    pageSize: pageSize,
-                    name: _searchController.text),
+                CountrySearchObject(pageNumber: currentPage, pageSize: pageSize, name: _searchController.text),
               );
             }
           },

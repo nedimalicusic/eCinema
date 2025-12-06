@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:ecinema_mobile/models/category_movies.dart';
 import 'package:ecinema_mobile/providers/base_provider.dart';
 import 'package:http/http.dart' as http;
 import '../helpers/constants.dart';
@@ -24,22 +23,6 @@ class MovieProvider extends BaseProvider<Movie> {
       var data = json.decode(response.body);
 
       return data.map((d) => fromJson(d)).cast<Movie>().toList();
-    } else {
-      throw Exception(response.body);
-    }
-  }
-
-  Future<List<CategoryMovies>> getCategoryAndMovies() async {
-    var uri = Uri.parse('$apiUrl/Movie/GetCategoryAndMovies');
-    var headers = Authorization.createHeaders();
-
-    final response = await http.get(uri, headers: headers);
-
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      return data
-          .map<CategoryMovies>((json) => CategoryMovies.fromJson(json))
-          .toList();
     } else {
       throw Exception(response.body);
     }
@@ -84,6 +67,23 @@ class MovieProvider extends BaseProvider<Movie> {
   }
 
   Category? get category => _selectedCategory;
+
+  Future<dynamic> insertMovieReaction(int userId, int movieId, int rating) async {
+    var uri = Uri.parse('$apiUrl/MovieReaction');
+
+    Map<String, String> headers = Authorization.createHeaders();
+    headers['Content-Type'] = 'application/json';
+
+    var requestBody = jsonEncode({'userId': userId, 'movieId': movieId, 'rating': rating});
+
+    var response = await http.post(uri, headers: headers, body: requestBody);
+
+    if (response.statusCode == 200) {
+      return "OK";
+    } else {
+      throw Exception('Greška prilikom unosa: ${response.body}');
+    }
+  }
 
   @override
   Movie fromJson(data) {

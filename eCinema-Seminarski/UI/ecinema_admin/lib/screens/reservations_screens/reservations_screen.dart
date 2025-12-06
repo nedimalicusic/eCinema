@@ -54,11 +54,7 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
     _isConfirmNotifier = ValueNotifier<bool>(_isReservationConfirm);
     _isActiveNotifier = ValueNotifier<bool>(_isReservationActive);
     loadCinema();
-    loadReservation(ReservationSearchObject(
-        name: _searchController.text,
-        pageSize: pageSize,
-        cinemaId: selectedCinemaId,
-        pageNumber: currentPage));
+    loadReservation(ReservationSearchObject(name: _searchController.text, pageSize: pageSize, cinemaId: selectedCinemaId, pageNumber: currentPage));
 
     _searchController.addListener(() {
       final searchQuery = _searchController.text;
@@ -84,14 +80,16 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
 
   void loadReservation(ReservationSearchObject searchObject) async {
     try {
-      var reservationResponse =
-          await _reservationProvider.getPaged(searchObject: searchObject);
+      var reservationResponse = await _reservationProvider.getPaged(searchObject: searchObject);
+      if (!mounted) return;
       setState(() {
         reservations = reservationResponse;
         hasNextPage = reservations.length;
       });
     } on Exception catch (e) {
-      showErrorDialog(context, e.toString().substring(11));
+      if (mounted) {
+        showErrorDialog(context, e.toString().substring(11));
+      }
     }
   }
 
@@ -128,11 +126,7 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
       if (actor == "OK") {
         Navigator.of(context).pop();
         loadReservation(
-          ReservationSearchObject(
-              name: _searchController.text,
-              pageNumber: currentPage,
-              pageSize: pageSize,
-              cinemaId: null),
+          ReservationSearchObject(name: _searchController.text, pageNumber: currentPage, pageSize: pageSize, cinemaId: null),
         );
       }
     } on Exception catch (e) {
@@ -148,8 +142,7 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
         ),
         body: Padding(
             padding: const EdgeInsets.all(16.0),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               buildFilterDropdowns(),
               const SizedBox(height: 16.0),
               BuildSearchField(context),
@@ -168,39 +161,40 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.teal),
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            width: 350,
-            height: 40,
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.only(top: 4.0, left: 10.0),
-                hintText: "Pretraga",
-                border: const OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                ),
-                suffixIcon: InkWell(
-                  onTap: () {},
-                  child: Container(
-                    padding: const EdgeInsets.all(defaultPadding * 0.75),
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: defaultPadding / 2),
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                    child: SvgPicture.asset(
-                      "assets/icons/Search.svg",
-                      color: Colors.teal,
+        Expanded(
+          child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.teal),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              width: 350,
+              height: 40,
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.only(top: 4.0, left: 10.0),
+                  hintText: "Pretraga",
+                  border: const OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                  suffixIcon: InkWell(
+                    onTap: () {},
+                    child: Container(
+                      padding: const EdgeInsets.all(defaultPadding * 0.75),
+                      margin: const EdgeInsets.symmetric(horizontal: defaultPadding / 2),
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child: SvgPicture.asset(
+                        "assets/icons/Search.svg",
+                        color: Colors.teal,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            )),
+              )),
+        ),
         const SizedBox(
           width: 20,
         ),
@@ -295,17 +289,14 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       title: const Text("Upozorenje"),
-                      content: const Text(
-                          "Morate odabrati barem jednu rezervaciju za uređivanje"),
+                      content: const Text("Morate odabrati barem jednu rezervaciju za uređivanje"),
                       actions: <Widget>[
                         ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: primaryColor),
+                          style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
-                          child:
-                              const Text("OK", style: TextStyle(color: white)),
+                          child: const Text("OK", style: TextStyle(color: white)),
                         ),
                       ],
                     );
@@ -316,17 +307,14 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       title: const Text("Upozorenje"),
-                      content: const Text(
-                          "Odaberite samo jednu rezervaciju koju želite urediti"),
+                      content: const Text("Odaberite samo jednu rezervaciju koju želite urediti"),
                       actions: <Widget>[
                         ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor),
+                            style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            child: const Text("Ok",
-                                style: TextStyle(color: white)))
+                            child: const Text("Ok", style: TextStyle(color: white)))
                       ],
                     );
                   });
@@ -337,29 +325,25 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
                     return AlertDialog(
                       backgroundColor: Colors.white,
                       title: const Text("Uredi rezervaciju"),
-                      content: EditReservationForm(
-                          isEditing: true,
-                          reservationToEdit: selectedReservation[0]),
+                      content: EditReservationForm(isEditing: true, reservationToEdit: selectedReservation[0]),
                       actions: <Widget>[
                         ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor),
+                            style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            child: const Text("Zatvori",
-                                style: TextStyle(color: white))),
+                            child: const Text("Zatvori", style: TextStyle(color: white))),
                         ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor),
+                            style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
                             onPressed: () {
-                              EditReservation(selectedReservation[0].id);
-                              setState(() {
-                                selectedReservation = [];
-                              });
+                              if (_formKey.currentState!.validate()) {
+                                EditReservation(selectedReservation[0].id);
+                                setState(() {
+                                  selectedReservation = [];
+                                });
+                              }
                             },
-                            child: const Text("Spremi",
-                                style: TextStyle(color: white))),
+                            child: const Text("Spremi", style: TextStyle(color: white))),
                       ],
                     );
                   });
@@ -381,22 +365,17 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
                   showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return AlertDialog(
-                            title: const Text("Upozorenje"),
-                            content: const Text(
-                                "Morate odabrati rezervaciju koju želite obrisati."),
-                            actions: <Widget>[
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: primaryColor,
-                                ),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text("OK",
-                                    style: TextStyle(color: white)),
-                              ),
-                            ]);
+                        return AlertDialog(title: const Text("Upozorenje"), content: const Text("Morate odabrati rezervaciju koju želite obrisati."), actions: <Widget>[
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: primaryColor,
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text("OK", style: TextStyle(color: white)),
+                          ),
+                        ]);
                       });
                 }
               : () {
@@ -406,8 +385,7 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
                         return AlertDialog(
                           title: const Text("Izbriši rezervaciju!"),
                           content: const SingleChildScrollView(
-                            child: Text(
-                                "Da li ste sigurni da želite obrisati rezervaciju?"),
+                            child: Text("Da li ste sigurni da želite obrisati rezervaciju?"),
                           ),
                           actions: <Widget>[
                             ElevatedButton(
@@ -417,8 +395,7 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
-                              child: const Text("Odustani",
-                                  style: TextStyle(color: white)),
+                              child: const Text("Odustani", style: TextStyle(color: white)),
                             ),
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
@@ -430,8 +407,7 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
                                 }
                                 Navigator.of(context).pop();
                               },
-                              child: const Text("Obriši",
-                                  style: TextStyle(color: white)),
+                              child: const Text("Obriši", style: TextStyle(color: white)),
                             ),
                           ],
                         );
@@ -446,18 +422,15 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
     );
   }
 
-  Widget EditReservationForm(
-      {bool isEditing = false, Reservation? reservationToEdit}) {
+  Widget EditReservationForm({bool isEditing = false, Reservation? reservationToEdit}) {
     if (reservationToEdit != null) {
       selectedCinemaId = reservationToEdit.show.cinemaId;
       selectedShowId = reservationToEdit.showId;
       selectedMovie = reservationToEdit.show.movie.title;
       selectedSeatId = reservationToEdit.seatId;
-      selectedUser =
-          "${reservationToEdit.user.firstName} ${reservationToEdit.user.lastName}";
+      selectedUser = "${reservationToEdit.user.firstName} ${reservationToEdit.user.lastName}";
       selectedUserId = reservationToEdit.userId;
-      selectedSeat =
-          '${reservationToEdit.seat.row.toString()}${reservationToEdit.seat.column.toString()}';
+      selectedSeat = '${reservationToEdit.seat.row.toString()}${reservationToEdit.seat.column.toString()}';
       _isActiveNotifier.value = reservationToEdit.isActive;
       _isConfirmNotifier.value = reservationToEdit.isConfirm;
       selectedCinemaId = null;
@@ -539,8 +512,7 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: ConstrainedBox(
-          constraints:
-              BoxConstraints(minWidth: MediaQuery.of(context).size.width),
+          constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width),
           child: Container(
             decoration: BoxDecoration(
               border: Border.all(color: Colors.teal, style: BorderStyle.solid),
@@ -548,8 +520,7 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
             ),
             child: DataTable(
                 dataRowHeight: 80,
-                dataRowColor: MaterialStateProperty.all(
-                    const Color.fromARGB(42, 241, 241, 241)),
+                dataRowColor: MaterialStateProperty.all(const Color.fromARGB(42, 241, 241, 241)),
                 columns: [
                   DataColumn(
                       label: Checkbox(
@@ -596,18 +567,14 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
                                   } else {
                                     selectedReservation.remove(reservationItem);
                                   }
-                                  isAllSelected =
-                                      reservations.every((u) => u.isSelected);
+                                  isAllSelected = reservations.every((u) => u.isSelected);
                                 });
                               },
                             ),
                           ),
-                          DataCell(Text(
-                              reservationItem.show.cinema.name.toString())),
-                          DataCell(Text(
-                              reservationItem.show.movie.title.toString())),
-                          DataCell(Text(
-                              '${reservationItem.seat.row.toString()}${reservationItem.seat.column.toString()}')),
+                          DataCell(Text(reservationItem.show.cinema.name.toString())),
+                          DataCell(Text(reservationItem.show.movie.title.toString())),
+                          DataCell(Text('${reservationItem.seat.row.toString()}${reservationItem.seat.column.toString()}')),
                           DataCell(Container(
                             alignment: Alignment.center,
                             child: reservationItem.isActive == true
@@ -676,10 +643,7 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
               }
             });
             if (hasNextPage == pageSize) {
-              loadReservation(ReservationSearchObject(
-                  pageNumber: currentPage,
-                  pageSize: pageSize,
-                  name: _searchController.text));
+              loadReservation(ReservationSearchObject(pageNumber: currentPage, pageSize: pageSize, name: _searchController.text));
             }
           },
           child: const Icon(

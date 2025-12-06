@@ -22,6 +22,7 @@ class UserProvider extends BaseProvider {
     var headers = Authorization.createHeaders();
 
     final response = await http.get(uri, headers: headers);
+
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
 
@@ -65,8 +66,7 @@ class UserProvider extends BaseProvider {
 
       var request = http.MultipartRequest('PUT', uri);
 
-      var stringUpdatedUserData =
-          updatedUserData.map((key, value) => MapEntry(key, value.toString()));
+      var stringUpdatedUserData = updatedUserData.map((key, value) => MapEntry(key, value.toString()));
 
       request.fields.addAll(stringUpdatedUserData);
 
@@ -92,8 +92,7 @@ class UserProvider extends BaseProvider {
 
       var request = http.MultipartRequest('PUT', uri);
 
-      var stringUpdatedUserData =
-          updatedUserData.map((key, value) => MapEntry(key, value.toString()));
+      var stringUpdatedUserData = updatedUserData.map((key, value) => MapEntry(key, value.toString()));
 
       request.fields.addAll(stringUpdatedUserData);
 

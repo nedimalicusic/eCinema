@@ -34,6 +34,7 @@ class ReservationProvider extends BaseProvider<Reservation> {
     var headers = Authorization.createHeaders();
 
     final response = await http.get(uri, headers: headers);
+
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
       return data.map((d) => fromJson(d)).cast<Reservation>().toList();
@@ -42,8 +43,7 @@ class ReservationProvider extends BaseProvider<Reservation> {
     }
   }
 
-  Future<List<Reservation>> getPaged(
-      {ReservationObjectModel? searchObject}) async {
+  Future<List<Reservation>> getPaged({ReservationObjectModel? searchObject}) async {
     var uri = Uri.parse('$apiUrl/Reservation/GetPaged');
     var headers = Authorization.createHeaders();
     final Map<String, String> queryParameters = {};
@@ -70,6 +70,7 @@ class ReservationProvider extends BaseProvider<Reservation> {
 
   Future<List<Reservation>> getByShowId(int showId) async {
     var uri = Uri.parse('$apiUrl/Reservation/GetByShowId?showId=$showId');
+
     var headers = Authorization.createHeaders();
     final response = await http.get(uri, headers: headers);
     if (response.statusCode == 200) {
@@ -82,15 +83,18 @@ class ReservationProvider extends BaseProvider<Reservation> {
 
   @override
   Future<dynamic> insert(dynamic resource) async {
-    var uri = Uri.parse('$apiUrl/Reservation/PostAsync');
-    Map<String, String> headers = Authorization.createHeaders();
+    try {
+      var uri = Uri.parse('$apiUrl/Reservation/PostAsync');
+      Map<String, String> headers = Authorization.createHeaders();
 
-    var jsonRequest = jsonEncode(resource);
-    var response = await http.post(uri, headers: headers, body: jsonRequest);
-    if (response.statusCode == 200) {
-      return "OK";
+      var jsonRequest = jsonEncode(resource);
+      var response = await http.post(uri, headers: headers, body: jsonRequest);
+      if (response.statusCode == 200) {
+        return "OK";
+      }
+    } catch (e) {
+      return "Greska prilikom kreiranja rezervacije!";
     }
-    return "Greska prilikom kreiranja rezervacije!";
   }
 
   @override

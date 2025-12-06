@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:ecinema_admin/models/category.dart';
-import 'package:ecinema_admin/models/searchObject/base_search.dart';
 import '../helpers/constants.dart';
+import '../models/searchObject/category_search.dart';
 import '../utils/authorzation.dart';
 import 'base_provider.dart';
 import 'package:http/http.dart' as http;
@@ -9,17 +9,17 @@ import 'package:http/http.dart' as http;
 class CategoryProvider extends BaseProvider<Category> {
   CategoryProvider() : super('Category/GetPaged');
 
-  Future<List<Category>> getPaged({BaseSearchObject? searchObject}) async {
+  Future<List<Category>> getPaged({CategorySerchObject? searchObject}) async {
     var uri = Uri.parse('$apiUrl/Category/GetPaged');
     var headers = Authorization.createHeaders();
     final Map<String, String> queryParameters = {};
 
     if (searchObject != null) {
-      if (searchObject.PageNumber != null) {
-        queryParameters['pageNumber'] = searchObject.PageNumber.toString();
+      if (searchObject.pageNumber != null) {
+        queryParameters['pageNumber'] = searchObject.pageNumber.toString();
       }
-      if (searchObject.PageSize != null) {
-        queryParameters['pageSize'] = searchObject.PageSize.toString();
+      if (searchObject.pageSize != null) {
+        queryParameters['pageSize'] = searchObject.pageSize.toString();
       }
     }
 

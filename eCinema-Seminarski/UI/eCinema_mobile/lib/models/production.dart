@@ -1,4 +1,3 @@
-
 import 'package:ecinema_mobile/models/country.dart';
 
 class Production {
@@ -7,11 +6,11 @@ class Production {
   late int countryId;
   late Country country;
 
-  Production(
-      {required this.id,
-        required this.name,
-        required this.countryId,
-        required this.country,
+  Production({
+    required this.id,
+    required this.name,
+    required this.countryId,
+    required this.country,
   });
 
   factory Production.fromJson(Map<String, dynamic> json) {
@@ -19,7 +18,7 @@ class Production {
       id: json['id'],
       name: json['name'],
       countryId: json['countryId'],
-      country:Country.fromJson(json['country']),
+      country: Country.fromJson(json['country']),
     );
   }
 

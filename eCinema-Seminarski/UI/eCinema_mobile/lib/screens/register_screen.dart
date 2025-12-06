@@ -24,6 +24,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -32,6 +33,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void register() async {
+    setState(() {
+      _isLoading = true;
+    });
+
     try {
       var registerData = Register(
         password: _passwordController.text,
@@ -46,17 +51,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-              backgroundColor: Colors.lightBlueAccent,
-              content: Text('Registracija uspješna.',
-                  style: TextStyle(
-                    color: Colors.white,
-                  ))),
+            backgroundColor: Colors.teal,
+            content: Text(
+              'Registracija uspješna.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
         );
-        Navigator.pushNamedAndRemoveUntil(
-            context, LoginScreen.routeName, (route) => false);
+        Navigator.pushNamedAndRemoveUntil(context, LoginScreen.routeName, (route) => false);
       }
     } on Exception catch (e) {
       showErrorDialog(context, e.toString().substring(11));
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -86,10 +98,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     Text(
                       "eCinema",
-                      style: TextStyle(
-                          color: Colors.teal,
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold),
+                      style: TextStyle(color: Colors.teal, fontSize: 32, fontWeight: FontWeight.bold),
                     )
                   ],
                 ),
@@ -98,10 +107,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const Center(
                 child: Text(
                   "Sign Up",
-                  style: TextStyle(
-                      color: Colors.teal,
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold),
+                  style: TextStyle(color: Colors.teal, fontSize: 26, fontWeight: FontWeight.bold),
                 ),
               ),
               const SizedBox(height: 30),
@@ -154,8 +160,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   if (value!.isEmpty) {
                     return 'Unesite vaš email.';
                   }
-                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                      .hasMatch(value)) {
+                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
                     return 'Unesite validan email.';
                   }
                   return null;
@@ -174,16 +179,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(height: 10),
               TextFormField(
                 controller: _phoneNumberController,
-                keyboardType: TextInputType.name,
+                keyboardType: TextInputType.phone,
                 validator: (value) {
                   if (value!.isEmpty) {
                     return 'Unesite broj telefona!';
+                  }
+                  if (!RegExp(r'^\d{9,}$').hasMatch(value)) {
+                    return 'Broj telefona mora imati barem 9 cifara!';
                   }
                   return null;
                 },
                 decoration: InputDecoration(
                   labelText: "Phone",
-                  prefixIcon: const Icon(Icons.person_outline),
+                  prefixIcon: const Icon(Icons.phone),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -196,9 +204,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
               TextFormField(
                 controller: _passwordController,
                 keyboardType: TextInputType.visiblePassword,
+                obscureText: _obscurePassword,
                 validator: (value) {
                   if (value!.isEmpty) {
                     return 'Unesite šifru!';
+                  }
+                  if (value.length < 6) {
+                    return 'Šifra mora imati barem 6 karaktera!';
+                  }
+                  if (!RegExp(r'[A-Z]').hasMatch(value)) {
+                    return 'Šifra mora sadržati barem jedno veliko slovo!';
+                  }
+                  if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
+                    return 'Šifra mora sadržati barem jedan specijalni znak!';
                   }
                   return null;
                 },
@@ -206,14 +224,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   labelText: "Password",
                   prefixIcon: const Icon(Icons.password_outlined),
                   suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
-                      icon: _obscurePassword
-                          ? const Icon(Icons.visibility_outlined)
-                          : const Icon(Icons.visibility_off_outlined)),
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
+                    icon: _obscurePassword ? const Icon(Icons.visibility_outlined) : const Icon(Icons.visibility_off_outlined),
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -226,7 +243,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text("Already hava an account?"),
+                  const Text("Already have an account?"),
                   TextButton(
                     onPressed: () {
                       Navigator.pushNamed(context, LoginScreen.routeName);
@@ -244,12 +261,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        register();
-                      }
-                    },
-                    child: const Text("Sign Up"),
+                    onPressed: _isLoading
+                        ? null
+                        : () {
+                            if (_formKey.currentState!.validate()) {
+                              register();
+                            }
+                          },
+                    child: _isLoading
+                        ? const SizedBox(
+                            height: 24,
+                            width: 24,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : const Text("Sign Up"),
                   ),
                 ],
               ),

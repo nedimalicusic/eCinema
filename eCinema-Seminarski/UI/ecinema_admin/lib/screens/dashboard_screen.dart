@@ -25,12 +25,7 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  late Dashboard dashboard = Dashboard(
-      countUsers: 0,
-      countUsersActive: 0,
-      countUsersInActive: 0,
-      countEmployees: 0,
-      countOfReservation: 0);
+  late Dashboard dashboard = Dashboard(countUsers: 0, countUsersActive: 0, countUsersInActive: 0, countEmployees: 0, countOfReservation: 0);
   late CinemaProvider _cinemaProvider;
   late ReservationProvider _reservationProvider;
   List<Cinema> cinemaList = <Cinema>[];
@@ -50,8 +45,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   void loadDashboardInformation(int? cinemaId) async {
     try {
-      var dashboardResponse =
-          await _cinemaProvider.getDashboardInformation(cinemaId);
+      var dashboardResponse = await _cinemaProvider.getDashboardInformation(cinemaId);
       if (mounted) {
         setState(() {
           dashboard = dashboardResponse;
@@ -100,7 +94,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 Text(
-                  'Dobrodošli, ${loginUserProvider.loginUser!.FirstName} ${loginUserProvider.loginUser!.LastName}',
+                  'Dobrodošli, ${loginUserProvider.user!.firstName} ${loginUserProvider.user!.lastName}',
                   style: const TextStyle(fontSize: 16),
                 ),
                 const SizedBox(width: 20),
@@ -198,8 +192,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     setState(() {
                       currentYear--;
                     });
-                    loadReservations(BarChartSearchObject(
-                        year: currentYear, cinemaId: selectedCinema?.id));
+                    loadReservations(BarChartSearchObject(year: currentYear, cinemaId: selectedCinema?.id));
                   },
                   icon: const Icon(Icons.arrow_left),
                   color: Colors.teal,
@@ -215,8 +208,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     setState(() {
                       currentYear++;
                     });
-                    loadReservations(BarChartSearchObject(
-                        year: currentYear, cinemaId: selectedCinema?.id));
+                    loadReservations(BarChartSearchObject(year: currentYear, cinemaId: selectedCinema?.id));
                   },
                   icon: const Icon(Icons.arrow_right),
                   color: Colors.teal,
@@ -247,14 +239,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
               color: Colors.white,
             ),
             const SizedBox(height: 5),
-            Text(label,
-                style: const TextStyle(color: Colors.white, fontSize: 16)),
+            Text(label, style: const TextStyle(color: Colors.white, fontSize: 16)),
             Text(
               num.toString(),
-              style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white),
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: Colors.white),
             )
           ],
         ),
@@ -304,15 +292,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     });
                     if (selectedCinema == null) {
                       loadDashboardInformation(null);
-                      loadReservations(BarChartSearchObject(
-                          year: currentYear, cinemaId: null));
+                      loadReservations(BarChartSearchObject(year: currentYear, cinemaId: null));
                     } else {
                       loadDashboardInformation(selectedCinema!.id);
-                      loadReservations(BarChartSearchObject(
-                          year: currentYear,
-                          cinemaId: selectedCinema == null
-                              ? null
-                              : selectedCinema!.id));
+                      loadReservations(BarChartSearchObject(year: currentYear, cinemaId: selectedCinema == null ? null : selectedCinema!.id));
                     }
                   },
                   underline: const Text(""),
@@ -331,9 +314,7 @@ class BarChartReservations extends StatelessWidget {
 
   final color = Colors.teal;
   final betweenSpace = 0.2;
-  final maxData = data.isNotEmpty
-      ? data.reduce((value, element) => value > element ? value : element)
-      : 0.0;
+  final maxData = data.isNotEmpty ? data.reduce((value, element) => value > element ? value : element) : 0.0;
 
   BarChartRodData generateRodData(
     double y,

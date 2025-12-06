@@ -1,6 +1,4 @@
-
 import 'package:ecinema_mobile/models/city.dart';
-
 
 class Cinema {
   late int id;
@@ -13,16 +11,17 @@ class Cinema {
   late int cityId;
   late City city;
 
-  Cinema(
-      {required this.id,
-        required this.name,
-        required this.address,
-        required this.description,
-        required this.email,
-        required this.phoneNumber,
-        required this.cityId,
-        required this.city,
-        required this.numberOfSeats});
+  Cinema({
+    required this.id,
+    required this.name,
+    required this.address,
+    required this.description,
+    required this.email,
+    required this.phoneNumber,
+    required this.cityId,
+    required this.city,
+    required this.numberOfSeats,
+  });
 
   Cinema.fromJson(Map<String, dynamic> json) {
     id = json['id'];

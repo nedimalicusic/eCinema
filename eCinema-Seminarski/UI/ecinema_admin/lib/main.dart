@@ -1,4 +1,3 @@
-import 'package:ecinema_admin/models/loginUser.dart';
 import 'package:ecinema_admin/providers/actor_provider.dart';
 import 'package:ecinema_admin/providers/category_provider.dart';
 import 'package:ecinema_admin/providers/cinema_provider.dart';
@@ -22,6 +21,8 @@ import 'package:ecinema_admin/screens/home_screen.dart';
 import 'package:ecinema_admin/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'models/login_user.dart';
 
 void main() {
   runApp(const MyApp());
@@ -88,7 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    LoginUser? loginUser = loginUserprovider.loginUser;
+    UserLogin? loginUser = loginUserprovider.user;
     if (loginUser == null) {
       return const LoginScreen();
     }

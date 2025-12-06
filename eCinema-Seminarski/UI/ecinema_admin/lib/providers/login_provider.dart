@@ -1,21 +1,21 @@
 import 'dart:convert';
-import 'package:ecinema_admin/models/loginUser.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
 import '../helpers/constants.dart';
+import '../models/login_user.dart';
 import '../utils/authorzation.dart';
 import 'base_provider.dart';
 
-class LoginProvider extends BaseProvider<LoginUser> {
+class LoginProvider extends BaseProvider<UserLogin> {
   LoginProvider() : super('User/GetPaged');
-  LoginUser? loginUser;
+  UserLogin? user;
 
   refreshUser() async {
-    loginUser = await getById(int.parse(loginUser!.Id));
+    user = await getById(int.parse(user!.id));
   }
 
   @override
-  Future<LoginUser> getById(int id) async {
+  Future<UserLogin> getById(int id) async {
     var uri = Uri.parse('$apiUrl/User/$id');
 
     var headers = Authorization.createHeaders();
@@ -30,7 +30,7 @@ class LoginProvider extends BaseProvider<LoginUser> {
     }
   }
 
-  Future<LoginUser> loginAsync(String email, String password) async {
+  Future<UserLogin> loginAsync(String email, String password) async {
     var url = '$apiUrl/Access/SignIn';
     final response = await http.post(
       Uri.parse(url),
@@ -44,26 +44,25 @@ class LoginProvider extends BaseProvider<LoginUser> {
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> decodedToken = JwtDecoder.decode(response.body);
-      loginUser = LoginUser.fromJson(decodedToken);
-      if (loginUser?.Role == 'Administrator') {
-        Authorization.token = loginUser!.token;
-        notifyListeners();
-        return loginUser!;
-      } else {
-        throw Exception("UserWrongCredentialsException");
-      }
+      user = UserLogin.fromJson(decodedToken);
+      var data = json.decode(response.body);
+      var token = data['token'];
+
+      Authorization.token = token;
+      notifyListeners();
+      return user!;
     } else {
       throw Exception(response.body);
     }
   }
 
   void logout() {
-    loginUser = null;
+    user = null;
     notifyListeners();
   }
 
   @override
   fromJson(data) {
-    return LoginUser.fromJson(data);
+    return UserLogin.fromJson(data);
   }
 }

@@ -1,4 +1,3 @@
-import 'package:ecinema_admin/models/loginUser.dart';
 import 'package:ecinema_admin/screens/admin_screens/admin_screen.dart';
 import 'package:ecinema_admin/screens/cities_screens/city_screen.dart';
 import 'package:ecinema_admin/screens/countries_screens/counry_screen.dart';
@@ -12,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
+import '../models/login_user.dart';
 import '../providers/login_provider.dart';
 import 'cinema_screens/cinemas_screen.dart';
 import 'dashboard_screen.dart';
@@ -34,7 +34,7 @@ class SideMenu extends StatefulWidget {
 
 class _SideMenuState extends State<SideMenu> {
   late LoginProvider loginUserProvider;
-  late LoginUser? loginUser;
+  late UserLogin? loginUser;
   bool isExpanded = false;
 
   @override
@@ -57,8 +57,7 @@ class _SideMenuState extends State<SideMenu> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: const [
-                      Icon(Icons.slow_motion_video_rounded,
-                          color: Colors.white, size: 24),
+                      Icon(Icons.slow_motion_video_rounded, color: Colors.white, size: 24),
                       SizedBox(
                         width: 8,
                       ),
@@ -160,9 +159,7 @@ class _SideMenuState extends State<SideMenu> {
                     style: TextStyle(color: Colors.white),
                   ),
                   trailing: Icon(
-                    !isExpanded
-                        ? Icons.keyboard_arrow_down
-                        : Icons.keyboard_arrow_right,
+                    !isExpanded ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_right,
                     color: Colors.white,
                   ),
                   children: <Widget>[
@@ -197,8 +194,7 @@ class _SideMenuState extends State<SideMenu> {
             svgSrc: "assets/icons/logout.svg",
             press: () {
               loginUserProvider.logout();
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const LoginScreen()));
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => const LoginScreen()));
             },
           ),
         ],

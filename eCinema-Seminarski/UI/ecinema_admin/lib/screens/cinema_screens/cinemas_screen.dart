@@ -31,8 +31,7 @@ class _CinemasScreenState extends State<CinemasScreen> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
-  final TextEditingController _numberOfSeatsController =
-      TextEditingController();
+  final TextEditingController _numberOfSeatsController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
   List<Cinema> selectedCinema = <Cinema>[];
   int? selectedCity;
@@ -47,22 +46,17 @@ class _CinemasScreenState extends State<CinemasScreen> {
     _cinemaProvider = context.read<CinemaProvider>();
     _cityProvider = context.read<CityProvider>();
     loadCities();
-    loadCinema(CinemaSearchObject(
-        name: _searchController.text,
-        pageSize: pageSize,
-        pageNumber: currentPage));
+    loadCinema(CinemaSearchObject(name: _searchController.text, pageSize: pageSize, pageNumber: currentPage));
 
     _searchController.addListener(() {
       final searchQuery = _searchController.text;
-      loadCinema(CinemaSearchObject(
-          name: searchQuery, pageNumber: currentPage, pageSize: pageSize));
+      loadCinema(CinemaSearchObject(name: searchQuery, pageNumber: currentPage, pageSize: pageSize));
     });
   }
 
   void loadCinema(CinemaSearchObject searchObject) async {
     try {
-      var cinemaResponse =
-          await _cinemaProvider.getPaged(searchObject: searchObject);
+      var cinemaResponse = await _cinemaProvider.getPaged(searchObject: searchObject);
       setState(() {
         cinemas = cinemaResponse;
         hasNextPage = cinemas.length;
@@ -85,15 +79,7 @@ class _CinemasScreenState extends State<CinemasScreen> {
 
   void InsertCinema() async {
     try {
-      var newCinema = {
-        "name": _nameController.text,
-        "address": _addressController.text,
-        "description": _descriptionController.text,
-        "email": _emailController.text,
-        "phoneNumber": _phoneNumberController.text,
-        "numberOfSeats": _numberOfSeatsController.text,
-        "cityId": selectedCity
-      };
+      var newCinema = {"name": _nameController.text, "address": _addressController.text, "description": _descriptionController.text, "email": _emailController.text, "phoneNumber": _phoneNumberController.text, "numberOfSeats": _numberOfSeatsController.text, "cityId": selectedCity};
       var city = await _cinemaProvider.insert(newCinema);
       if (city == "OK") {
         Navigator.of(context).pop();
@@ -112,16 +98,7 @@ class _CinemasScreenState extends State<CinemasScreen> {
 
   void EditCinema(int id) async {
     try {
-      var newCinema = {
-        "id": id,
-        "name": _nameController.text,
-        "address": _addressController.text,
-        "description": _descriptionController.text,
-        "email": _emailController.text,
-        "phoneNumber": _phoneNumberController.text,
-        "numberOfSeats": _numberOfSeatsController.text,
-        "cityId": selectedCity
-      };
+      var newCinema = {"id": id, "name": _nameController.text, "address": _addressController.text, "description": _descriptionController.text, "email": _emailController.text, "phoneNumber": _phoneNumberController.text, "numberOfSeats": _numberOfSeatsController.text, "cityId": selectedCity};
       var city = await _cinemaProvider.edit(newCinema);
       if (city == "OK") {
         Navigator.of(context).pop();
@@ -163,8 +140,7 @@ class _CinemasScreenState extends State<CinemasScreen> {
         ),
         body: Padding(
             padding: const EdgeInsets.all(16.0),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               BuildSearchField(context),
               const SizedBox(
                 height: 10,
@@ -181,39 +157,40 @@ class _CinemasScreenState extends State<CinemasScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.teal),
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            width: 350,
-            height: 40,
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.only(top: 4.0, left: 10.0),
-                hintText: "Pretraga",
-                border: const OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                ),
-                suffixIcon: InkWell(
-                  onTap: () {},
-                  child: Container(
-                    padding: const EdgeInsets.all(defaultPadding * 0.75),
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: defaultPadding / 2),
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                    child: SvgPicture.asset(
-                      "assets/icons/Search.svg",
-                      color: Colors.teal,
+        Expanded(
+          child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.teal),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              width: 350,
+              height: 40,
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.only(top: 4.0, left: 10.0),
+                  hintText: "Pretraga",
+                  border: const OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                  suffixIcon: InkWell(
+                    onTap: () {},
+                    child: Container(
+                      padding: const EdgeInsets.all(defaultPadding * 0.75),
+                      margin: const EdgeInsets.symmetric(horizontal: defaultPadding / 2),
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child: SvgPicture.asset(
+                        "assets/icons/Search.svg",
+                        color: Colors.teal,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            )),
+              )),
+        ),
         const SizedBox(
           width: 20,
         ),
@@ -249,8 +226,7 @@ class _CinemasScreenState extends State<CinemasScreen> {
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
-                          child: const Text("Zatvori",
-                              style: TextStyle(color: white))),
+                          child: const Text("Zatvori", style: TextStyle(color: white))),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: primaryColor,
@@ -260,8 +236,7 @@ class _CinemasScreenState extends State<CinemasScreen> {
                               InsertCinema();
                             }
                           },
-                          child: const Text("Spremi",
-                              style: TextStyle(color: white)))
+                          child: const Text("Spremi", style: TextStyle(color: white)))
                     ],
                   );
                 });
@@ -284,17 +259,14 @@ class _CinemasScreenState extends State<CinemasScreen> {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       title: const Text("Upozorenje"),
-                      content: const Text(
-                          "Morate odabrati barem jedno kino za uređivanje"),
+                      content: const Text("Morate odabrati barem jedno kino za uređivanje"),
                       actions: <Widget>[
                         ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: primaryColor),
+                          style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
-                          child:
-                              const Text("OK", style: TextStyle(color: white)),
+                          child: const Text("OK", style: TextStyle(color: white)),
                         ),
                       ],
                     );
@@ -305,17 +277,14 @@ class _CinemasScreenState extends State<CinemasScreen> {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       title: const Text("Upozorenje"),
-                      content: const Text(
-                          "Odaberite samo jedno kino kojeg želite urediti"),
+                      content: const Text("Odaberite samo jedno kino kojeg želite urediti"),
                       actions: <Widget>[
                         ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor),
+                            style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            child: const Text("Ok",
-                                style: TextStyle(color: white)))
+                            child: const Text("Ok", style: TextStyle(color: white)))
                       ],
                     );
                   });
@@ -326,28 +295,25 @@ class _CinemasScreenState extends State<CinemasScreen> {
                     return AlertDialog(
                       backgroundColor: Colors.white,
                       title: const Text("Uredi kino"),
-                      content: AddCinemaForm(
-                          isEditing: true, cinemaToEdit: selectedCinema[0]),
+                      content: AddCinemaForm(isEditing: true, cinemaToEdit: selectedCinema[0]),
                       actions: <Widget>[
                         ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor),
+                            style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            child: const Text("Zatvori",
-                                style: TextStyle(color: white))),
+                            child: const Text("Zatvori", style: TextStyle(color: white))),
                         ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor),
+                            style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
                             onPressed: () {
-                              EditCinema(selectedCinema[0].id);
-                              setState(() {
-                                selectedCinema = [];
-                              });
+                              if (_formKey.currentState!.validate()) {
+                                EditCinema(selectedCinema[0].id);
+                                setState(() {
+                                  selectedCinema = [];
+                                });
+                              }
                             },
-                            child: const Text("Spremi",
-                                style: TextStyle(color: white))),
+                            child: const Text("Spremi", style: TextStyle(color: white))),
                       ],
                     );
                   });
@@ -369,22 +335,17 @@ class _CinemasScreenState extends State<CinemasScreen> {
                   showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return AlertDialog(
-                            title: const Text("Upozorenje"),
-                            content: const Text(
-                                "Morate odabrati kino kojeg želite obrisati."),
-                            actions: <Widget>[
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: primaryColor,
-                                ),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text("OK",
-                                    style: TextStyle(color: white)),
-                              ),
-                            ]);
+                        return AlertDialog(title: const Text("Upozorenje"), content: const Text("Morate odabrati kino kojeg želite obrisati."), actions: <Widget>[
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: primaryColor,
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text("OK", style: TextStyle(color: white)),
+                          ),
+                        ]);
                       });
                 }
               : () {
@@ -394,8 +355,7 @@ class _CinemasScreenState extends State<CinemasScreen> {
                         return AlertDialog(
                           title: const Text("Izbriši kino!"),
                           content: const SingleChildScrollView(
-                            child: Text(
-                                "Da li ste sigurni da želite obrisati kino?"),
+                            child: Text("Da li ste sigurni da želite obrisati kino?"),
                           ),
                           actions: <Widget>[
                             ElevatedButton(
@@ -405,8 +365,7 @@ class _CinemasScreenState extends State<CinemasScreen> {
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
-                              child: const Text("Odustani",
-                                  style: TextStyle(color: white)),
+                              child: const Text("Odustani", style: TextStyle(color: white)),
                             ),
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
@@ -418,8 +377,7 @@ class _CinemasScreenState extends State<CinemasScreen> {
                                 }
                                 Navigator.of(context).pop();
                               },
-                              child: const Text("Obriši",
-                                  style: TextStyle(color: white)),
+                              child: const Text("Obriši", style: TextStyle(color: white)),
                             ),
                           ],
                         );
@@ -454,7 +412,6 @@ class _CinemasScreenState extends State<CinemasScreen> {
     }
 
     return SizedBox(
-      height: 400,
       width: 700,
       child: Form(
         key: _formKey,
@@ -557,8 +514,7 @@ class _CinemasScreenState extends State<CinemasScreen> {
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: ConstrainedBox(
-          constraints:
-              BoxConstraints(minWidth: MediaQuery.of(context).size.width),
+          constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width),
           child: Container(
             decoration: BoxDecoration(
               border: Border.all(color: Colors.teal, style: BorderStyle.solid),
@@ -566,8 +522,7 @@ class _CinemasScreenState extends State<CinemasScreen> {
             ),
             child: DataTable(
                 dataRowHeight: 80,
-                dataRowColor: MaterialStateProperty.all(
-                    const Color.fromARGB(42, 241, 241, 241)),
+                dataRowColor: MaterialStateProperty.all(const Color.fromARGB(42, 241, 241, 241)),
                 columns: [
                   DataColumn(
                       label: Checkbox(
@@ -614,8 +569,7 @@ class _CinemasScreenState extends State<CinemasScreen> {
                                   } else {
                                     selectedCinema.remove(cinemaItem);
                                   }
-                                  isAllSelected =
-                                      cinemas.every((u) => u.isSelected);
+                                  isAllSelected = cinemas.every((u) => u.isSelected);
                                 });
                               },
                             ),
@@ -666,10 +620,7 @@ class _CinemasScreenState extends State<CinemasScreen> {
             });
             if (hasNextPage == pageSize) {
               loadCinema(
-                CinemaSearchObject(
-                    pageNumber: currentPage,
-                    pageSize: pageSize,
-                    name: _searchController.text),
+                CinemaSearchObject(pageNumber: currentPage, pageSize: pageSize, name: _searchController.text),
               );
             }
           },

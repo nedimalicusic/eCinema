@@ -1,4 +1,6 @@
 {
     "editor.formatOnSave": true,
-    "editor.formatOnSaveMode": "file"
+    "editor.formatOnSaveMode": "file",
+    "cmake.sourceDirectory": "C:/Users/alicu/Desktop/eCinema-main/eCinema-Seminarski/UI/ecinema_admin/linux",
+    "java.configuration.updateBuildConfiguration": "interactive"
 }

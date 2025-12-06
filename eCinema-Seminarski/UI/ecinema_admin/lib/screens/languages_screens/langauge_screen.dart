@@ -34,22 +34,17 @@ class _LanguageScreenState extends State<LanguageScreen> {
   void initState() {
     super.initState();
     _languageProvider = context.read<LanguageProvider>();
-    loadLanguages(LanguageSearchObject(
-        name: _searchController.text,
-        pageSize: pageSize,
-        pageNumber: currentPage));
+    loadLanguages(LanguageSearchObject(name: _searchController.text, pageSize: pageSize, pageNumber: currentPage));
 
     _searchController.addListener(() {
       final searchQuery = _searchController.text;
-      loadLanguages(LanguageSearchObject(
-          name: searchQuery, pageNumber: currentPage, pageSize: pageSize));
+      loadLanguages(LanguageSearchObject(name: searchQuery, pageNumber: currentPage, pageSize: pageSize));
     });
   }
 
   void loadLanguages(LanguageSearchObject searchObject) async {
     try {
-      var languageResponse =
-          await _languageProvider.getPaged(searchObject: searchObject);
+      var languageResponse = await _languageProvider.getPaged(searchObject: searchObject);
       setState(() {
         languages = languageResponse;
         hasNextPage = languages.length;
@@ -127,8 +122,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
         ),
         body: Padding(
             padding: const EdgeInsets.all(16.0),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               BuildSearchField(context),
               const SizedBox(
                 height: 10,
@@ -145,39 +139,40 @@ class _LanguageScreenState extends State<LanguageScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.teal),
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            width: 350,
-            height: 40,
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.only(top: 4.0, left: 10.0),
-                hintText: "Pretraga",
-                border: const OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                ),
-                suffixIcon: InkWell(
-                  onTap: () {},
-                  child: Container(
-                    padding: const EdgeInsets.all(defaultPadding * 0.75),
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: defaultPadding / 2),
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                    child: SvgPicture.asset(
-                      "assets/icons/Search.svg",
-                      color: Colors.teal,
+        Expanded(
+          child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.teal),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              width: 350,
+              height: 40,
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.only(top: 4.0, left: 10.0),
+                  hintText: "Pretraga",
+                  border: const OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                  suffixIcon: InkWell(
+                    onTap: () {},
+                    child: Container(
+                      padding: const EdgeInsets.all(defaultPadding * 0.75),
+                      margin: const EdgeInsets.symmetric(horizontal: defaultPadding / 2),
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child: SvgPicture.asset(
+                        "assets/icons/Search.svg",
+                        color: Colors.teal,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            )),
+              )),
+        ),
         const SizedBox(
           width: 20,
         ),
@@ -186,157 +181,165 @@ class _LanguageScreenState extends State<LanguageScreen> {
     );
   }
 
-  Row buildButtons(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: primaryColor,
-            minimumSize: const Size(40, 40),
-          ),
-          onPressed: () {
-            showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    backgroundColor: Colors.white,
-                    title: const Text("Dodaj jezik"),
-                    content: SingleChildScrollView(
-                      child: AddLanguageForm(),
-                    ),
-                    actions: <Widget>[
-                      ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: primaryColor,
-                          ),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: const Text("Zatvori",
-                              style: TextStyle(color: white))),
-                      ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: primaryColor,
-                          ),
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              InsertLanguage();
-                            }
-                          },
-                          child: const Text("Spremi",
-                              style: TextStyle(color: white)))
-                    ],
-                  );
-                });
-          },
-          child: const Icon(
-            Icons.add_outlined,
-            color: Colors.white,
-          ),
-        ),
-        const SizedBox(width: 10.0),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: primaryColor,
-            minimumSize: const Size(40, 40),
-          ),
-          onPressed: () {
-            if (selectedLanguage.isEmpty) {
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text("Upozorenje"),
-                      content: const Text(
-                          "Morate odabrati barem jedan jezik za uređivanje"),
-                      actions: <Widget>[
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: primaryColor),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child:
-                              const Text("OK", style: TextStyle(color: white)),
-                        ),
-                      ],
-                    );
-                  });
-            } else if (selectedLanguage.length > 1) {
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text("Upozorenje"),
-                      content: const Text(
-                          "Odaberite samo jedan jezik koji želite urediti"),
-                      actions: <Widget>[
-                        ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text("Ok",
-                                style: TextStyle(color: white)))
-                      ],
-                    );
-                  });
-            } else {
+  Expanded buildButtons(BuildContext context) {
+    return Expanded(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: primaryColor,
+              minimumSize: const Size(40, 40),
+            ),
+            onPressed: () {
               showDialog(
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
                       backgroundColor: Colors.white,
-                      title: const Text("Uredi državu"),
-                      content: AddLanguageForm(
-                          isEditing: true, languageToEdit: selectedLanguage[0]),
+                      title: const Text("Dodaj jezik"),
+                      content: SingleChildScrollView(
+                        child: AddLanguageForm(),
+                      ),
                       actions: <Widget>[
                         ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor),
+                              backgroundColor: primaryColor,
+                            ),
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            child: const Text("Zatvori",
-                                style: TextStyle(color: white))),
+                            child: const Text("Zatvori", style: TextStyle(color: white))),
                         ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor),
+                              backgroundColor: primaryColor,
+                            ),
                             onPressed: () {
-                              EditLanguage(selectedLanguage[0].id);
-                              setState(() {
-                                selectedLanguage = [];
-                              });
+                              if (_formKey.currentState!.validate()) {
+                                InsertLanguage();
+                              }
                             },
-                            child: const Text("Spremi",
-                                style: TextStyle(color: white))),
+                            child: const Text("Spremi", style: TextStyle(color: white)))
                       ],
                     );
                   });
-            }
-          },
-          child: const Icon(
-            Icons.edit_outlined,
-            color: Colors.white,
+            },
+            child: const Icon(
+              Icons.add_outlined,
+              color: Colors.white,
+            ),
           ),
-        ),
-        const SizedBox(width: 10.0),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: primaryColor,
-            minimumSize: const Size(40, 40),
+          const SizedBox(width: 10.0),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: primaryColor,
+              minimumSize: const Size(40, 40),
+            ),
+            onPressed: () {
+              if (selectedLanguage.isEmpty) {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text("Upozorenje"),
+                        content: const Text("Morate odabrati barem jedan jezik za uređivanje"),
+                        actions: <Widget>[
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text("OK", style: TextStyle(color: white)),
+                          ),
+                        ],
+                      );
+                    });
+              } else if (selectedLanguage.length > 1) {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text("Upozorenje"),
+                        content: const Text("Odaberite samo jedan jezik koji želite urediti"),
+                        actions: <Widget>[
+                          ElevatedButton(
+                              style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text("Ok", style: TextStyle(color: white)))
+                        ],
+                      );
+                    });
+              } else {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        backgroundColor: Colors.white,
+                        title: const Text("Uredi državu"),
+                        content: AddLanguageForm(isEditing: true, languageToEdit: selectedLanguage[0]),
+                        actions: <Widget>[
+                          ElevatedButton(
+                              style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text("Zatvori", style: TextStyle(color: white))),
+                          ElevatedButton(
+                              style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  EditLanguage(selectedLanguage[0].id);
+                                  setState(() {
+                                    selectedLanguage = [];
+                                  });
+                                }
+                              },
+                              child: const Text("Spremi", style: TextStyle(color: white))),
+                        ],
+                      );
+                    });
+              }
+            },
+            child: const Icon(
+              Icons.edit_outlined,
+              color: Colors.white,
+            ),
           ),
-          onPressed: selectedLanguage.isEmpty
-              ? () {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                            title: const Text("Upozorenje"),
-                            content: const Text(
-                                "Morate odabrati jezik koji želite obrisati."),
+          const SizedBox(width: 10.0),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: primaryColor,
+              minimumSize: const Size(40, 40),
+            ),
+            onPressed: selectedLanguage.isEmpty
+                ? () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(title: const Text("Upozorenje"), content: const Text("Morate odabrati jezik koji želite obrisati."), actions: <Widget>[
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: primaryColor,
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text("OK", style: TextStyle(color: white)),
+                            ),
+                          ]);
+                        });
+                  }
+                : () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text("Izbriši jezik!"),
+                            content: const SingleChildScrollView(
+                              child: Text("Da li ste sigurni da želite obrisati jezik?"),
+                            ),
                             actions: <Widget>[
                               ElevatedButton(
                                 style: ElevatedButton.styleFrom(
@@ -345,56 +348,31 @@ class _LanguageScreenState extends State<LanguageScreen> {
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
-                                child: const Text("OK",
-                                    style: TextStyle(color: white)),
+                                child: const Text("Odustani", style: TextStyle(color: white)),
                               ),
-                            ]);
-                      });
-                }
-              : () {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text("Izbriši jezik!"),
-                          content: const SingleChildScrollView(
-                            child: Text(
-                                "Da li ste sigurni da želite obrisati jezik?"),
-                          ),
-                          actions: <Widget>[
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor,
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                ),
+                                onPressed: () {
+                                  for (Language n in selectedLanguage) {
+                                    DeleteLanguage(n.id);
+                                  }
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text("Obriši", style: TextStyle(color: white)),
                               ),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text("Odustani",
-                                  style: TextStyle(color: white)),
-                            ),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red,
-                              ),
-                              onPressed: () {
-                                for (Language n in selectedLanguage) {
-                                  DeleteLanguage(n.id);
-                                }
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text("Obriši",
-                                  style: TextStyle(color: white)),
-                            ),
-                          ],
-                        );
-                      });
-                },
-          child: const Icon(
-            Icons.delete_forever_outlined,
-            color: Colors.white,
+                            ],
+                          );
+                        });
+                  },
+            child: const Icon(
+              Icons.delete_forever_outlined,
+              color: Colors.white,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -434,8 +412,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: ConstrainedBox(
-          constraints:
-              BoxConstraints(minWidth: MediaQuery.of(context).size.width),
+          constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width),
           child: Container(
             decoration: BoxDecoration(
               border: Border.all(color: Colors.teal, style: BorderStyle.solid),
@@ -443,8 +420,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
             ),
             child: DataTable(
                 dataRowHeight: 50,
-                dataRowColor: MaterialStateProperty.all(
-                    const Color.fromARGB(42, 241, 241, 241)),
+                dataRowColor: MaterialStateProperty.all(const Color.fromARGB(42, 241, 241, 241)),
                 columns: [
                   DataColumn(
                       label: Checkbox(
@@ -479,8 +455,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
                                   } else {
                                     selectedLanguage.remove(languageItem);
                                   }
-                                  isAllSelected =
-                                      languages.every((u) => u.isSelected);
+                                  isAllSelected = languages.every((u) => u.isSelected);
                                 });
                               },
                             ),
@@ -527,10 +502,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
             });
             if (hasNextPage == pageSize) {
               loadLanguages(
-                LanguageSearchObject(
-                    pageNumber: currentPage,
-                    pageSize: pageSize,
-                    name: _searchController.text),
+                LanguageSearchObject(pageNumber: currentPage, pageSize: pageSize, name: _searchController.text),
               );
             }
           },

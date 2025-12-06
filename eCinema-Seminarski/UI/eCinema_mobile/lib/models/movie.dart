@@ -12,8 +12,8 @@ class Movie {
   String description;
   String author;
   int releaseYear;
-  int photoId;
-  Photo photo;
+  int? photoId;
+  Photo? photo;
   int productionId;
   Production production;
   Language language;
@@ -21,6 +21,8 @@ class Movie {
   List<Category> categories;
   List<Genre> genres;
   List<Actors> actors;
+  int? userRating;
+
   late bool isSelected = false;
 
   Movie({
@@ -30,8 +32,8 @@ class Movie {
     required this.description,
     required this.author,
     required this.releaseYear,
-    required this.photoId,
-    required this.photo,
+    this.photoId,
+    this.photo,
     required this.categories,
     required this.genres,
     required this.actors,
@@ -39,6 +41,7 @@ class Movie {
     required this.productionId,
     required this.languageId,
     required this.production,
+    this.userRating,
   });
 
   factory Movie.fromJson(Map<String, dynamic> json) {
@@ -46,24 +49,19 @@ class Movie {
       id: json['id'],
       title: json['title'],
       duration: json['duration'],
-      photo: Photo.fromJson(json['photo']),
+      photo: json['photo'] != null ? Photo.fromJson(json['photo']) : null,
       description: json['description'],
       author: json['author'],
       releaseYear: json['releaseYear'],
       photoId: json['photoId'],
-      categories: (json['categories'] as List<dynamic>)
-          .map((categoryJson) => Category.fromJson(categoryJson))
-          .toList(),
-      genres: (json['genres'] as List<dynamic>)
-          .map((genreJson) => Genre.fromJson(genreJson))
-          .toList(),
-      actors: (json['actors'] as List<dynamic>)
-          .map((actorJson) => Actors.fromJson(actorJson))
-          .toList(),
+      categories: (json['categories'] as List<dynamic>).map((categoryJson) => Category.fromJson(categoryJson)).toList(),
+      genres: (json['genres'] as List<dynamic>).map((genreJson) => Genre.fromJson(genreJson)).toList(),
+      actors: (json['actors'] as List<dynamic>).map((actorJson) => Actors.fromJson(actorJson)).toList(),
       productionId: json['productionId'],
       languageId: json['languageId'],
       production: Production.fromJson(json['production']),
       language: Language.fromJson(json['language']),
+      userRating: json['userRating'],
     );
   }
 

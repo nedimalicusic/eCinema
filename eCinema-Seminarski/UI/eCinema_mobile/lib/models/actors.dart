@@ -3,9 +3,11 @@ class Actors {
   final String firstName;
   final String lastName;
 
-  const Actors({required this.id,
+  const Actors({
+    required this.id,
     required this.firstName,
-    required this.lastName});
+    required this.lastName,
+  });
 
   factory Actors.fromJson(Map<String, dynamic> json) {
     return Actors(

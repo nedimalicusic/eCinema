@@ -1,31 +1,32 @@
 class Notifications {
-  late int id;
+  late int? id;
   late String title;
   late String description;
   late int userId;
   late bool seen;
   late DateTime sendOnDate;
-  late DateTime dateRead;
+  late DateTime? dateRead;
 
   Notifications({
-    required this.id,
+    this.id,
     required this.title,
     required this.description,
     required this.userId,
     required this.seen,
     required this.sendOnDate,
-    required this.dateRead,
+    this.dateRead,
   });
 
   factory Notifications.fromJson(Map<String, dynamic> json) {
     return Notifications(
-        id: json['id'],
-        title: json['title'],
-        description: json['description'],
-        userId: json['userId'],
-        seen: json['seen'],
-        sendOnDate: DateTime.parse(json['sendOnDate']),
-        dateRead: DateTime.parse(json['dateRead']));
+      id: json['id'],
+      title: json['title'],
+      description: json['description'],
+      userId: json['userId'],
+      seen: json['seen'],
+      sendOnDate: DateTime.parse(json['sendOnDate']),
+      dateRead: json['dateRead'] != null ? DateTime.parse(json['dateRead']) : null,
+    );
   }
 
   Map<String, dynamic> toJson() {

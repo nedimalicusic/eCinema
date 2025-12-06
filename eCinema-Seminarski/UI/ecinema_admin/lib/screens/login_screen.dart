@@ -16,11 +16,11 @@ class _LoginScreenState extends State<LoginScreen> {
   late LoginProvider loginUserProvider;
 
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailController =
-      TextEditingController(text: 'admin@eCinema.com');
-  final TextEditingController _passwordController =
-      TextEditingController(text: 'test');
+  final TextEditingController _emailController = TextEditingController(text: 'admin@eCinema.com');
+  final TextEditingController _passwordController = TextEditingController(text: 'test');
   bool _obscurePassword = true;
+
+  bool _isLoading = false; // <-- Dodano za loader
 
   @override
   void initState() {
@@ -30,9 +30,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void login() async {
     if (!mounted) return;
+
+    setState(() {
+      _isLoading = true; // <-- start loader
+    });
+
     try {
-      await loginUserProvider.loginAsync(
-          _emailController.text, _passwordController.text);
+      await loginUserProvider.loginAsync(_emailController.text, _passwordController.text);
       if (context.mounted) {
         Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
       }
@@ -40,16 +44,19 @@ class _LoginScreenState extends State<LoginScreen> {
       if (context.mounted) {
         showErrorDialog(context, getErrorMessage(e));
       }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false; // <-- stop loader
+        });
+      }
     }
   }
 
   String getErrorMessage(dynamic exception) {
-    if (exception.toString().contains('eCinema.Core.UserNotFoundException') ||
-        exception.toString().contains('UserWrongCredentialsException')) {
+    if (exception.toString().contains('eCinema.Core.UserNotFoundException') || exception.toString().contains('UserWrongCredentialsException')) {
       return 'Neispravni korisnički podaci. Pokušajte ponovo.';
-    } else if (exception
-        .toString()
-        .contains('The remote computer refused the network connection')) {
+    } else if (exception.toString().contains('The remote computer refused the network connection')) {
       return 'Došlo je do greške na serveru. Pokušajte kasnije.';
     } else {
       return 'Došlo je do nepoznate greške. Pokušajte ponovo.';
@@ -78,9 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const SizedBox(
-                        height: 10,
-                      ),
+                      const SizedBox(height: 10),
                       const Text(
                         "Welcome",
                         style: TextStyle(
@@ -127,9 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               });
                             },
                             icon: Icon(
-                              _obscurePassword
-                                  ? Icons.visibility_off_outlined
-                                  : Icons.visibility_outlined,
+                              _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
                             ),
                           ),
                           border: OutlineInputBorder(
@@ -149,12 +152,23 @@ class _LoginScreenState extends State<LoginScreen> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              login();
-                            }
-                          },
-                          child: const Text("Sign In"),
+                          onPressed: _isLoading
+                              ? null
+                              : () {
+                                  if (_formKey.currentState!.validate()) {
+                                    login();
+                                  }
+                                },
+                          child: _isLoading
+                              ? const SizedBox(
+                                  height: 24,
+                                  width: 24,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2.5,
+                                  ),
+                                )
+                              : const Text("Sign In"),
                         ),
                       ),
                     ],

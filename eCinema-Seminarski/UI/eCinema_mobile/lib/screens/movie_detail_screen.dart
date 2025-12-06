@@ -36,102 +36,20 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Movie details',
-          textAlign: TextAlign.center,
-        ),
+        title: const Text('Movie details'),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
+        padding: const EdgeInsets.only(bottom: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            PhotoWidget(),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 10, horizontal: 25.0),
-              child: Text(
-                widget.movie.title,
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Padding(
-                  padding:
-                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 25.0),
-                  child: Text(
-                    'Genres:',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 16.0),
-                  child: Wrap(
-                    spacing: 5.0,
-                    children: widget.movie.genres
-                        .map((genre) => Chip(label: Text(genre.name)))
-                        .toList(),
-                  ),
-                ),
-                const Padding(
-                  padding:
-                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 25.0),
-                  child: Text(
-                    'Categories:',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 16.0),
-                  child: Wrap(
-                    spacing: 5.0,
-                    children: widget.movie.categories
-                        .map((category) => Chip(label: Text(category.name)))
-                        .toList(),
-                  ),
-                ),
-                const Padding(
-                  padding:
-                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 25.0),
-                  child: Text(
-                    'Actors:',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 16.0),
-                  child: Wrap(
-                    spacing: 5.0,
-                    children: widget.movie.actors
-                        .map(
-                          (actor) => Chip(
-                            label: Text('${actor.firstName} ${actor.lastName}'),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                ),
-                const Padding(
-                  padding:
-                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 25.0),
-                  child: Text(
-                    'Description:',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 25.0),
-                  child: Text(
-                    widget.movie.description,
-                    style: const TextStyle(fontSize: 15),
-                  ),
-                ),
-              ],
-            ),
+            _buildHeader(context),
+            _buildTitle(),
+            _buildGenres(),
+            _buildCategories(),
+            _buildActors(),
+            _buildDescription(),
             ShowsTab(movieId: widget.movie.id),
           ],
         ),
@@ -139,61 +57,127 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
     );
   }
 
-  Widget PhotoWidget() {
+  Widget _buildHeader(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            flex: 2,
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Container(
-                margin: const EdgeInsets.only(right: 20),
-                width: 210,
-                height: 270,
-                child: widget.movie.photo.guidId != null
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(12.0),
-                        child: FadeInImage(
-                          placeholder: MemoryImage(kTransparentImage),
-                          image: NetworkImage(
-                            '$apiUrl/Photo/GetById?id=${widget.movie.photo.guidId}&original=true',
-                            headers: Authorization.createHeaders(),
-                          ),
-                          fadeInDuration: const Duration(milliseconds: 300),
-                          fit: BoxFit.fill,
-                        ),
-                      )
-                    : const Placeholder(),
-              ),
-            ),
+          Container(
+            margin: const EdgeInsets.only(right: 20),
+            width: 200,
+            height: 280,
+            child: widget.movie.photo?.guidId != null
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(12.0),
+                    child: FadeInImage(
+                      placeholder: MemoryImage(kTransparentImage),
+                      image: NetworkImage(
+                        '$apiUrl/Photo/GetById?id=${widget.movie.photo?.guidId}&original=true',
+                        headers: Authorization.createHeaders(),
+                      ),
+                      fadeInDuration: const Duration(milliseconds: 300),
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                : const Placeholder(),
           ),
           Expanded(
-            flex: 1,
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  InfoCard(
-                    widget.movie.language.name.toString(),
-                    "Language",
-                    Icons.play_arrow_rounded,
-                  ),
-                  InfoCard(
-                    widget.movie.duration.toString(),
-                    "Duration",
-                    Icons.timer,
-                  ),
-                  InfoCardWithoutIcon(
-                    widget.movie.production.country.abbreviation,
-                    widget.movie.releaseYear.toString(),
-                  ),
-                ],
-              ),
+            child: Column(
+              children: [
+                InfoCard(
+                  widget.movie.language.name.toString(),
+                  "Language",
+                  Icons.play_arrow_rounded,
+                ),
+                const SizedBox(height: 3),
+                InfoCard(
+                  widget.movie.duration.toString(),
+                  "Duration",
+                  Icons.timer,
+                ),
+                const SizedBox(height: 3),
+                InfoCardWithoutIcon(
+                  widget.movie.production.country.abbreviation,
+                  widget.movie.releaseYear.toString(),
+                ),
+              ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTitle() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25.0),
+      child: Text(
+        widget.movie.title,
+        style: const TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGenres() {
+    return _buildChipSection(
+      title: "Genres",
+      items: widget.movie.genres.map((e) => e.name).toList(),
+    );
+  }
+
+  Widget _buildCategories() {
+    return _buildChipSection(
+      title: "Categories",
+      items: widget.movie.categories.map((e) => e.name).toList(),
+    );
+  }
+
+  Widget _buildActors() {
+    return _buildChipSection(
+      title: "Actors",
+      items: widget.movie.actors.map((a) => '${a.firstName} ${a.lastName}').toList(),
+    );
+  }
+
+  Widget _buildDescription() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 25.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Description:',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            widget.movie.description,
+            style: const TextStyle(fontSize: 15),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChipSection({required String title, required List<String> items}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 25.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '$title:',
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 4),
+          Wrap(
+            spacing: 6.0,
+            runSpacing: 4.0,
+            children: items.map((text) => Chip(label: Text(text))).toList(),
           ),
         ],
       ),
@@ -202,19 +186,16 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
 
   Widget InfoCard(String text, String text2, IconData icon) {
     return Card(
-      elevation: 4,
+      elevation: 3,
       color: Colors.teal,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Container(
-        height: 80,
-        width: 90,
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+        width: double.infinity,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Icon(
-              icon,
-              size: 26,
-              color: Colors.white,
-            ),
+            Icon(icon, size: 26, color: Colors.white),
             const SizedBox(height: 3),
             Text(
               text2,
@@ -237,18 +218,16 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
 
   Widget InfoCardWithoutIcon(String country, String year) {
     return Card(
-      elevation: 4,
+      elevation: 3,
       color: Colors.teal,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Container(
-        height: 80,
-        width: 90,
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+        width: double.infinity,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              "Country",
-              style: TextStyle(color: Colors.white, fontSize: 12),
-            ),
+            const Text("Country", style: TextStyle(color: Colors.white, fontSize: 12)),
             Text(
               country,
               style: const TextStyle(
@@ -257,10 +236,8 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                 fontSize: 12,
               ),
             ),
-            const Text(
-              "Year",
-              style: TextStyle(color: Colors.white, fontSize: 12),
-            ),
+            const SizedBox(height: 4),
+            const Text("Year", style: TextStyle(color: Colors.white, fontSize: 12)),
             Text(
               year,
               style: const TextStyle(

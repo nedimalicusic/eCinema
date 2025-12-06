@@ -20,8 +20,7 @@ class ReservationSuccessScreen extends StatelessWidget {
                 ),
                 child: Column(
                   children: const [
-                    Icon(Icons.check_circle_outline,
-                        color: Colors.green, size: 100),
+                    Icon(Icons.check_circle_outline, color: Colors.green, size: 100),
                     SizedBox(
                       height: 16,
                     ),
@@ -44,9 +43,7 @@ class ReservationSuccessScreen extends StatelessWidget {
                   Icons.close_sharp,
                   color: Colors.teal,
                 ),
-                onPressed: () => Navigator.pushNamedAndRemoveUntil(
-                    context, '/', (route) => false,
-                    arguments: 2),
+                onPressed: () => Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false, arguments: 2),
               )
             ],
           ),

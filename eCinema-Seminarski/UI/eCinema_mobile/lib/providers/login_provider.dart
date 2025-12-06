@@ -3,7 +3,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'dart:convert';
 import '../helpers/constants.dart';
 import '../models/register.dart';
-import '../models/loginUser.dart';
+import '../models/login_user.dart';
 import '../utils/authorization.dart';
 import 'base_provider.dart';
 
@@ -13,7 +13,7 @@ class UserLoginProvider extends BaseProvider {
   UserLoginProvider() : super('User');
 
   refreshUser() async {
-    user = await getById(int.parse(user!.Id));
+    user = await getById(int.parse(user!.id));
   }
 
   @override
@@ -34,7 +34,7 @@ class UserLoginProvider extends BaseProvider {
 
   int? getUserId() {
     if (user != null) {
-      return int.parse(user!.Id);
+      return int.parse(user!.id);
     }
     return null;
   }
@@ -54,7 +54,10 @@ class UserLoginProvider extends BaseProvider {
     if (response.statusCode == 200) {
       Map<String, dynamic> decodedToken = JwtDecoder.decode(response.body);
       user = UserLogin.fromJson(decodedToken);
-      Authorization.token = user!.token;
+      var data = json.decode(response.body);
+      var token = data['token'];
+
+      Authorization.token = token;
       notifyListeners();
       return user!;
     } else {

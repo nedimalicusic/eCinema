@@ -64,25 +64,15 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
     _pickedFileNotifier = ValueNotifier<File?>(_pickedFile);
     loadCinema();
 
-    loadEmployee(
-        EmployeeSearchObject(
-            name: _searchController.text,
-            cinemaId: selectedCinema?.id,
-            pageSize: pageSize,
-            pageNumber: currentPage),
-        _selectedIsActive);
+    loadEmployee(EmployeeSearchObject(name: _searchController.text, cinemaId: selectedCinema?.id, pageSize: pageSize, pageNumber: currentPage), _selectedIsActive);
 
     _searchController.addListener(() {
       final searchQuery = _searchController.text;
-      loadEmployee(
-          EmployeeSearchObject(
-              name: searchQuery, pageNumber: currentPage, pageSize: pageSize),
-          _selectedIsActive);
+      loadEmployee(EmployeeSearchObject(name: searchQuery, pageNumber: currentPage, pageSize: pageSize), _selectedIsActive);
     });
   }
 
-  void loadEmployee(
-      EmployeeSearchObject searchObject, String selectedIsActive) async {
+  void loadEmployee(EmployeeSearchObject searchObject, String selectedIsActive) async {
     searchObject.isActive = selectedIsActive == 'Aktivni'
         ? true
         : selectedIsActive == 'Neaktivni'
@@ -90,8 +80,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
             : null;
 
     try {
-      var employeeResponse =
-          await _employeeProvider.getPaged(searchObject: searchObject);
+      var employeeResponse = await _employeeProvider.getPaged(searchObject: searchObject);
       if (mounted) {
         setState(() {
           employees = employeeResponse;
@@ -104,8 +93,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
   }
 
   Future<void> _pickImage() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       _pickedFileNotifier.value = File(pickedFile.path);
@@ -130,15 +118,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
 
   void InsertEmployee() async {
     try {
-      var newEmployee = {
-        "FirstName": _firstNameController.text,
-        "LastName": _lastNameController.text,
-        "Email": _emailController.text,
-        "BirthDate": _birthDateController.text,
-        "Gender": selectedGender,
-        "CinemaId": selectedCinemaId,
-        "IsActive": _isActive
-      };
+      var newEmployee = {"FirstName": _firstNameController.text, "LastName": _lastNameController.text, "Email": _emailController.text, "BirthDate": _birthDateController.text, "Gender": selectedGender, "CinemaId": selectedCinemaId, "IsActive": _isActive};
 
       if (_pickedFile != null) {
         newEmployee['ProfilePhoto'] = http.MultipartFile.fromBytes(
@@ -181,7 +161,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
         "BirthDate": _birthDateController.text,
         "Gender": selectedGender,
         "CinemaId": selectedCinemaId,
-        "IsActive": _isActive
+        "IsActive": _isActive,
       };
 
       if (_pickedFile != null) {
@@ -245,60 +225,60 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
           title: const Text("Uposlenici"),
         ),
         body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              buildFilterDropdowns(),
-              const SizedBox(height: 16.0),
-              BuildSearchField(context),
-              const SizedBox(
-                height: 10,
-              ),
-              buildDataList(context),
-              const SizedBox(
-                height: 10,
-              ),
-              buildPagination(),
-            ])));
+          padding: const EdgeInsets.all(16.0),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            buildFilterDropdowns(),
+            const SizedBox(height: 16.0),
+            BuildSearchField(context),
+            const SizedBox(
+              height: 10,
+            ),
+            buildDataList(context),
+            const SizedBox(
+              height: 10,
+            ),
+            buildPagination(),
+          ]),
+        ));
   }
 
   Row BuildSearchField(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.teal),
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            width: 350,
-            height: 40,
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.only(top: 4.0, left: 10.0),
-                hintText: "Pretraga",
-                border: const OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                ),
-                suffixIcon: InkWell(
-                  onTap: () {},
-                  child: Container(
-                    padding: const EdgeInsets.all(defaultPadding * 0.75),
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: defaultPadding / 2),
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                    child: SvgPicture.asset(
-                      "assets/icons/Search.svg",
-                      color: Colors.teal,
+        Expanded(
+          child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.teal),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              height: 40,
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.only(top: 4.0, left: 10.0),
+                  hintText: "Pretraga",
+                  border: const OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                  suffixIcon: InkWell(
+                    onTap: () {},
+                    child: Container(
+                      padding: const EdgeInsets.all(defaultPadding * 0.75),
+                      margin: const EdgeInsets.symmetric(horizontal: defaultPadding / 2),
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child: SvgPicture.asset(
+                        "assets/icons/Search.svg",
+                        color: Colors.teal,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            )),
+              )),
+        ),
         const SizedBox(
           width: 20,
         ),
@@ -408,11 +388,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                     setState(() {
                       selectedGender = newValue;
                       loadEmployee(
-                        EmployeeSearchObject(
-                            gender: selectedGender,
-                            name: _searchController.text,
-                            pageNumber: currentPage,
-                            pageSize: pageSize),
+                        EmployeeSearchObject(gender: selectedGender, name: _searchController.text, pageNumber: currentPage, pageSize: pageSize),
                         _selectedIsActive,
                       );
                     });
@@ -440,8 +416,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                   hint: const Text("Aktivi racuni"),
                   value: _selectedIsActive,
                   icon: const Icon(Icons.arrow_drop_down_outlined),
-                  items:
-                      <String>['Svi', 'Aktivni', 'Neaktivni'].map((String a) {
+                  items: <String>['Svi', 'Aktivni', 'Neaktivni'].map((String a) {
                     return DropdownMenuItem<String>(
                       value: a,
                       child: Padding(
@@ -506,8 +481,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                             });
                             Navigator.of(context).pop();
                           },
-                          child: const Text("Zatvori",
-                              style: TextStyle(color: white))),
+                          child: const Text("Zatvori", style: TextStyle(color: white))),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: primaryColor,
@@ -520,8 +494,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                               });
                             }
                           },
-                          child: const Text("Spremi",
-                              style: TextStyle(color: white)))
+                          child: const Text("Spremi", style: TextStyle(color: white)))
                     ],
                   );
                 });
@@ -544,17 +517,14 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       title: const Text("Upozorenje"),
-                      content: const Text(
-                          "Morate odabrati barem jednog uposlenika za uređivanje"),
+                      content: const Text("Morate odabrati barem jednog uposlenika za uređivanje"),
                       actions: <Widget>[
                         ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: primaryColor),
+                          style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
-                          child:
-                              const Text("OK", style: TextStyle(color: white)),
+                          child: const Text("OK", style: TextStyle(color: white)),
                         ),
                       ],
                     );
@@ -565,17 +535,14 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       title: const Text("Upozorenje"),
-                      content: const Text(
-                          "Odaberite samo jednog uposlenika kojeg želite urediti"),
+                      content: const Text("Odaberite samo jednog uposlenika kojeg želite urediti"),
                       actions: <Widget>[
                         ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor),
+                            style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            child: const Text("Ok",
-                                style: TextStyle(color: white)))
+                            child: const Text("Ok", style: TextStyle(color: white)))
                       ],
                     );
                   });
@@ -586,32 +553,29 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                     return AlertDialog(
                       backgroundColor: Colors.white,
                       title: const Text("Uredi uposlenika"),
-                      content: AddEmployeeForm(
-                          isEditing: true, employeeToEdit: selectedEmployee[0]),
+                      content: AddEmployeeForm(isEditing: true, employeeToEdit: selectedEmployee[0]),
                       actions: <Widget>[
                         ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor),
+                            style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
                             onPressed: () {
                               setState(() {
                                 _isActive = false;
                               });
                               Navigator.of(context).pop();
                             },
-                            child: const Text("Zatvori",
-                                style: TextStyle(color: white))),
+                            child: const Text("Zatvori", style: TextStyle(color: white))),
                         ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor),
+                            style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
                             onPressed: () {
-                              EditEmployee(selectedEmployee[0].id);
-                              setState(() {
-                                selectedEmployee = [];
-                                _isActive = false;
-                              });
+                              if (_formKey.currentState!.validate()) {
+                                EditEmployee(selectedEmployee[0].id);
+                                setState(() {
+                                  selectedEmployee = [];
+                                  _isActive = false;
+                                });
+                              }
                             },
-                            child: const Text("Spremi",
-                                style: TextStyle(color: white))),
+                            child: const Text("Spremi", style: TextStyle(color: white))),
                       ],
                     );
                   });
@@ -633,22 +597,17 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                   showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return AlertDialog(
-                            title: const Text("Upozorenje"),
-                            content: const Text(
-                                "Morate odabrati uposlenika kojeg želite obrisati."),
-                            actions: <Widget>[
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: primaryColor,
-                                ),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text("OK",
-                                    style: TextStyle(color: white)),
-                              ),
-                            ]);
+                        return AlertDialog(title: const Text("Upozorenje"), content: const Text("Morate odabrati uposlenika kojeg želite obrisati."), actions: <Widget>[
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: primaryColor,
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text("OK", style: TextStyle(color: white)),
+                          ),
+                        ]);
                       });
                 }
               : () {
@@ -658,8 +617,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                         return AlertDialog(
                           title: const Text("Izbriši uposlenika!"),
                           content: const SingleChildScrollView(
-                            child: Text(
-                                "Da li ste sigurni da želite obrisati uposlenika?"),
+                            child: Text("Da li ste sigurni da želite obrisati uposlenika?"),
                           ),
                           actions: <Widget>[
                             ElevatedButton(
@@ -669,8 +627,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
-                              child: const Text("Odustani",
-                                  style: TextStyle(color: white)),
+                              child: const Text("Odustani", style: TextStyle(color: white)),
                             ),
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
@@ -682,8 +639,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                                 }
                                 Navigator.of(context).pop();
                               },
-                              child: const Text("Obriši",
-                                  style: TextStyle(color: white)),
+                              child: const Text("Obriši", style: TextStyle(color: white)),
                             ),
                           ],
                         );
@@ -738,16 +694,9 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                           height: 180,
                           color: Colors.teal,
                           child: FutureBuilder<String>(
-                            future: _pickedFile != null
-                                ? Future.value(_pickedFile!.path)
-                                : loadPhoto(isEditing
-                                    ? (employeeToEdit?.profilePhoto?.guidId ??
-                                        '')
-                                    : ''),
-                            builder: (BuildContext context,
-                                AsyncSnapshot<String> snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
+                            future: _pickedFile != null ? Future.value(_pickedFile!.path) : loadPhoto(isEditing ? (employeeToEdit?.profilePhoto?.guidId ?? '') : ''),
+                            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
                                 return const CircularProgressIndicator();
                               } else if (snapshot.hasError) {
                                 return const Text(
@@ -763,12 +712,10 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                                         ? FileImage(_pickedFile!)
                                         : NetworkImage(
                                             imageUrl,
-                                            headers:
-                                                Authorization.createHeaders(),
+                                            headers: Authorization.createHeaders(),
                                           ) as ImageProvider<Object>,
                                     placeholder: MemoryImage(kTransparentImage),
-                                    fadeInDuration:
-                                        const Duration(milliseconds: 300),
+                                    fadeInDuration: const Duration(milliseconds: 300),
                                     fit: BoxFit.cover,
                                     width: 230,
                                     height: 200,
@@ -776,13 +723,11 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                                 } else {
                                   return isEditing
                                       ? Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 8.0),
+                                          padding: const EdgeInsets.symmetric(vertical: 8.0),
                                           child: const Text('Odaberite sliku'),
                                         )
                                       : Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 8.0),
+                                          padding: const EdgeInsets.symmetric(vertical: 8.0),
                                           child: Image.asset(
                                             'assets/images/default_user_image.jpg',
                                             width: 230,
@@ -809,9 +754,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                             borderRadius: BorderRadius.circular(20.0),
                           ),
                         ),
-                        child: const Text('Odaberite sliku',
-                            style:
-                                TextStyle(fontSize: 12, color: Colors.white)),
+                        child: const Text('Odaberite sliku', style: TextStyle(fontSize: 12, color: Colors.white)),
                       ),
                     ),
                   )
@@ -894,7 +837,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                     controller: _birthDateController,
                     decoration: const InputDecoration(
                       labelText: 'Datum',
-                      hintText: 'Odaberite datum', // Dodajte hintText ovde
+                      hintText: 'Odaberite datum',
                     ),
                     onTap: () {
                       showDatePicker(
@@ -906,8 +849,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                         if (date != null) {
                           setState(() {
                             selectedDate = date;
-                            _birthDateController.text =
-                                DateFormat('yyyy-MM-dd').format(date);
+                            _birthDateController.text = DateFormat('yyyy-MM-dd').format(date);
                           });
                         }
                       });
@@ -961,8 +903,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                           Checkbox(
                             value: _isActiveNotifier.value,
                             onChanged: (bool? value) {
-                              _isActiveNotifier.value =
-                                  !_isActiveNotifier.value;
+                              _isActiveNotifier.value = !_isActiveNotifier.value;
                               _isActive = _isActiveNotifier.value;
                             },
                           ),
@@ -985,8 +926,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: ConstrainedBox(
-          constraints:
-              BoxConstraints(minWidth: MediaQuery.of(context).size.width),
+          constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width),
           child: Container(
             decoration: BoxDecoration(
               border: Border.all(color: Colors.teal, style: BorderStyle.solid),
@@ -994,8 +934,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
             ),
             child: DataTable(
                 dataRowHeight: 80,
-                dataRowColor: MaterialStateProperty.all(
-                    const Color.fromARGB(42, 241, 241, 241)),
+                dataRowColor: MaterialStateProperty.all(const Color.fromARGB(42, 241, 241, 241)),
                 columns: [
                   DataColumn(
                       label: Checkbox(
@@ -1042,84 +981,86 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                                   } else {
                                     selectedEmployee.remove(employeeItem);
                                   }
-                                  isAllSelected =
-                                      employees.every((u) => u.isSelected);
+                                  isAllSelected = employees.every((u) => u.isSelected);
                                 });
                               },
                             ),
                           ),
-                          DataCell(Text(
-                              ("${employeeItem.firstName.toString()} ${employeeItem.lastName.toString()}"))),
+                          DataCell(Text(("${employeeItem.firstName.toString()} ${employeeItem.lastName.toString()}"))),
                           DataCell(
                             Row(
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.only(right: 8.0),
-                                  child: FutureBuilder<String>(
-                                    future: loadPhoto(
-                                        employeeItem.profilePhoto?.guidId ??
-                                            ''),
-                                    builder: (BuildContext context,
-                                        AsyncSnapshot<String> snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return const CircularProgressIndicator();
-                                      } else if (snapshot.hasError) {
-                                        return Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 8.0),
-                                          child: Image.asset(
-                                            'assets/images/user2.png',
-                                            width: 80,
-                                            height: 105,
-                                            fit: BoxFit.fill,
-                                          ),
-                                        );
-                                      } else {
-                                        final imageUrl = snapshot.data;
+                                  child: () {
+                                    final guid = employeeItem.profilePhoto?.guidId;
 
-                                        if (imageUrl != null &&
-                                            imageUrl.isNotEmpty) {
+                                    if (guid == null || guid.isEmpty) {
+                                      return Container(
+                                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                        child: Image.asset(
+                                          'assets/images/user2.png',
+                                          width: 80,
+                                          height: 105,
+                                          fit: BoxFit.fill,
+                                        ),
+                                      );
+                                    }
+
+                                    return FutureBuilder<String>(
+                                      future: loadPhoto(guid),
+                                      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                                        if (snapshot.connectionState == ConnectionState.waiting) {
+                                          return const CircularProgressIndicator();
+                                        } else if (snapshot.hasError) {
                                           return Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 8.0),
-                                            child: FadeInImage(
-                                              image: NetworkImage(
-                                                imageUrl,
-                                                headers: Authorization
-                                                    .createHeaders(),
-                                              ),
-                                              placeholder: MemoryImage(
-                                                  kTransparentImage),
-                                              fadeInDuration: const Duration(
-                                                  milliseconds: 300),
+                                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                            child: Image.asset(
+                                              'assets/images/user2.png',
                                               width: 80,
                                               height: 105,
                                               fit: BoxFit.fill,
                                             ),
                                           );
                                         } else {
-                                          return Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 8.0),
-                                            child: Image.asset(
-                                              'assets/images/user2.png',
-                                              width: 80,
-                                              height: 80,
-                                              fit: BoxFit.fill,
-                                            ),
-                                          );
+                                          final imageUrl = snapshot.data;
+
+                                          if (imageUrl != null && imageUrl.isNotEmpty) {
+                                            return Container(
+                                              padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                              child: FadeInImage(
+                                                image: NetworkImage(
+                                                  imageUrl,
+                                                  headers: Authorization.createHeaders(),
+                                                ),
+                                                placeholder: MemoryImage(kTransparentImage),
+                                                fadeInDuration: const Duration(milliseconds: 300),
+                                                width: 80,
+                                                height: 105,
+                                                fit: BoxFit.fill,
+                                              ),
+                                            );
+                                          } else {
+                                            return Container(
+                                              padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                              child: Image.asset(
+                                                'assets/images/user2.png',
+                                                width: 80,
+                                                height: 105,
+                                                fit: BoxFit.fill,
+                                              ),
+                                            );
+                                          }
                                         }
-                                      }
-                                    },
-                                  ),
+                                      },
+                                    );
+                                  }(),
                                 ),
                               ],
                             ),
                           ),
                           DataCell(Text(employeeItem.email.toString())),
-                          DataCell(Text(
-                              employeeItem.gender == 0 ? "Muško" : "Žensko")),
+                          DataCell(Text(employeeItem.gender == 0 ? "Muško" : "Žensko")),
                           DataCell(Container(
                             alignment: Alignment.center,
                             child: employeeItem.isActive == true
@@ -1176,12 +1117,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
               }
             });
             if (hasNextPage == pageSize) {
-              loadEmployee(
-                  EmployeeSearchObject(
-                      pageNumber: currentPage,
-                      pageSize: pageSize,
-                      name: _searchController.text),
-                  _selectedIsActive);
+              loadEmployee(EmployeeSearchObject(pageNumber: currentPage, pageSize: pageSize, name: _searchController.text), _selectedIsActive);
             }
           },
           child: const Icon(

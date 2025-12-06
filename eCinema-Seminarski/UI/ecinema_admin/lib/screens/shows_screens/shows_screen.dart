@@ -45,8 +45,7 @@ class _ShowsScreenState extends State<ShowsScreen> {
   final _formKeySecond = GlobalKey<FormState>();
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
-  final TextEditingController _startDateTimeController =
-      TextEditingController();
+  final TextEditingController _startDateTimeController = TextEditingController();
   final TextEditingController _endDateTimeController = TextEditingController();
   final TextEditingController _reccuringStartDate = TextEditingController();
   final TextEditingController _reccuringEndDate = TextEditingController();
@@ -82,11 +81,7 @@ class _ShowsScreenState extends State<ShowsScreen> {
     loadMovies();
     loadShowTypes();
     loadWeekDays();
-    loadShows(ShowSearchObject(
-        name: _searchController.text,
-        cinemaId: selectedCinemaId,
-        pageSize: pageSize,
-        pageNumber: currentPage));
+    loadShows(ShowSearchObject(name: _searchController.text, cinemaId: selectedCinemaId, pageSize: pageSize, pageNumber: currentPage));
 
     _searchController.addListener(() {
       final searchQuery = _searchController.text;
@@ -114,8 +109,7 @@ class _ShowsScreenState extends State<ShowsScreen> {
 
   void loadShows(ShowSearchObject searchObject) async {
     try {
-      var showResponse =
-          await _showProvider.getPaged(searchObject: searchObject);
+      var showResponse = await _showProvider.getPaged(searchObject: searchObject);
       if (mounted) {
         setState(() {
           shows = showResponse;
@@ -173,12 +167,8 @@ class _ShowsScreenState extends State<ShowsScreen> {
         "CinemaId": selectedCinemaId,
         "ShowTypeId": selectedShowTypeId,
         "Price": _priceController.text,
-        "StartsAt": DateTime.parse(_startDateTimeController.text)
-            .toUtc()
-            .toIso8601String(),
-        "EndsAt": DateTime.parse(_endDateTimeController.text)
-            .toUtc()
-            .toIso8601String(),
+        "StartsAt": DateTime.parse(_startDateTimeController.text).toUtc().toIso8601String(),
+        "EndsAt": DateTime.parse(_endDateTimeController.text).toUtc().toIso8601String(),
         "RecurringShowId": reccuringShowId,
       };
       var show = await _showProvider.insert(newShow);
@@ -200,15 +190,11 @@ class _ShowsScreenState extends State<ShowsScreen> {
 
   void InsertReccuringShow(bool isEdit, int? showId) async {
     try {
-      var showTime =
-          TimeOfDay.fromDateTime(DateTime.parse(_startDateTimeController.text));
+      var showTime = TimeOfDay.fromDateTime(DateTime.parse(_startDateTimeController.text));
       var newReccuringShow = {
-        "StartingDate":
-            DateTime.parse(_reccuringStartDate.text).toUtc().toIso8601String(),
-        "EndingDate":
-            DateTime.parse(_reccuringEndDate.text).toUtc().toIso8601String(),
-        "ShowTime":
-            Duration(hours: showTime.hour, minutes: showTime.minute).toString(),
+        "StartingDate": DateTime.parse(_reccuringStartDate.text).toUtc().toIso8601String(),
+        "EndingDate": DateTime.parse(_reccuringEndDate.text).toUtc().toIso8601String(),
+        "ShowTime": Duration(hours: showTime.hour, minutes: showTime.minute).toString(),
         "WeekDayId": selectWeekDayId,
       };
       var recurringShow = await _reccuringShowProvider.insert(newReccuringShow);
@@ -226,16 +212,12 @@ class _ShowsScreenState extends State<ShowsScreen> {
 
   void EditReccuringShow(int showId, int id) async {
     try {
-      var showTime =
-          TimeOfDay.fromDateTime(DateTime.parse(_startDateTimeController.text));
+      var showTime = TimeOfDay.fromDateTime(DateTime.parse(_startDateTimeController.text));
       var ediReccurinhShow = {
         "Id": id,
-        "StartingDate":
-            DateTime.parse(_reccuringStartDate.text).toUtc().toIso8601String(),
-        "EndingDate":
-            DateTime.parse(_reccuringEndDate.text).toUtc().toIso8601String(),
-        "ShowTime":
-            Duration(hours: showTime.hour, minutes: showTime.minute).toString(),
+        "StartingDate": DateTime.parse(_reccuringStartDate.text).toUtc().toIso8601String(),
+        "EndingDate": DateTime.parse(_reccuringEndDate.text).toUtc().toIso8601String(),
+        "ShowTime": Duration(hours: showTime.hour, minutes: showTime.minute).toString(),
         "WeekDayId": selectWeekDayId,
       };
       var recurringShow = await _reccuringShowProvider.edit(ediReccurinhShow);
@@ -255,12 +237,8 @@ class _ShowsScreenState extends State<ShowsScreen> {
         "CinemaId": selectedCinemaId,
         "ShowTypeId": selectedShowTypeId,
         "Price": _priceController.text,
-        "StartsAt": DateTime.parse(_startDateTimeController.text)
-            .toUtc()
-            .toIso8601String(),
-        "EndsAt": DateTime.parse(_endDateTimeController.text)
-            .toUtc()
-            .toIso8601String(),
+        "StartsAt": DateTime.parse(_startDateTimeController.text).toUtc().toIso8601String(),
+        "EndsAt": DateTime.parse(_endDateTimeController.text).toUtc().toIso8601String(),
         "RecurringShowId": reccuringShowId,
       };
       var show = await _showProvider.edit(editShow);
@@ -306,8 +284,7 @@ class _ShowsScreenState extends State<ShowsScreen> {
         ),
         body: Padding(
             padding: const EdgeInsets.all(16.0),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               buildFilterDropdowns(),
               const SizedBox(height: 16.0),
               BuildSearchField(context),
@@ -326,39 +303,40 @@ class _ShowsScreenState extends State<ShowsScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.teal),
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            width: 350,
-            height: 40,
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.only(top: 4.0, left: 10.0),
-                hintText: "Pretraga",
-                border: const OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                ),
-                suffixIcon: InkWell(
-                  onTap: () {},
-                  child: Container(
-                    padding: const EdgeInsets.all(defaultPadding * 0.75),
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: defaultPadding / 2),
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                    child: SvgPicture.asset(
-                      "assets/icons/Search.svg",
-                      color: Colors.teal,
+        Expanded(
+          child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.teal),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              width: 350,
+              height: 40,
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.only(top: 4.0, left: 10.0),
+                  hintText: "Pretraga",
+                  border: const OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                  suffixIcon: InkWell(
+                    onTap: () {},
+                    child: Container(
+                      padding: const EdgeInsets.all(defaultPadding * 0.75),
+                      margin: const EdgeInsets.symmetric(horizontal: defaultPadding / 2),
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child: SvgPicture.asset(
+                        "assets/icons/Search.svg",
+                        color: Colors.teal,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            )),
+              )),
+        ),
         const SizedBox(
           width: 20,
         ),
@@ -464,16 +442,14 @@ class _ShowsScreenState extends State<ShowsScreen> {
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
-                          child: const Text("Zatvori",
-                              style: TextStyle(color: white))),
+                          child: const Text("Zatvori", style: TextStyle(color: white))),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: primaryColor,
                           ),
                           onPressed: () {
                             if (_isReccuringShow.value) {
-                              if (_formKeySecond.currentState!.validate() &&
-                                  _formKey.currentState!.validate()) {
+                              if (_formKeySecond.currentState!.validate() && _formKey.currentState!.validate()) {
                                 InsertReccuringShow(false, null);
                               }
                             } else {
@@ -482,8 +458,7 @@ class _ShowsScreenState extends State<ShowsScreen> {
                               }
                             }
                           },
-                          child: const Text("Spremi",
-                              style: TextStyle(color: white)))
+                          child: const Text("Spremi", style: TextStyle(color: white)))
                     ],
                   );
                 });
@@ -506,17 +481,14 @@ class _ShowsScreenState extends State<ShowsScreen> {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       title: const Text("Upozorenje"),
-                      content: const Text(
-                          "Morate odabrati barem jednu projekciju za uređivanje"),
+                      content: const Text("Morate odabrati barem jednu projekciju za uređivanje"),
                       actions: <Widget>[
                         ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: primaryColor),
+                          style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
-                          child:
-                              const Text("OK", style: TextStyle(color: white)),
+                          child: const Text("OK", style: TextStyle(color: white)),
                         ),
                       ],
                     );
@@ -527,17 +499,14 @@ class _ShowsScreenState extends State<ShowsScreen> {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       title: const Text("Upozorenje"),
-                      content: const Text(
-                          "Odaberite samo jednu projekciju kojeg želite urediti"),
+                      content: const Text("Odaberite samo jednu projekciju kojeg želite urediti"),
                       actions: <Widget>[
                         ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor),
+                            style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            child: const Text("Ok",
-                                style: TextStyle(color: white)))
+                            child: const Text("Ok", style: TextStyle(color: white)))
                       ],
                     );
                   });
@@ -548,28 +517,21 @@ class _ShowsScreenState extends State<ShowsScreen> {
                     return AlertDialog(
                       backgroundColor: Colors.white,
                       title: const Text("Uredi projekciju"),
-                      content: AddShowForm(
-                          isEditing: true, showToEdit: selectedShow[0]),
+                      content: AddShowForm(isEditing: true, showToEdit: selectedShow[0]),
                       actions: <Widget>[
                         ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor),
+                            style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            child: const Text("Zatvori",
-                                style: TextStyle(color: white))),
+                            child: const Text("Zatvori", style: TextStyle(color: white))),
                         ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor),
+                            style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
                             onPressed: () {
-                              if (selectedShow[0].recurringShowId != null &&
-                                  selectedShow[0].recurringShowId! > 0) {
+                              if (selectedShow[0].recurringShowId != null && selectedShow[0].recurringShowId! > 0) {
                                 if (_isReccuringShow.value) {
-                                  if (_formKeySecond.currentState!.validate() &&
-                                      _formKey.currentState!.validate()) {
-                                    EditReccuringShow(selectedShow[0].id,
-                                        selectedShow[0].recurringShowId!);
+                                  if (_formKeySecond.currentState!.validate() && _formKey.currentState!.validate()) {
+                                    EditReccuringShow(selectedShow[0].id, selectedShow[0].recurringShowId!);
                                   }
                                 } else {
                                   if (_formKey.currentState!.validate()) {
@@ -578,10 +540,8 @@ class _ShowsScreenState extends State<ShowsScreen> {
                                 }
                               } else {
                                 if (_isReccuringShow.value) {
-                                  if (_formKeySecond.currentState!.validate() &&
-                                      _formKey.currentState!.validate()) {
-                                    InsertReccuringShow(
-                                        true, selectedShow[0].id);
+                                  if (_formKeySecond.currentState!.validate() && _formKey.currentState!.validate()) {
+                                    InsertReccuringShow(true, selectedShow[0].id);
                                   }
                                 } else {
                                   if (_formKey.currentState!.validate()) {
@@ -593,8 +553,7 @@ class _ShowsScreenState extends State<ShowsScreen> {
                                 selectedShow = [];
                               });
                             },
-                            child: const Text("Spremi",
-                                style: TextStyle(color: white))),
+                            child: const Text("Spremi", style: TextStyle(color: white))),
                       ],
                     );
                   });
@@ -616,22 +575,17 @@ class _ShowsScreenState extends State<ShowsScreen> {
                   showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return AlertDialog(
-                            title: const Text("Upozorenje"),
-                            content: const Text(
-                                "Morate odabrati projekciju koju želite obrisati."),
-                            actions: <Widget>[
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: primaryColor,
-                                ),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text("OK",
-                                    style: TextStyle(color: white)),
-                              ),
-                            ]);
+                        return AlertDialog(title: const Text("Upozorenje"), content: const Text("Morate odabrati projekciju koju želite obrisati."), actions: <Widget>[
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: primaryColor,
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text("OK", style: TextStyle(color: white)),
+                          ),
+                        ]);
                       });
                 }
               : () {
@@ -641,8 +595,7 @@ class _ShowsScreenState extends State<ShowsScreen> {
                         return AlertDialog(
                           title: const Text("Izbriši projekciju!"),
                           content: const SingleChildScrollView(
-                            child: Text(
-                                "Da li ste sigurni da želite obrisati projekciju?"),
+                            child: Text("Da li ste sigurni da želite obrisati projekciju?"),
                           ),
                           actions: <Widget>[
                             ElevatedButton(
@@ -652,8 +605,7 @@ class _ShowsScreenState extends State<ShowsScreen> {
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
-                              child: const Text("Odustani",
-                                  style: TextStyle(color: white)),
+                              child: const Text("Odustani", style: TextStyle(color: white)),
                             ),
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
@@ -665,8 +617,7 @@ class _ShowsScreenState extends State<ShowsScreen> {
                                 }
                                 Navigator.of(context).pop();
                               },
-                              child: const Text("Obriši",
-                                  style: TextStyle(color: white)),
+                              child: const Text("Obriši", style: TextStyle(color: white)),
                             ),
                           ],
                         );
@@ -690,17 +641,13 @@ class _ShowsScreenState extends State<ShowsScreen> {
       selectedMovieId = showToEdit.movieId;
       selectedShowTypeId = showToEdit.showTypeId;
       _priceController.text = showToEdit.price.toString();
-      _startDateTimeController.text =
-          DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(showToEdit.startsAt);
-      _endDateTimeController.text =
-          DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(showToEdit.endsAt);
+      _startDateTimeController.text = DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(showToEdit.startsAt);
+      _endDateTimeController.text = DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(showToEdit.endsAt);
       if (showToEdit.recurringShowId != null) {
         isReccuringShow = true;
         selectWeekDayId = showToEdit.reccuringShow!.weekDayId;
-        _reccuringStartDate.text = DateFormat('yyyy-MM-dd')
-            .format(showToEdit.reccuringShow!.startingDate);
-        _reccuringEndDate.text = DateFormat('yyyy-MM-dd')
-            .format(showToEdit.reccuringShow!.endingDate);
+        _reccuringStartDate.text = DateFormat('yyyy-MM-dd').format(showToEdit.reccuringShow!.startingDate);
+        _reccuringEndDate.text = DateFormat('yyyy-MM-dd').format(showToEdit.reccuringShow!.endingDate);
       } else {
         isReccuringShow = false;
         selectWeekDayId = null;
@@ -791,8 +738,7 @@ class _ShowsScreenState extends State<ShowsScreen> {
                           if (date != null) {
                             showTimePicker(
                               context: context,
-                              initialTime:
-                                  TimeOfDay.fromDateTime(selectedDateStart),
+                              initialTime: TimeOfDay.fromDateTime(selectedDateStart),
                             ).then((time) {
                               if (time != null) {
                                 setState(() {
@@ -803,9 +749,7 @@ class _ShowsScreenState extends State<ShowsScreen> {
                                     time.hour,
                                     time.minute,
                                   );
-                                  _startDateTimeController.text =
-                                      DateFormat('yyyy-MM-dd HH:mm')
-                                          .format(selectedDateStart);
+                                  _startDateTimeController.text = DateFormat('yyyy-MM-dd HH:mm').format(selectedDateStart);
                                 });
                               }
                             });
@@ -835,8 +779,7 @@ class _ShowsScreenState extends State<ShowsScreen> {
                           if (date != null) {
                             showTimePicker(
                               context: context,
-                              initialTime:
-                                  TimeOfDay.fromDateTime(selecteDateEnd),
+                              initialTime: TimeOfDay.fromDateTime(selecteDateEnd),
                             ).then((time) {
                               if (time != null) {
                                 setState(() {
@@ -847,9 +790,7 @@ class _ShowsScreenState extends State<ShowsScreen> {
                                     time.hour,
                                     time.minute,
                                   );
-                                  _endDateTimeController.text =
-                                      DateFormat('yyyy-MM-dd HH:mm')
-                                          .format(selecteDateEnd);
+                                  _endDateTimeController.text = DateFormat('yyyy-MM-dd HH:mm').format(selecteDateEnd);
                                 });
                               }
                             });
@@ -926,8 +867,7 @@ class _ShowsScreenState extends State<ShowsScreen> {
                                     value: _isReccuringShow.value,
                                     onChanged: (bool? value) {
                                       setState(() {
-                                        _isReccuringShow.value =
-                                            !_isReccuringShow.value;
+                                        _isReccuringShow.value = !_isReccuringShow.value;
                                       });
                                     },
                                   ),
@@ -947,8 +887,7 @@ class _ShowsScreenState extends State<ShowsScreen> {
                                     child: Text(weekDay.name),
                                   );
                                 }).toList(),
-                                decoration: const InputDecoration(
-                                    labelText: 'Dan u sedmici'),
+                                decoration: const InputDecoration(labelText: 'Dan u sedmici'),
                                 validator: (value) {
                                   if (value == null) {
                                     return 'Odaberite dan!';
@@ -972,9 +911,7 @@ class _ShowsScreenState extends State<ShowsScreen> {
                                     if (date != null) {
                                       setState(() {
                                         selectedreccuringStartDate = date;
-                                        _reccuringStartDate.text =
-                                            DateFormat('yyyy-MM-dd')
-                                                .format(date);
+                                        _reccuringStartDate.text = DateFormat('yyyy-MM-dd').format(date);
                                       });
                                     }
                                   });
@@ -1002,9 +939,7 @@ class _ShowsScreenState extends State<ShowsScreen> {
                                     if (date != null) {
                                       setState(() {
                                         selectedreccuringEndDate = date;
-                                        _reccuringEndDate.text =
-                                            DateFormat('yyyy-MM-dd')
-                                                .format(date);
+                                        _reccuringEndDate.text = DateFormat('yyyy-MM-dd').format(date);
                                       });
                                     }
                                   });
@@ -1026,8 +961,7 @@ class _ShowsScreenState extends State<ShowsScreen> {
                                 value: _isReccuringShow.value,
                                 onChanged: (bool? value) {
                                   setState(() {
-                                    _isReccuringShow.value =
-                                        !_isReccuringShow.value;
+                                    _isReccuringShow.value = !_isReccuringShow.value;
                                   });
                                 },
                               ),
@@ -1052,8 +986,7 @@ class _ShowsScreenState extends State<ShowsScreen> {
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: ConstrainedBox(
-          constraints:
-              BoxConstraints(minWidth: MediaQuery.of(context).size.width),
+          constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width),
           child: Container(
             decoration: BoxDecoration(
               border: Border.all(color: Colors.teal, style: BorderStyle.solid),
@@ -1061,8 +994,7 @@ class _ShowsScreenState extends State<ShowsScreen> {
             ),
             child: DataTable(
                 dataRowHeight: 80,
-                dataRowColor: MaterialStateProperty.all(
-                    const Color.fromARGB(42, 241, 241, 241)),
+                dataRowColor: MaterialStateProperty.all(const Color.fromARGB(42, 241, 241, 241)),
                 columns: [
                   DataColumn(
                       label: Checkbox(
@@ -1109,16 +1041,13 @@ class _ShowsScreenState extends State<ShowsScreen> {
                                   } else {
                                     selectedShow.remove(showItem);
                                   }
-                                  isAllSelected =
-                                      shows.every((u) => u.isSelected);
+                                  isAllSelected = shows.every((u) => u.isSelected);
                                 });
                               },
                             ),
                           ),
-                          DataCell(Text(DateFormat('dd.MM.yyyy HH:mm')
-                              .format(showItem.startsAt))),
-                          DataCell(Text(DateFormat('dd.MM.yyyy HH:mm')
-                              .format(showItem.endsAt))),
+                          DataCell(Text(DateFormat('dd.MM.yyyy HH:mm').format(showItem.startsAt))),
+                          DataCell(Text(DateFormat('dd.MM.yyyy HH:mm').format(showItem.endsAt))),
                           DataCell(Text(showItem.movie.title.toString())),
                           DataCell(Text(showItem.showType.name.toString())),
                           DataCell(Text('${showItem.price.toString()} KM')),
@@ -1162,10 +1091,7 @@ class _ShowsScreenState extends State<ShowsScreen> {
               }
             });
             if (hasNextPage == pageSize) {
-              loadShows(ShowSearchObject(
-                  pageNumber: currentPage,
-                  pageSize: pageSize,
-                  name: _searchController.text));
+              loadShows(ShowSearchObject(pageNumber: currentPage, pageSize: pageSize, name: _searchController.text));
             }
           },
           child: const Icon(

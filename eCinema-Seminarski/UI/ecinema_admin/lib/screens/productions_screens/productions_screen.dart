@@ -40,15 +40,11 @@ class _ProductionScreenState extends State<ProductionScreen> {
     _productionProvider = context.read<ProductionProvider>();
     _countryProvider = context.read<CountryProvider>();
     loadCountries();
-    loadProductions(ProductionSearchObject(
-        name: _searchController.text,
-        pageSize: pageSize,
-        pageNumber: currentPage));
+    loadProductions(ProductionSearchObject(name: _searchController.text, pageSize: pageSize, pageNumber: currentPage));
 
     _searchController.addListener(() {
       final searchQuery = _searchController.text;
-      loadProductions(ProductionSearchObject(
-          name: searchQuery, pageNumber: currentPage, pageSize: pageSize));
+      loadProductions(ProductionSearchObject(name: searchQuery, pageNumber: currentPage, pageSize: pageSize));
     });
   }
 
@@ -65,8 +61,7 @@ class _ProductionScreenState extends State<ProductionScreen> {
 
   void loadProductions(ProductionSearchObject searchObject) async {
     try {
-      var moviesResponse =
-          await _productionProvider.getPaged(searchObject: searchObject);
+      var moviesResponse = await _productionProvider.getPaged(searchObject: searchObject);
       setState(() {
         productions = moviesResponse;
         hasNextPage = productions.length;
@@ -152,8 +147,7 @@ class _ProductionScreenState extends State<ProductionScreen> {
         ),
         body: Padding(
             padding: const EdgeInsets.all(16.0),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               BuildSearchField(context),
               const SizedBox(
                 height: 10,
@@ -170,39 +164,40 @@ class _ProductionScreenState extends State<ProductionScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.teal),
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            width: 350,
-            height: 40,
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.only(top: 4.0, left: 10.0),
-                hintText: "Pretraga",
-                border: const OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                ),
-                suffixIcon: InkWell(
-                  onTap: () {},
-                  child: Container(
-                    padding: const EdgeInsets.all(defaultPadding * 0.75),
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: defaultPadding / 2),
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                    child: SvgPicture.asset(
-                      "assets/icons/Search.svg",
-                      color: Colors.teal,
+        Expanded(
+          child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.teal),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              width: 350,
+              height: 40,
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.only(top: 4.0, left: 10.0),
+                  hintText: "Pretraga",
+                  border: const OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                  suffixIcon: InkWell(
+                    onTap: () {},
+                    child: Container(
+                      padding: const EdgeInsets.all(defaultPadding * 0.75),
+                      margin: const EdgeInsets.symmetric(horizontal: defaultPadding / 2),
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child: SvgPicture.asset(
+                        "assets/icons/Search.svg",
+                        color: Colors.teal,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            )),
+              )),
+        ),
         const SizedBox(
           width: 20,
         ),
@@ -238,8 +233,7 @@ class _ProductionScreenState extends State<ProductionScreen> {
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
-                          child: const Text("Zatvori",
-                              style: TextStyle(color: white))),
+                          child: const Text("Zatvori", style: TextStyle(color: white))),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: primaryColor,
@@ -249,8 +243,7 @@ class _ProductionScreenState extends State<ProductionScreen> {
                               InsertProduction();
                             }
                           },
-                          child: const Text("Spremi",
-                              style: TextStyle(color: white)))
+                          child: const Text("Spremi", style: TextStyle(color: white)))
                     ],
                   );
                 });
@@ -273,17 +266,14 @@ class _ProductionScreenState extends State<ProductionScreen> {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       title: const Text("Upozorenje"),
-                      content: const Text(
-                          "Morate odabrati barem jednu produkciju za uređivanje"),
+                      content: const Text("Morate odabrati barem jednu produkciju za uređivanje"),
                       actions: <Widget>[
                         ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: primaryColor),
+                          style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
-                          child:
-                              const Text("OK", style: TextStyle(color: white)),
+                          child: const Text("OK", style: TextStyle(color: white)),
                         ),
                       ],
                     );
@@ -294,17 +284,14 @@ class _ProductionScreenState extends State<ProductionScreen> {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       title: const Text("Upozorenje"),
-                      content: const Text(
-                          "Odaberite samo jednu projekciju koju želite urediti"),
+                      content: const Text("Odaberite samo jednu projekciju koju želite urediti"),
                       actions: <Widget>[
                         ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor),
+                            style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            child: const Text("Ok",
-                                style: TextStyle(color: white)))
+                            child: const Text("Ok", style: TextStyle(color: white)))
                       ],
                     );
                   });
@@ -315,29 +302,25 @@ class _ProductionScreenState extends State<ProductionScreen> {
                     return AlertDialog(
                       backgroundColor: Colors.white,
                       title: const Text("Uredi projekciju"),
-                      content: AddProductionForm(
-                          isEditing: true,
-                          productionToEdit: selectedProduction[0]),
+                      content: AddProductionForm(isEditing: true, productionToEdit: selectedProduction[0]),
                       actions: <Widget>[
                         ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor),
+                            style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            child: const Text("Zatvori",
-                                style: TextStyle(color: white))),
+                            child: const Text("Zatvori", style: TextStyle(color: white))),
                         ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor),
+                            style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
                             onPressed: () {
-                              EditProduction(selectedProduction[0].id);
-                              setState(() {
-                                selectedProduction = [];
-                              });
+                              if (_formKey.currentState!.validate()) {
+                                EditProduction(selectedProduction[0].id);
+                                setState(() {
+                                  selectedProduction = [];
+                                });
+                              }
                             },
-                            child: const Text("Spremi",
-                                style: TextStyle(color: white))),
+                            child: const Text("Spremi", style: TextStyle(color: white))),
                       ],
                     );
                   });
@@ -359,22 +342,17 @@ class _ProductionScreenState extends State<ProductionScreen> {
                   showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return AlertDialog(
-                            title: const Text("Upozorenje"),
-                            content: const Text(
-                                "Morate odabrati projekciju koju želite obrisati."),
-                            actions: <Widget>[
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: primaryColor,
-                                ),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text("OK",
-                                    style: TextStyle(color: white)),
-                              ),
-                            ]);
+                        return AlertDialog(title: const Text("Upozorenje"), content: const Text("Morate odabrati projekciju koju želite obrisati."), actions: <Widget>[
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: primaryColor,
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text("OK", style: TextStyle(color: white)),
+                          ),
+                        ]);
                       });
                 }
               : () {
@@ -384,8 +362,7 @@ class _ProductionScreenState extends State<ProductionScreen> {
                         return AlertDialog(
                           title: const Text("Izbriši projekciju!"),
                           content: const SingleChildScrollView(
-                            child: Text(
-                                "Da li ste sigurni da želite obrisati projekciju?"),
+                            child: Text("Da li ste sigurni da želite obrisati projekciju?"),
                           ),
                           actions: <Widget>[
                             ElevatedButton(
@@ -395,8 +372,7 @@ class _ProductionScreenState extends State<ProductionScreen> {
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
-                              child: const Text("Odustani",
-                                  style: TextStyle(color: white)),
+                              child: const Text("Odustani", style: TextStyle(color: white)),
                             ),
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
@@ -408,8 +384,7 @@ class _ProductionScreenState extends State<ProductionScreen> {
                                 }
                                 Navigator.of(context).pop();
                               },
-                              child: const Text("Obriši",
-                                  style: TextStyle(color: white)),
+                              child: const Text("Obriši", style: TextStyle(color: white)),
                             ),
                           ],
                         );
@@ -424,8 +399,7 @@ class _ProductionScreenState extends State<ProductionScreen> {
     );
   }
 
-  Widget AddProductionForm(
-      {bool isEditing = false, Production? productionToEdit}) {
+  Widget AddProductionForm({bool isEditing = false, Production? productionToEdit}) {
     if (productionToEdit != null) {
       _nameController.text = productionToEdit.name;
       _selectedCountryId = productionToEdit.countryId;
@@ -484,8 +458,7 @@ class _ProductionScreenState extends State<ProductionScreen> {
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: ConstrainedBox(
-          constraints:
-              BoxConstraints(minWidth: MediaQuery.of(context).size.width),
+          constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width),
           child: Container(
             decoration: BoxDecoration(
               border: Border.all(color: Colors.teal, style: BorderStyle.solid),
@@ -493,8 +466,7 @@ class _ProductionScreenState extends State<ProductionScreen> {
             ),
             child: DataTable(
                 dataRowHeight: 50,
-                dataRowColor: MaterialStateProperty.all(
-                    const Color.fromARGB(42, 241, 241, 241)),
+                dataRowColor: MaterialStateProperty.all(const Color.fromARGB(42, 241, 241, 241)),
                 columns: [
                   DataColumn(
                       label: Checkbox(
@@ -532,15 +504,13 @@ class _ProductionScreenState extends State<ProductionScreen> {
                                   } else {
                                     selectedProduction.remove(productionItem);
                                   }
-                                  isAllSelected =
-                                      productions.every((u) => u.isSelected);
+                                  isAllSelected = productions.every((u) => u.isSelected);
                                 });
                               },
                             ),
                           ),
                           DataCell(Text(productionItem.name.toString())),
-                          DataCell(
-                              Text(productionItem.country.name.toString())),
+                          DataCell(Text(productionItem.country.name.toString())),
                         ]))
                     .toList()),
           ),
@@ -582,10 +552,7 @@ class _ProductionScreenState extends State<ProductionScreen> {
             });
             if (hasNextPage == pageSize) {
               loadProductions(
-                ProductionSearchObject(
-                    pageNumber: currentPage,
-                    pageSize: pageSize,
-                    name: _searchController.text),
+                ProductionSearchObject(pageNumber: currentPage, pageSize: pageSize, name: _searchController.text),
               );
             }
           },

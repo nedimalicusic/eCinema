@@ -26,12 +26,15 @@ class _MoviesScreenState extends State<MoviesScreen> {
   late CategoryProvider _categoryProvider;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool _isMounted = false;
+
   List<Genre> genres = <Genre>[];
   List<Category> categories = <Category>[];
   List<Movie> movies = <Movie>[];
-  Category? selectedCategory;
-  Genre? selectedGenre;
-  bool loading = false;
+
+  int? selectedCategoryId;
+  int? selectedGenreId;
+
+  bool loading = true;
 
   @override
   void initState() {
@@ -41,31 +44,32 @@ class _MoviesScreenState extends State<MoviesScreen> {
     _genreProvider = context.read<GenreProvider>();
     _categoryProvider = context.read<CategoryProvider>();
 
-    // selectedCategory = _movieProvider.category;
-    // categories = _categoryProvider.categories;
+    selectedCategoryId = _movieProvider.category?.id;
+
+    categories = _categoryProvider.categories;
+
     loadData();
   }
 
   void loadData() async {
-    loadMovies(MovieSearchObject(
-        name: null,
-        genreId: selectedGenre?.id,
-        categoryId: selectedCategory?.id));
     await loadGenres();
     await loadCategories();
+    loadMovies(MovieSearchObject(name: null, genreId: selectedGenreId, categoryId: selectedCategoryId));
   }
 
   void loadMovies(MovieSearchObject searchObject) async {
-    loading = true;
     try {
       var data = await _movieProvider.getPaged(searchObject: searchObject);
       if (_isMounted) {
         setState(() {
           movies = data;
+          loading = false;
         });
       }
-      loading = false;
     } on Exception catch (e) {
+      setState(() {
+        loading = false;
+      });
       showErrorDialog(context, e.toString().substring(11));
     }
   }
@@ -73,6 +77,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
   Future loadGenres() async {
     try {
       genres = await _genreProvider.get(null);
+      setState(() {});
     } on Exception catch (e) {
       showErrorDialog(context, e.toString().substring(11));
     }
@@ -81,7 +86,8 @@ class _MoviesScreenState extends State<MoviesScreen> {
   Future loadCategories() async {
     try {
       categories = await _categoryProvider.get(null);
-    } on Exception catch (e) {
+      setState(() {});
+    } catch (e) {
       showErrorDialog(context, e.toString().substring(11));
     }
   }
@@ -98,12 +104,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Filmovi'),
-        actions: [
-          IconButton(
-              onPressed: () =>
-                  showSearch(context: context, delegate: MovieSearchDelegate()),
-              icon: const Icon(Icons.search))
-        ],
+        actions: [IconButton(onPressed: () => showSearch(context: context, delegate: MovieSearchDelegate()), icon: const Icon(Icons.search))],
       ),
       body: Column(
         children: [
@@ -117,35 +118,40 @@ class _MoviesScreenState extends State<MoviesScreen> {
   }
 
   Widget _buildFilterList() {
-    if (selectedCategory == null && selectedGenre == null) {
-      return Container();
+    List<Widget> filters = [];
+    if (selectedCategoryId != null) {
+      final category = categories.firstWhere((c) => c.id == selectedCategoryId, orElse: () => const Category(id: 0, name: ''));
+      if (category.id != 0) {
+        filters.add(Container(
+          padding: const EdgeInsets.all(8),
+          margin: const EdgeInsets.only(right: 12),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Text(category.name),
+        ));
+      }
     }
+    if (selectedGenreId != null) {
+      final genre = genres.firstWhere((g) => g.id == selectedGenreId, orElse: () => const Genre(id: 0, name: ''));
+      if (genre.id != 0) {
+        filters.add(Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Text(genre.name),
+        ));
+      }
+    }
+
+    if (filters.isEmpty) return Container();
 
     return Container(
       margin: const EdgeInsets.fromLTRB(8, 20, 8, 0),
-      child: Row(
-        children: [
-          if (selectedCategory != null)
-            Container(
-              padding: const EdgeInsets.all(8),
-              margin: const EdgeInsets.only(right: 12),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Text(selectedCategory!.name),
-            ),
-          if (selectedGenre != null)
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Text(selectedGenre!.name),
-            )
-        ],
-      ),
+      child: Row(children: filters),
     );
   }
 
@@ -162,10 +168,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
                 children: [
                   Text(
                     'Filtriraj rezultate',
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium!
-                        .copyWith(color: Colors.white),
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.white),
                   ),
                 ],
               )),
@@ -200,11 +203,10 @@ class _MoviesScreenState extends State<MoviesScreen> {
                     ),
                     onPressed: () {
                       setState(() {
-                        selectedCategory = null;
-                        selectedGenre = null;
+                        selectedCategoryId = null;
+                        selectedGenreId = null;
                       });
-                      loadMovies(MovieSearchObject(
-                          name: null, genreId: null, categoryId: null));
+                      loadMovies(MovieSearchObject(name: null, genreId: null, categoryId: null));
                     },
                     child: const Text(
                       'Poništi',
@@ -235,128 +237,82 @@ class _MoviesScreenState extends State<MoviesScreen> {
 
   Widget _buildCategoryDropdown() {
     return Container(
-        margin: const EdgeInsets.only(top: 6, bottom: 20),
-        child: categories.isNotEmpty
-            ? DropdownButton<Category>(
-                isExpanded: true,
-                value: selectedCategory,
-                icon: const Icon(
-                  Icons.arrow_drop_down,
-                  color: Colors.grey,
-                ),
-                elevation: 16,
-                hint: const Text(
-                  'Odaberi kategoriju...',
-                  style: TextStyle(color: Colors.grey),
-                ),
-                onChanged: (Category? value) {
-                  setState(() {
-                    selectedCategory = value;
-                  });
-                  loadMovies(MovieSearchObject(
-                      name: null,
-                      genreId: null,
-                      categoryId: selectedCategory!.id));
-                },
-                items: categories
-                    .map<DropdownMenuItem<Category>>(
-                        (c) => DropdownMenuItem<Category>(
-                              value: c,
-                              child: Text(
-                                c.name,
-                              ),
-                            ))
-                    .toList(),
-              )
-            : Container());
+      margin: const EdgeInsets.only(top: 6, bottom: 20),
+      child: categories.isNotEmpty
+          ? DropdownButton<int>(
+              isExpanded: true,
+              value: selectedCategoryId,
+              hint: const Text('Odaberi kategoriju...', style: TextStyle(color: Colors.grey)),
+              onChanged: (int? value) {
+                setState(() {
+                  selectedCategoryId = value;
+                });
+                loadMovies(MovieSearchObject(name: null, genreId: selectedGenreId, categoryId: selectedCategoryId));
+              },
+              items: categories
+                  .map((c) => DropdownMenuItem<int>(
+                        value: c.id,
+                        child: Text(c.name),
+                      ))
+                  .toList(),
+            )
+          : Container(),
+    );
   }
 
   Widget _buildGenreDropdown() {
     return Container(
-        margin: const EdgeInsets.only(top: 6, bottom: 20),
-        child: genres.isNotEmpty
-            ? DropdownButton<Genre>(
-                isExpanded: true,
-                value: selectedGenre,
-                icon: const Icon(
-                  Icons.arrow_drop_down,
-                  color: Colors.grey,
-                ),
-                elevation: 16,
-                hint: const Text(
-                  'Odaberi žanr...',
-                  style: TextStyle(color: Colors.grey),
-                ),
-                onChanged: (Genre? value) {
-                  setState(() {
-                    selectedGenre = value;
-                  });
-                  loadMovies(MovieSearchObject(
-                      name: null,
-                      genreId: selectedGenre!.id,
-                      categoryId: null));
-                },
-                items: genres
-                    .map<DropdownMenuItem<Genre>>(
-                        (c) => DropdownMenuItem<Genre>(
-                              value: c,
-                              child: Text(
-                                c.name,
-                              ),
-                            ))
-                    .toList(),
-                selectedItemBuilder: (_) {
-                  return genres
-                      .map((c) => Container(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              c.name,
-                              style: const TextStyle(color: Colors.teal),
-                            ),
-                          ))
-                      .toList();
-                },
-              )
-            : Container());
-  }
-
-  Widget _buildMovieListView(List<Movie> movies) {
-    return Expanded(
-      child: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          childAspectRatio: 0.8,
-        ),
-        padding: const EdgeInsets.all(4.0),
-        itemCount: movies.length,
-        itemBuilder: (context, index) {
-          return _buildMovie(context, movies[index]);
-        },
-      ),
+      margin: const EdgeInsets.only(top: 6, bottom: 20),
+      child: genres.isNotEmpty
+          ? DropdownButton<int>(
+              isExpanded: true,
+              value: selectedGenreId,
+              hint: const Text('Odaberi žanr...', style: TextStyle(color: Colors.grey)),
+              onChanged: (int? value) {
+                setState(() {
+                  selectedGenreId = value;
+                });
+                loadMovies(MovieSearchObject(name: null, genreId: selectedGenreId, categoryId: selectedCategoryId));
+              },
+              items: genres
+                  .map((g) => DropdownMenuItem<int>(
+                        value: g.id,
+                        child: Text(g.name),
+                      ))
+                  .toList(),
+            )
+          : Container(),
     );
   }
 
   Widget _buildMovieList() {
     if (loading) {
-      return Column(
-        children: const [
-          SizedBox(
-            height: 130,
-          ),
-          Center(
-            child: CircularProgressIndicator(
-              color: Colors.teal,
-            ),
-          ),
-        ],
+      return const Expanded(
+        child: Center(
+          child: CircularProgressIndicator(color: Colors.teal),
+        ),
       );
-    } else if (movies.isEmpty) {
-      return const Center(child: Text('Nema filmova.'));
+    } else if (movies.isNotEmpty) {
+      return Expanded(
+        child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            childAspectRatio: 0.8,
+          ),
+          padding: const EdgeInsets.all(4.0),
+          itemCount: movies.length,
+          itemBuilder: (context, index) {
+            return _buildMovie(movies[index]);
+          },
+        ),
+      );
     }
-    return _buildMovieListView(movies);
+    return const Expanded(
+      child: Center(child: Text('Nema filmova.')),
+    );
   }
 
-  Widget _buildMovie(BuildContext context, Movie movie) {
+  Widget _buildMovie(Movie movie) {
     return GestureDetector(
       onTap: () => Navigator.pushNamed(
         context,
@@ -364,17 +320,17 @@ class _MoviesScreenState extends State<MoviesScreen> {
         arguments: movie,
       ),
       child: Padding(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(4),
         child: SizedBox(
           width: 80,
           height: 90,
-          child: movie.photo.guidId != null
+          child: movie.photo?.guidId != null
               ? ClipRRect(
                   borderRadius: BorderRadius.circular(12.0),
                   child: FadeInImage(
                     placeholder: MemoryImage(kTransparentImage),
                     image: NetworkImage(
-                      '$apiUrl/Photo/GetById?id=${movie.photo.guidId}&original=true',
+                      '$apiUrl/Photo/GetById?id=${movie.photo?.guidId}&original=true',
                       headers: Authorization.createHeaders(),
                     ),
                     fadeInDuration: const Duration(milliseconds: 300),
@@ -393,10 +349,19 @@ class MovieSearchDelegate extends SearchDelegate {
 
   @override
   ThemeData appBarTheme(BuildContext context) {
-    return Theme.of(context).copyWith(
+    final ThemeData theme = Theme.of(context);
+    return theme.copyWith(
+      appBarTheme: theme.appBarTheme.copyWith(
+        backgroundColor: Colors.teal,
+      ),
+      textTheme: const TextTheme(
+        titleLarge: TextStyle(color: Colors.white, fontSize: 18),
+      ),
       inputDecorationTheme: const InputDecorationTheme(
-          hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
-          labelStyle: TextStyle(color: Colors.white, fontSize: 14)),
+        hintStyle: TextStyle(color: Colors.white70, fontSize: 14),
+        labelStyle: TextStyle(color: Colors.white, fontSize: 14),
+        border: InputBorder.none,
+      ),
     );
   }
 
@@ -431,73 +396,58 @@ class MovieSearchDelegate extends SearchDelegate {
 
   Widget getMovieResults(BuildContext context) {
     var movieProvider = Provider.of<MovieProvider>(context);
-    var search =
-        MovieSearchObject(name: query, categoryId: null, genreId: null);
-    Future<List<Movie>> moviesFuture =
-        movieProvider.getPaged(searchObject: search);
+    var search = MovieSearchObject(name: query, categoryId: null, genreId: null);
+    Future<List<Movie>> moviesFuture = movieProvider.getPaged(searchObject: search);
 
     return FutureBuilder(
       future: moviesFuture,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return _buildMovieListView(snapshot.data!);
-        } else if (snapshot.hasError) {
-          return Text('${snapshot.error}');
-        }
-        return const SizedBox(
-          height: 350,
-          child: Center(
-            child: CircularProgressIndicator(
-              color: Colors.teal,
+          return GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              childAspectRatio: 0.8,
             ),
-          ),
+            padding: const EdgeInsets.all(4.0),
+            itemCount: snapshot.data!.length,
+            itemBuilder: (context, index) {
+              return GestureDetector(
+                onTap: () => Navigator.pushNamed(
+                  context,
+                  MovieDetailScreen.routeName,
+                  arguments: snapshot.data![index],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: SizedBox(
+                    width: 80,
+                    height: 90,
+                    child: snapshot.data![index].photo?.guidId != null
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(12.0),
+                            child: FadeInImage(
+                              placeholder: MemoryImage(kTransparentImage),
+                              image: NetworkImage(
+                                '$apiUrl/Photo/GetById?id=${snapshot.data![index].photo?.guidId}&original=true',
+                                headers: Authorization.createHeaders(),
+                              ),
+                              fadeInDuration: const Duration(milliseconds: 300),
+                              fit: BoxFit.fill,
+                            ),
+                          )
+                        : const Placeholder(),
+                  ),
+                ),
+              );
+            },
+          );
+        } else if (snapshot.hasError) {
+          return Center(child: Text('${snapshot.error}'));
+        }
+        return const Center(
+          child: CircularProgressIndicator(color: Colors.teal),
         );
       },
-    );
-  }
-
-  Widget _buildMovieListView(List<Movie> movies) {
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        childAspectRatio: 0.8,
-      ),
-      padding: const EdgeInsets.all(4.0),
-      itemCount: movies.length,
-      itemBuilder: (context, index) {
-        return _buildMovie(context, movies[index]);
-      },
-    );
-  }
-
-  Widget _buildMovie(BuildContext context, Movie movie) {
-    return GestureDetector(
-      onTap: () => Navigator.pushNamed(
-        context,
-        MovieDetailScreen.routeName,
-        arguments: movie,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: SizedBox(
-          width: 80,
-          height: 90,
-          child: movie.photo.guidId != null
-              ? ClipRRect(
-                  borderRadius: BorderRadius.circular(12.0),
-                  child: FadeInImage(
-                    placeholder: MemoryImage(kTransparentImage),
-                    image: NetworkImage(
-                      '$apiUrl/Photo/GetById?id=${movie.photo.guidId}&original=true',
-                      headers: Authorization.createHeaders(),
-                    ),
-                    fadeInDuration: const Duration(milliseconds: 300),
-                    fit: BoxFit.fill,
-                  ),
-                )
-              : const Placeholder(),
-        ),
-      ),
     );
   }
 }

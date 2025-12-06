@@ -91,8 +91,7 @@ class CinemaProvider extends BaseProvider<Cinema> {
   }
 
   Future<Dashboard> getDashboardInformation(int? cinemaId) async {
-    var uri =
-        Uri.parse('$apiUrl/Cinema/GetDashboardInformation?cinemaId=$cinemaId');
+    var uri = Uri.parse('$apiUrl/Cinema/GetDashboardInformation?cinemaId=$cinemaId');
     var headers = Authorization.createHeaders();
     final response = await http.get(uri, headers: headers);
     if (response.statusCode == 200) {

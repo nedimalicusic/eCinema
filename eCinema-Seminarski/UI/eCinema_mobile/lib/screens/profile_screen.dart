@@ -1,16 +1,19 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'package:ecinema_mobile/models/loginUser.dart';
+import 'package:flutter/material.dart';
+import 'package:ecinema_mobile/models/login_user.dart';
 import 'package:ecinema_mobile/providers/login_provider.dart';
 import 'package:ecinema_mobile/screens/login_screen.dart';
-import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:ecinema_mobile/screens/change_password.dart';
 import 'package:ecinema_mobile/screens/edit_profile.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 import '../helpers/constants.dart';
+import '../models/user.dart';
 import '../providers/photo_provider.dart';
+import '../providers/user_provider.dart';
 import '../utils/authorization.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -23,15 +26,32 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  late UserLoginProvider userProvider;
+  late UserProvider _userProvider;
   late PhotoProvider _photoProvider;
-  late UserLogin? user;
+  late UserLoginProvider _loginProvider;
+  late UserLogin? loginUser;
+  User? user;
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    userProvider = context.read<UserLoginProvider>();
+    _userProvider = context.read<UserProvider>();
+    _loginProvider = context.read<UserLoginProvider>();
     _photoProvider = context.read<PhotoProvider>();
+    _loadUser();
+  }
+
+  void _loadUser() async {
+    isLoading = true;
+    final id = _loginProvider.getUserId();
+    loginUser = _loginProvider.user;
+
+    final fetchedUser = await _userProvider.getById(id!);
+    setState(() {
+      user = fetchedUser;
+      isLoading = false;
+    });
   }
 
   Future<String> loadPhoto(String guidId) async {
@@ -40,8 +60,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    user = context.watch<UserLoginProvider>().user;
-    if (user == null) {
+    loginUser = context.watch<UserLoginProvider>().user;
+
+    if (isLoading) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Profil'),
+        ),
+        body: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    if (loginUser == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
       });
@@ -83,7 +115,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              onPressed: userProvider.logout,
+              onPressed: _loginProvider.logout,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
@@ -108,20 +140,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return SizedBox(
       width: 110,
       height: 110,
-      child: user!.GuidId != null
+      child: user!.profilePhoto?.guidId != null
           ? ClipRRect(
               borderRadius: BorderRadius.circular(100.0),
               child: FadeInImage(
                 placeholder: MemoryImage(kTransparentImage),
                 image: NetworkImage(
-                  '$apiUrl/Photo/GetById?id=${user!.GuidId}&original=true',
+                  '$apiUrl/Photo/GetById?id=${user!.profilePhoto!.guidId!}&original=true',
                   headers: Authorization.createHeaders(),
                 ),
                 fadeInDuration: const Duration(milliseconds: 300),
-                fit: BoxFit.fill,
+                fit: BoxFit.cover,
               ),
             )
-          : const Placeholder(),
+          : ClipRRect(
+              borderRadius: BorderRadius.circular(100),
+              child: Image.asset(
+                'assets/images/user2.png',
+                fit: BoxFit.cover,
+              ),
+            ),
     );
   }
 
@@ -132,10 +170,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildInfoItem("First Name", user!.FirstName),
-          _buildInfoItem("Last Name", user!.LastName),
-          _buildInfoItem("Email", user!.Email),
-          _buildInfoItem("Phone Number", user!.PhoneNumber.toString()),
+          _buildInfoItem("First Name", user!.firstName),
+          _buildInfoItem("Last Name", user!.lastName),
+          _buildInfoItem("Email", user!.email),
+          _buildInfoItem("Phone Number", user!.phoneNumber.toString()),
+          _buildInfoItem(
+            "Birth Date",
+            user!.birthDate != null && user!.birthDate!.isNotEmpty ? DateFormat('d.M.yyyy.').format(DateTime.parse(user!.birthDate!).toLocal()) : '-',
+          ),
           const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -157,7 +199,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 100,
+            width: 120,
             child: Text(
               "$label:",
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
@@ -179,11 +221,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildButton(String text, String routeName) {
     return Expanded(
       child: ElevatedButton(
-        onPressed: () {
-          Navigator.pushNamed(context, routeName);
+        onPressed: () async {
+          final result = await Navigator.pushNamed(context, routeName);
+          if (result == true) {
+            _loadUser();
+          }
         },
         style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(10.0),
           backgroundColor: Colors.teal,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
@@ -191,7 +236,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         child: Text(
           text,
-          style: const TextStyle(fontSize: 16),
+          style: const TextStyle(fontSize: 14.0),
         ),
       ),
     );

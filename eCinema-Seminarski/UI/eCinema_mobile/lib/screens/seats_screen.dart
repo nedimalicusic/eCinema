@@ -11,7 +11,6 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 import '../helpers/constants.dart';
-import '../models/searchObject/reservation_search.dart';
 import '../models/seats.dart';
 import '../providers/seats_provider.dart';
 import '../utils/authorization.dart';
@@ -48,8 +47,7 @@ class _SeatsScreenState extends State<SeatsScreen> {
   }
 
   void takenSeats() async {
-    var search = ReservationObjectModel(showId: widget.shows.id);
-    reservations = await reservationProvider.getPaged(searchObject: search);
+    reservations = await reservationProvider.getByShowId(widget.shows.id);
     setState(() {
       takenSeatIds = reservations.map((r) => r.seatId).toList();
     });
@@ -100,31 +98,40 @@ class _SeatsScreenState extends State<SeatsScreen> {
               height: 40,
             ),
             _buildCinemaScreen(),
-            Container(
-              constraints: const BoxConstraints(minHeight: 30),
-              margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-              child: seats.isNotEmpty
-                  ? GridView.count(
-                      shrinkWrap: true,
-                      crossAxisCount: 10,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 20,
-                      children: _buildSeats(),
-                    )
-                  : const Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.teal,
-                      ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Container(
+                      constraints: const BoxConstraints(minHeight: 30),
+                      margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                      child: seats.isNotEmpty
+                          ? GridView.count(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              crossAxisCount: 10,
+                              crossAxisSpacing: 5,
+                              mainAxisSpacing: 10,
+                              children: _buildSeats(),
+                            )
+                          : const Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.teal,
+                              ),
+                            ),
                     ),
+                    const Divider(
+                      height: 2,
+                      color: Colors.grey,
+                    ),
+                    _buildInfoBoxes(),
+                  ],
+                ),
+              ),
             ),
-            const Divider(
-              height: 2,
-              color: Colors.grey,
-            ),
-            _buildInfoBoxes(),
-            _buildBottomBar(),
           ],
         ),
+        bottomNavigationBar: _buildBottomBar(),
       ),
     );
   }
@@ -169,16 +176,16 @@ class _SeatsScreenState extends State<SeatsScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            margin: const EdgeInsets.only(right: 20),
+            margin: const EdgeInsets.only(right: 20, left: 10),
             width: 90,
             height: 120,
-            child: widget.shows.movie.photo.guidId != null
+            child: widget.shows.movie.photo?.guidId != null
                 ? ClipRRect(
                     borderRadius: BorderRadius.circular(12.0),
                     child: FadeInImage(
                       placeholder: MemoryImage(kTransparentImage),
                       image: NetworkImage(
-                        '$apiUrl/Photo/GetById?id=${widget.shows.movie.photo.guidId}&original=true',
+                        '$apiUrl/Photo/GetById?id=${widget.shows.movie.photo?.guidId}&original=true',
                         headers: Authorization.createHeaders(),
                       ),
                       fadeInDuration: const Duration(milliseconds: 300),
@@ -190,21 +197,22 @@ class _SeatsScreenState extends State<SeatsScreen> {
           const SizedBox(
             width: 10,
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                widget.shows.movie.title,
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-              ),
-              Text(
-                '${DateFormat.Hm().format(widget.shows.startsAt)} - ${DateFormat.Hm().format(widget.shows.endsAt)}  |  ${DateFormat.MMMMEEEEd('bs').format(widget.shows.startsAt)}',
-                style: const TextStyle(
-                  color: Colors.grey,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.shows.movie.title,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                 ),
-              ),
-            ],
+                Text(
+                  '${DateFormat.Hm().format(widget.shows.startsAt)} - ${DateFormat.Hm().format(widget.shows.endsAt)}  |  ${DateFormat.MMMMEEEEd('bs').format(widget.shows.startsAt)}',
+                  style: const TextStyle(
+                    color: Colors.black,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -215,69 +223,75 @@ class _SeatsScreenState extends State<SeatsScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-          child: Column(
-            children: [
-              Container(
-                height: 20,
-                width: 20,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(4),
+        Expanded(
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 30),
+            child: Column(
+              children: [
+                Container(
+                  height: 20,
+                  width: 20,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
                 ),
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              const Text(
-                'Slobodno',
-              )
-            ],
+                const SizedBox(
+                  height: 8,
+                ),
+                const Text(
+                  'Slobodno',
+                )
+              ],
+            ),
           ),
         ),
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-          child: Column(
-            children: [
-              Container(
-                height: 20,
-                width: 20,
-                decoration: BoxDecoration(
-                  color: Colors.red,
-                  border: Border.all(color: Colors.red),
-                  borderRadius: BorderRadius.circular(4),
+        Expanded(
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+            child: Column(
+              children: [
+                Container(
+                  height: 20,
+                  width: 20,
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    border: Border.all(color: Colors.red),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
                 ),
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              const Text(
-                'Zauzeto',
-              )
-            ],
+                const SizedBox(
+                  height: 8,
+                ),
+                const Text(
+                  'Zauzeto',
+                )
+              ],
+            ),
           ),
         ),
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-          child: Column(
-            children: [
-              Container(
-                height: 20,
-                width: 20,
-                decoration: BoxDecoration(
-                  color: Colors.teal,
-                  border: Border.all(color: Colors.teal),
-                  borderRadius: BorderRadius.circular(4),
+        Expanded(
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+            child: Column(
+              children: [
+                Container(
+                  height: 20,
+                  width: 20,
+                  decoration: BoxDecoration(
+                    color: Colors.teal,
+                    border: Border.all(color: Colors.teal),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
                 ),
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              const Text(
-                'Odabrano',
-              )
-            ],
+                const SizedBox(
+                  height: 8,
+                ),
+                const Text(
+                  'Odabrano',
+                )
+              ],
+            ),
           ),
         ),
       ],
@@ -308,7 +322,8 @@ class _SeatsScreenState extends State<SeatsScreen> {
           SizedBox(
             width: MediaQuery.of(context).size.width * 0.5,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (selectedSeats.isNotEmpty)
                   Text(
@@ -318,66 +333,60 @@ class _SeatsScreenState extends State<SeatsScreen> {
                       fontWeight: FontWeight.w700,
                       color: Colors.grey,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                if (selectedSeats.isNotEmpty)
-                  const SizedBox(
-                    height: 8,
-                  ),
-                if (!selectedSeats.isNotEmpty)
-                  const SizedBox(
-                    height: 16,
-                  ),
+                if (selectedSeats.isNotEmpty) const SizedBox(height: 8),
                 Text(
                   "${widget.shows.price * (selectedSeats.isNotEmpty ? selectedSeats.length : 1)}KM",
                   style: const TextStyle(
-                      color: Colors.teal,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 22),
+                    color: Colors.teal,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 22,
+                  ),
                 ),
               ],
             ),
           ),
-          SizedBox(
-            width: 150,
-            height: 50,
-            child: ElevatedButton(
-              onPressed: () {
-                if (selectedSeats.isNotEmpty) {
-                  updateTicketProvider();
-                  Navigator.pushNamed(context, PaymentScreen.routeName);
-                } else {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: const Text("Upozorenje"),
-                        content: const Text(
-                            "Molimo odaberite minimalno jedno sjedalo prije plaćanja."),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Text("OK"),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                }
-              },
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.teal),
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
+          Expanded(
+            child: SizedBox(
+              height: 50,
+              child: ElevatedButton(
+                onPressed: () {
+                  if (selectedSeats.isNotEmpty) {
+                    updateTicketProvider();
+                    Navigator.pushNamed(context, PaymentScreen.routeName);
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text("Upozorenje"),
+                          content: const Text("Molimo odaberite minimalno jedno sjedalo prije plaćanja."),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text("OK"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                },
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.teal),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
                   ),
                 ),
-              ),
-              child: const Text(
-                'Buy ticket',
-                style: TextStyle(
-                  fontSize: 18,
+                child: const Text(
+                  'Buy ticket',
+                  style: TextStyle(fontSize: 18),
                 ),
               ),
             ),

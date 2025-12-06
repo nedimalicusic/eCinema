@@ -5,7 +5,7 @@ class User {
   late String firstName;
   late String lastName;
   late String? phoneNumber;
-  late String? dateOfBirth;
+  late String? birthDate;
   late String email;
   late String? password;
   late String? token;
@@ -13,8 +13,8 @@ class User {
   late int gender;
   late bool isActive;
   late bool isVerified;
-  late Photo? photo;
-  late int? photoId;
+  late Photo? profilePhoto;
+  late int? profilePhotoId;
   late bool isSelected = false;
 
   User({
@@ -26,12 +26,12 @@ class User {
     required this.isActive,
     required this.isVerified,
     this.password,
-    this.dateOfBirth,
+    this.birthDate,
     this.phoneNumber,
     this.token,
     this.role,
-    this.photo,
-    this.photoId,
+    this.profilePhoto,
+    this.profilePhotoId,
     required this.isSelected,
   });
 
@@ -47,12 +47,12 @@ class User {
     gender = json['gender'] as int;
     isActive = json['isActive'] as bool;
     isVerified = json['isVerified'] as bool;
-    dateOfBirth = json['dateOfBirth'];
-    photoId = json['photoId'];
-    if (json['photo'] != null) {
-      photo = Photo.fromJson(json['photo']);
+    birthDate = json['birthDate'];
+    profilePhotoId = json['profilePhotoId'];
+    if (json['profilePhoto'] != null) {
+      profilePhoto = Photo.fromJson(json['profilePhoto']);
     } else {
-      photo = null;
+      profilePhoto = null;
     }
   }
 
@@ -64,13 +64,13 @@ class User {
     data['phoneNumber'] = phoneNumber;
     data['password'] = password;
     data['email'] = email;
-    data['profilePhotoId'] = photoId;
+    data['profilePhotoId'] = profilePhotoId;
     data['token'] = token;
     data['role'] = role;
     data['gender'] = gender;
     data['isActive'] = isActive;
     data['isVerified'] = isVerified;
-    data['dateOfBirth'] = dateOfBirth;
+    data['birthDate'] = birthDate;
     return data;
   }
 }

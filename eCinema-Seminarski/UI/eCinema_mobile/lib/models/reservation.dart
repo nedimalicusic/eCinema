@@ -13,16 +13,17 @@ class Reservation {
   late bool isActive = false;
   late bool isClosed = false;
 
-  Reservation(
-      {required this.id,
-      required this.userId,
-      required this.showId,
-      required this.seatId,
-      required this.show,
-      required this.seat,
-      required this.user,
-      required this.isActive,
-      required this.isClosed});
+  Reservation({
+    required this.id,
+    required this.userId,
+    required this.showId,
+    required this.seatId,
+    required this.show,
+    required this.seat,
+    required this.user,
+    required this.isActive,
+    required this.isClosed,
+  });
 
   Reservation.fromJson(Map<String, dynamic> json) {
     id = json['id'];

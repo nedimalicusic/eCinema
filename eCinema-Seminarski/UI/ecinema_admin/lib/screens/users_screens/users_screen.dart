@@ -38,15 +38,13 @@ class _UsersScreenState extends State<UsersScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
   late ValueNotifier<bool> _isActiveNotifier;
-  late ValueNotifier<bool> _isVerifiedNotifier;
   ValueNotifier<File?> _pickedFileNotifier = ValueNotifier(null);
   DateTime selectedDate = DateTime.now();
   String _selectedIsActive = 'Svi';
-  String _selectedIsVerified = 'Svi';
+  final String _selectedIsVerified = 'Svi';
   int? selectedGender;
   int? selectedCinemaId;
   bool _isActive = false;
-  bool _isVerified = false;
   bool isAllSelected = false;
   int currentPage = 1;
   int pageSize = 5;
@@ -60,36 +58,18 @@ class _UsersScreenState extends State<UsersScreen> {
     _userProvider = context.read<UserProvider>();
     _photoProvider = context.read<PhotoProvider>();
     _isActiveNotifier = ValueNotifier<bool>(_isActive);
-    _isVerifiedNotifier = ValueNotifier<bool>(_isVerified);
     _pickedFileNotifier = ValueNotifier<File?>(_pickedFile);
 
-    loadUsers(
-      UserSearchObject(
-          name: _searchController.text,
-          pageSize: pageSize,
-          role: 1,
-          pageNumber: currentPage),
-      _selectedIsActive,
-      _selectedIsVerified,
-    );
+    loadUsers(UserSearchObject(name: _searchController.text, pageSize: pageSize, role: 1, pageNumber: currentPage), _selectedIsActive, _selectedIsVerified);
 
     _searchController.addListener(() {
       final searchQuery = _searchController.text;
-      loadUsers(
-          UserSearchObject(
-            name: searchQuery,
-            pageNumber: currentPage,
-            pageSize: pageSize,
-            role: 1,
-          ),
-          _selectedIsActive,
-          _selectedIsVerified);
+      loadUsers(UserSearchObject(name: searchQuery, pageNumber: currentPage, pageSize: pageSize, role: 1), _selectedIsActive, _selectedIsVerified);
     });
   }
 
   Future<void> _pickImage() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       _pickedFileNotifier.value = File(pickedFile.path);
@@ -97,8 +77,7 @@ class _UsersScreenState extends State<UsersScreen> {
     }
   }
 
-  void loadUsers(UserSearchObject searchObject, String selectedIsActive,
-      String selectedIsVerified) async {
+  void loadUsers(UserSearchObject searchObject, String selectedIsActive, String selectedIsVerified) async {
     searchObject.isActive = selectedIsActive == 'Aktivni'
         ? true
         : selectedIsActive == 'Neaktivni'
@@ -112,8 +91,7 @@ class _UsersScreenState extends State<UsersScreen> {
             : null;
 
     try {
-      var usersResponse =
-          await _userProvider.getPaged(searchObject: searchObject);
+      var usersResponse = await _userProvider.getPaged(searchObject: searchObject);
       if (mounted) {
         setState(() {
           users = usersResponse;
@@ -160,11 +138,10 @@ class _UsersScreenState extends State<UsersScreen> {
         'Password': _passwordController.text,
         'PhoneNumber': _phoneNumberController.text,
         'Gender': selectedGender.toString(),
-        'DateOfBirth':
-            DateTime.parse(_birthDateController.text).toUtc().toIso8601String(),
+        'DateOfBirth': DateTime.parse(_birthDateController.text).toUtc().toIso8601String(),
         'Role': '1',
         'LastSignInAt': DateTime.now().toUtc().toIso8601String(),
-        'IsVerified': _isVerified.toString(),
+        'IsVerified': true.toString(),
         'IsActive': _isActive.toString(),
       };
 
@@ -212,11 +189,10 @@ class _UsersScreenState extends State<UsersScreen> {
         'Password': _passwordController.text,
         'PhoneNumber': _phoneNumberController.text,
         'Gender': selectedGender.toString(),
-        'DateOfBirth':
-            DateTime.parse(_birthDateController.text).toUtc().toIso8601String(),
+        'DateOfBirth': DateTime.parse(_birthDateController.text).toUtc().toIso8601String(),
         'Role': '1',
         'LastSignInAt': DateTime.now().toUtc().toIso8601String(),
-        'IsVerified': _isVerified.toString(),
+        'IsVerified': true.toString(),
         'IsActive': _isActive.toString(),
       };
       if (_pickedFile != null) {
@@ -279,8 +255,7 @@ class _UsersScreenState extends State<UsersScreen> {
         ),
         body: Padding(
             padding: const EdgeInsets.all(16.0),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               buildFilterDropdowns(),
               const SizedBox(height: 16.0),
               BuildSearchField(context),
@@ -299,39 +274,39 @@ class _UsersScreenState extends State<UsersScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.teal),
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            width: 350,
-            height: 40,
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.only(top: 4.0, left: 10.0),
-                hintText: "Pretraga",
-                border: const OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                ),
-                suffixIcon: InkWell(
-                  onTap: () {},
-                  child: Container(
-                    padding: const EdgeInsets.all(defaultPadding * 0.25),
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: defaultPadding / 2),
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                    child: SvgPicture.asset(
-                      "assets/icons/Search.svg",
-                      color: Colors.teal,
+        Expanded(
+          child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.teal),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              height: 40,
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.only(top: 4.0, left: 10.0),
+                  hintText: "Pretraga",
+                  border: const OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                  suffixIcon: InkWell(
+                    onTap: () {},
+                    child: Container(
+                      padding: const EdgeInsets.all(defaultPadding * 0.25),
+                      margin: const EdgeInsets.symmetric(horizontal: defaultPadding / 2),
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child: SvgPicture.asset(
+                        "assets/icons/Search.svg",
+                        color: Colors.teal,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            )),
+              )),
+        ),
         const SizedBox(
           width: 20,
         ),
@@ -374,15 +349,7 @@ class _UsersScreenState extends State<UsersScreen> {
                   onChanged: (int? newValue) {
                     setState(() {
                       selectedGender = newValue;
-                      loadUsers(
-                          UserSearchObject(
-                              gender: selectedGender,
-                              name: _searchController.text,
-                              role: 1,
-                              pageNumber: currentPage,
-                              pageSize: pageSize),
-                          _selectedIsActive,
-                          _selectedIsVerified);
+                      loadUsers(UserSearchObject(gender: selectedGender, name: _searchController.text, role: 1, pageNumber: currentPage, pageSize: pageSize), _selectedIsActive, _selectedIsVerified);
                     });
                   },
                   underline: Container(),
@@ -408,8 +375,7 @@ class _UsersScreenState extends State<UsersScreen> {
                   hint: const Text("Aktivi racuni"),
                   value: _selectedIsActive,
                   icon: const Icon(Icons.arrow_drop_down_outlined),
-                  items:
-                      <String>['Svi', 'Aktivni', 'Neaktivni'].map((String a) {
+                  items: <String>['Svi', 'Aktivni', 'Neaktivni'].map((String a) {
                     return DropdownMenuItem<String>(
                       value: a,
                       child: Padding(
@@ -443,55 +409,6 @@ class _UsersScreenState extends State<UsersScreen> {
           ),
         ),
         const SizedBox(width: 10),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('  Verifikovani računi:'),
-              Container(
-                height: 40,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.teal),
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                child: DropdownButton<String>(
-                  isExpanded: true,
-                  icon: const Icon(Icons.arrow_drop_down_outlined),
-                  value: _selectedIsVerified,
-                  items: <String>['Svi', 'Verifikovani', 'Neverifikovani']
-                      .map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Text(value),
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedIsVerified = newValue ?? 'Svi';
-                    });
-                    loadUsers(
-                        UserSearchObject(
-                            isVerified: _selectedIsVerified == 'Verifikovani'
-                                ? true
-                                : _selectedIsVerified == 'Neverifikovani'
-                                    ? false
-                                    : null,
-                            name: _searchController.text,
-                            role: 1,
-                            pageNumber: currentPage,
-                            pageSize: pageSize),
-                        _selectedIsActive,
-                        _selectedIsVerified);
-                  },
-                  underline: const Text(""),
-                ),
-              ),
-            ],
-          ),
-        ),
       ],
     );
   }
@@ -523,12 +440,10 @@ class _UsersScreenState extends State<UsersScreen> {
                           onPressed: () {
                             setState(() {
                               _isActive = false;
-                              _isVerified = false;
                             });
                             Navigator.of(context).pop();
                           },
-                          child: const Text("Zatvori",
-                              style: TextStyle(color: white))),
+                          child: const Text("Zatvori", style: TextStyle(color: white))),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: primaryColor,
@@ -538,12 +453,10 @@ class _UsersScreenState extends State<UsersScreen> {
                               insertUser();
                               setState(() {
                                 _isActive = false;
-                                _isVerified = false;
                               });
                             }
                           },
-                          child: const Text("Spremi",
-                              style: TextStyle(color: white)))
+                          child: const Text("Spremi", style: TextStyle(color: white)))
                     ],
                   );
                 });
@@ -556,8 +469,7 @@ class _UsersScreenState extends State<UsersScreen> {
         ),
         const SizedBox(width: 10.0),
         ElevatedButton(
-          style: ElevatedButton.styleFrom(
-              backgroundColor: primaryColor, minimumSize: const Size(40, 40)),
+          style: ElevatedButton.styleFrom(backgroundColor: primaryColor, minimumSize: const Size(40, 40)),
           onPressed: () {
             if (selectedUsers.isEmpty) {
               showDialog(
@@ -565,17 +477,14 @@ class _UsersScreenState extends State<UsersScreen> {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       title: const Text("Upozorenje"),
-                      content: const Text(
-                          "Morate odabrati barem jednog klijenta za uređivanje"),
+                      content: const Text("Morate odabrati barem jednog klijenta za uređivanje"),
                       actions: <Widget>[
                         ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: primaryColor),
+                          style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
-                          child:
-                              const Text("OK", style: TextStyle(color: white)),
+                          child: const Text("OK", style: TextStyle(color: white)),
                         ),
                       ],
                     );
@@ -586,17 +495,14 @@ class _UsersScreenState extends State<UsersScreen> {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       title: const Text("Upozorenje"),
-                      content: const Text(
-                          "Odaberite samo jednog klijenta kojeg želite urediti"),
+                      content: const Text("Odaberite samo jednog klijenta kojeg želite urediti"),
                       actions: <Widget>[
                         ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor),
+                            style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            child: const Text("Ok",
-                                style: TextStyle(color: white)))
+                            child: const Text("Ok", style: TextStyle(color: white)))
                       ],
                     );
                   });
@@ -607,34 +513,29 @@ class _UsersScreenState extends State<UsersScreen> {
                     return AlertDialog(
                       backgroundColor: Colors.white,
                       title: const Text("Uredi klijenta"),
-                      content: AddUserForm(
-                          isEditing: true, userToEdit: selectedUsers[0]),
+                      content: AddUserForm(isEditing: true, userToEdit: selectedUsers[0]),
                       actions: <Widget>[
                         ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor),
+                            style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
                             onPressed: () {
                               setState(() {
                                 _isActive = false;
-                                _isVerified = false;
                               });
                               Navigator.of(context).pop();
                             },
-                            child: const Text("Zatvori",
-                                style: TextStyle(color: white))),
+                            child: const Text("Zatvori", style: TextStyle(color: white))),
                         ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor),
+                            style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
                             onPressed: () {
-                              editUser(selectedUsers[0].id);
-                              setState(() {
-                                selectedUsers = [];
-                                _isActive = false;
-                                _isVerified = false;
-                              });
+                              if (_formKey.currentState!.validate()) {
+                                editUser(selectedUsers[0].id);
+                                setState(() {
+                                  selectedUsers = [];
+                                  _isActive = false;
+                                });
+                              }
                             },
-                            child: const Text("Spremi",
-                                style: TextStyle(color: white))),
+                            child: const Text("Spremi", style: TextStyle(color: white))),
                       ],
                     );
                   });
@@ -657,22 +558,17 @@ class _UsersScreenState extends State<UsersScreen> {
                   showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return AlertDialog(
-                            title: const Text("Upozorenje"),
-                            content: const Text(
-                                "Morate odabrati klijenta kojeg želite obrisati."),
-                            actions: <Widget>[
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: primaryColor,
-                                ),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text("OK",
-                                    style: TextStyle(color: white)),
-                              ),
-                            ]);
+                        return AlertDialog(title: const Text("Upozorenje"), content: const Text("Morate odabrati klijenta kojeg želite obrisati."), actions: <Widget>[
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: primaryColor,
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text("OK", style: TextStyle(color: white)),
+                          ),
+                        ]);
                       });
                 }
               : () {
@@ -682,8 +578,7 @@ class _UsersScreenState extends State<UsersScreen> {
                         return AlertDialog(
                           title: const Text("Izbriši klijenta!"),
                           content: const SingleChildScrollView(
-                            child: Text(
-                                "Da li ste sigurni da želite obrisati klijenta?"),
+                            child: Text("Da li ste sigurni da želite obrisati klijenta?"),
                           ),
                           actions: <Widget>[
                             ElevatedButton(
@@ -693,8 +588,7 @@ class _UsersScreenState extends State<UsersScreen> {
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
-                              child: const Text("Odustani",
-                                  style: TextStyle(color: white)),
+                              child: const Text("Odustani", style: TextStyle(color: white)),
                             ),
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
@@ -706,8 +600,7 @@ class _UsersScreenState extends State<UsersScreen> {
                                 }
                                 Navigator.of(context).pop();
                               },
-                              child: const Text("Obriši",
-                                  style: TextStyle(color: white)),
+                              child: const Text("Obriši", style: TextStyle(color: white)),
                             ),
                           ],
                         );
@@ -728,8 +621,7 @@ class _UsersScreenState extends State<UsersScreen> {
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: ConstrainedBox(
-          constraints:
-              BoxConstraints(minWidth: MediaQuery.of(context).size.width),
+          constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width),
           child: Container(
             decoration: BoxDecoration(
               border: Border.all(color: Colors.teal, style: BorderStyle.solid),
@@ -737,8 +629,7 @@ class _UsersScreenState extends State<UsersScreen> {
             ),
             child: DataTable(
                 dataRowHeight: 80,
-                dataRowColor: MaterialStateProperty.all(
-                    const Color.fromARGB(42, 241, 241, 241)),
+                dataRowColor: MaterialStateProperty.all(const Color.fromARGB(42, 241, 241, 241)),
                 columns: [
                   DataColumn(
                       label: Checkbox(
@@ -774,9 +665,6 @@ class _UsersScreenState extends State<UsersScreen> {
                   const DataColumn(
                     label: Text('Aktivan'),
                   ),
-                  const DataColumn(
-                    label: Text('Verifikovan'),
-                  ),
                 ],
                 rows: users
                     .map((User userItem) => DataRow(cells: [
@@ -791,68 +679,62 @@ class _UsersScreenState extends State<UsersScreen> {
                                   } else {
                                     selectedUsers.remove(userItem);
                                   }
-                                  isAllSelected =
-                                      users.every((u) => u.isSelected);
+                                  isAllSelected = users.every((u) => u.isSelected);
                                 });
                               },
                             ),
                           ),
-                          DataCell(Text(
-                              ("${userItem.firstName.toString()} ${userItem.lastName.toString()}"))),
+                          DataCell(Text(("${userItem.firstName.toString()} ${userItem.lastName.toString()}"))),
                           DataCell(
                             Row(
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.only(right: 8.0),
-                                  child: FutureBuilder<String>(
-                                    future: loadPhoto(
-                                        userItem.profilePhoto?.guidId ?? ''),
-                                    builder: (BuildContext context,
-                                        AsyncSnapshot<String> snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return const CircularProgressIndicator();
-                                      } else if (snapshot.hasError) {
-                                        return const Text(
-                                            'Greška prilikom učitavanja slike');
-                                      } else {
-                                        final imageUrl = snapshot.data;
+                                  child: (userItem.profilePhoto?.guidId == null || userItem.profilePhoto!.guidId!.isEmpty)
+                                      ? Container(
+                                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                          child: Image.asset(
+                                            'assets/images/user2.png',
+                                            width: 80,
+                                            height: 105,
+                                            fit: BoxFit.fill,
+                                          ),
+                                        )
+                                      : FutureBuilder<String>(
+                                          future: loadPhoto(userItem.profilePhoto!.guidId!),
+                                          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                                            if (snapshot.connectionState == ConnectionState.waiting) {
+                                              return const CircularProgressIndicator();
+                                            } else if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
+                                              return Container(
+                                                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                                child: Image.asset(
+                                                  'assets/images/user2.png',
+                                                  width: 80,
+                                                  height: 105,
+                                                  fit: BoxFit.fill,
+                                                ),
+                                              );
+                                            }
 
-                                        if (imageUrl != null &&
-                                            imageUrl.isNotEmpty) {
-                                          return Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 8.0),
-                                            child: FadeInImage(
-                                              image: NetworkImage(
-                                                imageUrl,
-                                                headers: Authorization
-                                                    .createHeaders(),
+                                            final imageUrl = snapshot.data!;
+
+                                            return Container(
+                                              padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                              child: FadeInImage(
+                                                image: NetworkImage(
+                                                  imageUrl,
+                                                  headers: Authorization.createHeaders(),
+                                                ),
+                                                placeholder: MemoryImage(kTransparentImage),
+                                                fadeInDuration: const Duration(milliseconds: 300),
+                                                fit: BoxFit.fill,
+                                                width: 80,
+                                                height: 105,
                                               ),
-                                              placeholder: MemoryImage(
-                                                  kTransparentImage),
-                                              fadeInDuration: const Duration(
-                                                  milliseconds: 300),
-                                              fit: BoxFit.fill,
-                                              width: 80,
-                                              height: 105,
-                                            ),
-                                          );
-                                        } else {
-                                          return Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 8.0),
-                                            child: Image.asset(
-                                              'assets/images/user2.png',
-                                              width: 80,
-                                              height: 105,
-                                              fit: BoxFit.fill,
-                                            ),
-                                          );
-                                        }
-                                      }
-                                    },
-                                  ),
+                                            );
+                                          },
+                                        ),
                                 ),
                               ],
                             ),
@@ -861,25 +743,10 @@ class _UsersScreenState extends State<UsersScreen> {
                             child: Text(userItem.phoneNumber?.toString() ?? ""),
                           )),
                           DataCell(Text(userItem.email.toString())),
-                          DataCell(
-                              Text(userItem.gender == 0 ? "Male" : "Female")),
+                          DataCell(Text(userItem.gender == 0 ? "Male" : "Female")),
                           DataCell(Container(
                             alignment: Alignment.center,
                             child: userItem.isActive == true
-                                ? const Icon(
-                                    Icons.check_circle_outline,
-                                    color: green,
-                                    size: 30,
-                                  )
-                                : const Icon(
-                                    Icons.close_outlined,
-                                    color: Colors.red,
-                                    size: 30,
-                                  ),
-                          )),
-                          DataCell(Container(
-                            alignment: Alignment.center,
-                            child: userItem.isVerified == true
                                 ? const Icon(
                                     Icons.check_circle_outline,
                                     color: green,
@@ -908,7 +775,6 @@ class _UsersScreenState extends State<UsersScreen> {
       _birthDateController.text = userToEdit.birthDate;
       selectedGender = userToEdit.gender;
       _isActive = userToEdit.isActive;
-      _isVerified = userToEdit.isVerified;
       _passwordController.text = '';
       _pickedFile = null;
     } else {
@@ -918,7 +784,6 @@ class _UsersScreenState extends State<UsersScreen> {
       _phoneNumberController.text = '';
       _birthDateController.text = '';
       selectedGender = null;
-      _isVerified = false;
       _isActive = false;
       _passwordController.text = '';
       _pickedFile = null;
@@ -945,15 +810,9 @@ class _UsersScreenState extends State<UsersScreen> {
                           height: 180,
                           color: Colors.teal,
                           child: FutureBuilder<String>(
-                            future: _pickedFile != null
-                                ? Future.value(_pickedFile!.path)
-                                : loadPhoto(isEditing
-                                    ? (userToEdit?.profilePhoto?.guidId ?? '')
-                                    : ''),
-                            builder: (BuildContext context,
-                                AsyncSnapshot<String> snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
+                            future: _pickedFile != null ? Future.value(_pickedFile!.path) : loadPhoto(isEditing ? (userToEdit?.profilePhoto?.guidId ?? '') : ''),
+                            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
                                 return const CircularProgressIndicator();
                               } else if (snapshot.hasError) {
                                 return const Text(
@@ -969,12 +828,10 @@ class _UsersScreenState extends State<UsersScreen> {
                                         ? FileImage(_pickedFile!)
                                         : NetworkImage(
                                             imageUrl,
-                                            headers:
-                                                Authorization.createHeaders(),
+                                            headers: Authorization.createHeaders(),
                                           ) as ImageProvider<Object>,
                                     placeholder: MemoryImage(kTransparentImage),
-                                    fadeInDuration:
-                                        const Duration(milliseconds: 300),
+                                    fadeInDuration: const Duration(milliseconds: 300),
                                     fit: BoxFit.cover,
                                     width: 230,
                                     height: 200,
@@ -982,13 +839,11 @@ class _UsersScreenState extends State<UsersScreen> {
                                 } else {
                                   return isEditing
                                       ? Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 8.0),
+                                          padding: const EdgeInsets.symmetric(vertical: 8.0),
                                           child: const Text('Odaberite sliku'),
                                         )
                                       : Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 8.0),
+                                          padding: const EdgeInsets.symmetric(vertical: 8.0),
                                           child: Image.asset(
                                             'assets/images/default_user_image.jpg',
                                             width: 230,
@@ -1015,8 +870,7 @@ class _UsersScreenState extends State<UsersScreen> {
                             borderRadius: BorderRadius.circular(20.0),
                           ),
                         ),
-                        child: const Text('Odaberite sliku',
-                            style: TextStyle(fontSize: 12, color: white)),
+                        child: const Text('Odaberite sliku', style: TextStyle(fontSize: 12, color: white)),
                       ),
                     ),
                   )
@@ -1066,17 +920,46 @@ class _UsersScreenState extends State<UsersScreen> {
                   ),
                   TextFormField(
                     controller: _phoneNumberController,
+                    keyboardType: TextInputType.number,
                     decoration: const InputDecoration(labelText: 'Broj'),
                     validator: (value) {
-                      if (value!.isEmpty) {
+                      if (value == null || value.isEmpty) {
                         return 'Unesite broj!';
                       }
+
+                      if (value.length < 9) {
+                        return 'Broj mora imati najmanje 9 cifara!';
+                      }
+
+                      if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+                        return 'Dozvoljeni su samo brojevi!';
+                      }
+
                       return null;
                     },
                   ),
                   TextFormField(
                     controller: _passwordController,
-                    decoration: const InputDecoration(labelText: 'Sifra'),
+                    decoration: const InputDecoration(labelText: 'Šifra'),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Unesite šifru!';
+                      }
+
+                      if (value.length < 6) {
+                        return 'Šifra mora imati najmanje 6 karaktera!';
+                      }
+
+                      if (!RegExp(r'[A-Z]').hasMatch(value)) {
+                        return 'Šifra mora sadržavati barem jedno veliko slovo!';
+                      }
+
+                      if (!RegExp(r'[!@#\$%^&*(),.?":{}|<>]').hasMatch(value)) {
+                        return 'Šifra mora sadržavati barem jedan specijalni znak!';
+                      }
+
+                      return null;
+                    },
                   ),
                 ],
               ),
@@ -1104,8 +987,7 @@ class _UsersScreenState extends State<UsersScreen> {
                         if (date != null) {
                           setState(() {
                             selectedDate = date;
-                            _birthDateController.text =
-                                DateFormat('yyyy-MM-dd').format(date);
+                            _birthDateController.text = DateFormat('yyyy-MM-dd').format(date);
                           });
                         }
                       });
@@ -1159,8 +1041,7 @@ class _UsersScreenState extends State<UsersScreen> {
                           Checkbox(
                             value: _isActiveNotifier.value,
                             onChanged: (bool? value) {
-                              _isActiveNotifier.value =
-                                  !_isActiveNotifier.value;
+                              _isActiveNotifier.value = !_isActiveNotifier.value;
                               _isActive = _isActiveNotifier.value;
                             },
                           ),
@@ -1171,24 +1052,6 @@ class _UsersScreenState extends State<UsersScreen> {
                   ),
                   const SizedBox(
                     height: 10,
-                  ),
-                  ValueListenableBuilder<bool>(
-                    valueListenable: _isVerifiedNotifier,
-                    builder: (context, isVerified, child) {
-                      return Row(
-                        children: [
-                          Checkbox(
-                            value: _isVerifiedNotifier.value,
-                            onChanged: (bool? value) {
-                              _isVerifiedNotifier.value =
-                                  !_isVerifiedNotifier.value;
-                              _isVerified = _isVerifiedNotifier.value;
-                            },
-                          ),
-                          const Text('Verifikovan'),
-                        ],
-                      );
-                    },
                   ),
                 ],
               ),
@@ -1235,14 +1098,7 @@ class _UsersScreenState extends State<UsersScreen> {
               }
             });
             if (hasNextPage == pageSize) {
-              loadUsers(
-                  UserSearchObject(
-                      pageNumber: currentPage,
-                      pageSize: pageSize,
-                      role: 1,
-                      name: _searchController.text),
-                  _selectedIsActive,
-                  _selectedIsVerified);
+              loadUsers(UserSearchObject(pageNumber: currentPage, pageSize: pageSize, role: 1, name: _searchController.text), _selectedIsActive, _selectedIsVerified);
             }
           },
           child: const Icon(
