@@ -14,6 +14,6 @@
         public bool? IsVerified { get; set; }
         public bool? IsActive { get; set; }
 
-        public int ProfilePhotoId { get; set; }
+        public int? ProfilePhotoId { get; set; }
     }
 }

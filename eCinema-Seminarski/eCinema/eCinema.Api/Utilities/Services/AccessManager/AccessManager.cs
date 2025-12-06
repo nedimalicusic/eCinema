@@ -51,6 +51,11 @@ namespace eCinema.Api
         {
             var upsertDto = _mapper.Map<UserUpsertDto>(model);
 
+            upsertDto.IsVerified = true;
+            upsertDto.IsActive = true;
+            upsertDto.Role = Role.User;
+            upsertDto.ProfilePhotoId = null;
+
             await _usersService.AddAsync(upsertDto, cancellationToken);
         }
 

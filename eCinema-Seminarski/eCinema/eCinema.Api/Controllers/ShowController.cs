@@ -1,8 +1,8 @@
-﻿using eCinema.Application.Interfaces;
+﻿using Microsoft.AspNetCore.Mvc;
+
 using eCinema.Core;
-using eCinema.Infrastructure.Interfaces;
+using eCinema.Application.Interfaces;
 using eCinema.Infrastructure.Interfaces.SearchObjects;
-using Microsoft.AspNetCore.Mvc;
 
 namespace eCinema.Api.Controllers
 {

@@ -55,24 +55,47 @@ namespace eCinema.Infrastructure
             }
         }
 
-        public override async Task<PagedList<Show>> GetPagedAsync(ShowSearchObject searchObject, CancellationToken cancellationToken = default)
+        public override async Task<PagedList<Show>> GetPagedAsync(ShowSearchObject searchObject,CancellationToken cancellationToken = default)
         {
-            return await DbSet
+            var query = DbSet
+                .AsNoTracking()
                 .Where(u =>
-                    (searchObject.Name == null || u.Movie.Title.ToLower().Contains(searchObject.Name.ToLower())) &&
+                    (searchObject.Name == null ||
+                     u.Movie.Title.Contains(searchObject.Name)) &&
+
                     (searchObject.CinemaId == null || u.CinemaId == searchObject.CinemaId) &&
                     (searchObject.MovieId == null || u.MovieId == searchObject.MovieId) &&
                     (searchObject.Date == null || u.StartsAt.Date == searchObject.Date.Value.Date)
-                ).Include(s => s.Movie.Production.Country)
-                 .Include(s=>s.Movie.Language)
-                 .Include(s=>s.Movie.MovieGenres).ThenInclude(s=>s.Genre)
-                 .Include(s=>s.Movie.MovieCategories).ThenInclude(s=>s.Category)
-                 .Include(s=>s.Movie.MovieActors).ThenInclude(s=>s.Actors)
-                 .Include(s=>s.ShowType).Include(s=>s.ReccuringShow)
-                .Include(s=>s.Movie.Photo)
+                )
+                .Include(s => s.Movie.Production.Country)
+                .Include(s => s.Movie.Language)
+                .Include(s => s.Movie.MovieGenres)
+                    .ThenInclude(g => g.Genre)
+                .Include(s => s.Movie.MovieCategories)
+                    .ThenInclude(c => c.Category)
+                .Include(s => s.Movie.MovieActors)
+                    .ThenInclude(a => a.Actors)
+                .Include(s => s.Movie.Photo)
+                .Include(s => s.ShowType)
+                .Include(s => s.ReccuringShow)
                 .Include(s => s.Cinema.City.Country)
-                 .ToPagedListAsync(searchObject, cancellationToken);
+                .AsSplitQuery()
+                .OrderByDescending(s => s.StartsAt);
+
+            return await query.ToPagedListAsync(searchObject, cancellationToken);
         }
 
+
+
+        public async Task<IEnumerable<Show>> GetActiveShows(CancellationToken cancellationToken)
+        {
+            var now = DateTime.Now;
+
+            return await DbSet
+                .AsNoTracking()
+                .Include(s => s.Movie)
+                .Where(s => s.StartsAt > now)
+                .ToListAsync(cancellationToken);
+        }
     }
 }

@@ -23,6 +23,7 @@ namespace eCinema.Core
         public ICollection<MovieActors> MovieActors { get; set; } = null!;
         public ICollection<MovieGenre> MovieGenres { get; set; } = null!;
         public ICollection<MovieCategory> MovieCategories { get; set; } = null!;
+        public ICollection<MovieReaction> MovieReactions { get; set; } = null!;
         public ICollection<Show> Shows { get; set; } = null!;
     }
 }

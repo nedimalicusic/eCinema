@@ -1,7 +1,8 @@
-﻿using eCinema.Application.Interfaces;
-using eCinema.Core;
-using eCinema.Infrastructure.Interfaces;
+﻿using eCinema.Core;
 using Microsoft.AspNetCore.Mvc;
+
+using eCinema.Application.Interfaces;
+using eCinema.Infrastructure.Interfaces;
 
 namespace eCinema.Api.Controllers
 {
@@ -22,6 +23,21 @@ namespace eCinema.Api.Controllers
             catch (Exception e)
             {
                 Logger.LogError(e, "Error while trying to get notifications!");
+                return BadRequest();
+            }
+        }
+
+        [HttpPut("MarkAsRead")]
+        public async Task<IActionResult> MarkAsReed(int notificationId, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                await Service.MarkAsReed(notificationId, cancellationToken);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e, "Error while trying to update notification!");
                 return BadRequest();
             }
         }

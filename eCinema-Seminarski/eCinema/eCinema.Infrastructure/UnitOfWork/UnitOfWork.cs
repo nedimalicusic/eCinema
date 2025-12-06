@@ -30,6 +30,7 @@ namespace eCinema.Infrastructure
         public readonly IReccuringShowRepository ReccuringShowRepository;
         public readonly ICategoryRepository CategoryRepository;
         public readonly IMovieCategoryRepository MovieCategoryRepository;
+        public readonly IMovieReactionsRepository MovieReactionsRepository;
 
         public UnitOfWork(
             DatabaseContext databaseContext,
@@ -54,7 +55,8 @@ namespace eCinema.Infrastructure
             IShowTypeRepository showTypeRepository,
             IReccuringShowRepository reccuringShowRepository,
             ICategoryRepository categoryRepository,
-            IMovieCategoryRepository movieCategoryRepository
+            IMovieCategoryRepository movieCategoryRepository,
+            IMovieReactionsRepository movieReactionsRepository
             )
         {
             _databaseContext = databaseContext;
@@ -81,6 +83,7 @@ namespace eCinema.Infrastructure
             ShowTypeRepository = showTypeRepository;
             ReccuringShowRepository = reccuringShowRepository;
             MovieCategoryRepository = movieCategoryRepository;
+            MovieReactionsRepository = movieReactionsRepository;
         }
 
 

@@ -1,8 +1,9 @@
-﻿using eCinema.Application.Interfaces;
+﻿using Microsoft.AspNetCore.Mvc;
+
 using eCinema.Core;
 using eCinema.Core.Dtos.Photo;
+using eCinema.Application.Interfaces;
 using eCinema.Infrastructure.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 
 namespace eCinema.Api.Controllers
 {

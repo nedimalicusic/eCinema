@@ -22,6 +22,8 @@ namespace eCinema.Infrastructure
             SeedCategory(modelBuilder);
             SeedMovies(modelBuilder);
             SeedMovieGenres(modelBuilder);
+            SeedActors(modelBuilder);
+            SeedSeats(modelBuilder);
         }
 
         private void SeedCategory(ModelBuilder modelBuilder)
@@ -84,7 +86,6 @@ namespace eCinema.Infrastructure
                        ModifiedAt = null
                    });
         }
-
         private void SeedShowType(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ShowType>().HasData(
@@ -124,7 +125,6 @@ namespace eCinema.Infrastructure
                        ModifiedAt = null
                    });
         }
-
         private void SeedWeekDay(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<WeekDay>().HasData(
@@ -178,7 +178,6 @@ namespace eCinema.Infrastructure
                       ModifiedAt = null
                   });
         }
-
         private void SeedCountries(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Country>().HasData(
@@ -469,8 +468,6 @@ namespace eCinema.Infrastructure
                    ModifiedAt = null
                });
         }
-
-
         private void SeedMovies(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Movie>().HasData(
@@ -488,7 +485,7 @@ namespace eCinema.Infrastructure
                     LanguageId = 1,
                     ProductionId = 1,
                     PhotoId = null
-                    
+
 
 
 
@@ -506,51 +503,187 @@ namespace eCinema.Infrastructure
                     LanguageId = 1,
                     ProductionId = 1,
                     PhotoId = null
-
-
-
-
                 }
 
             );
         }
-
-       private void SeedMovieGenres(ModelBuilder modelBuilder)
+        private void SeedMovieGenres(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<MovieGenre>().HasData(
-       new MovieGenre
-       {
-           Id = 1,
-           CreatedAt = _dateTime,
-           ModifiedAt = null,
-           MovieId = 1,
-           GenreId = 1
-       }, 
-       new MovieGenre
-       {
-           Id = 2,
-           CreatedAt = _dateTime,
-           ModifiedAt = null,
-           MovieId = 1,
-           GenreId = 2
-       },
-       new MovieGenre
-       {
-           Id = 3,
-           CreatedAt = _dateTime,
-           ModifiedAt = null,
-           MovieId = 2,
-           GenreId = 1
-       }, 
-       new MovieGenre
-       {
-           Id = 4,
-           CreatedAt = _dateTime,
-           ModifiedAt = null,
-           MovieId = 2,
-           GenreId = 3
-       }
-       );
-       }
+               new MovieGenre
+               {
+                   Id = 1,
+                   CreatedAt = _dateTime,
+                   ModifiedAt = null,
+                   MovieId = 1,
+                   GenreId = 1
+               },
+               new MovieGenre
+               {
+                   Id = 2,
+                   CreatedAt = _dateTime,
+                   ModifiedAt = null,
+                   MovieId = 1,
+                   GenreId = 2
+               },
+               new MovieGenre
+               {
+                   Id = 3,
+                   CreatedAt = _dateTime,
+                   ModifiedAt = null,
+                   MovieId = 2,
+                   GenreId = 1
+               },
+               new MovieGenre
+               {
+                   Id = 4,
+                   CreatedAt = _dateTime,
+                   ModifiedAt = null,
+                   MovieId = 2,
+                   GenreId = 3
+               }
+               );
+        }
+        private void SeedActors(ModelBuilder modelBuilder)
+        {
+            var dateTime = DateTime.UtcNow;
+
+            modelBuilder.Entity<Actors>().HasData(
+                new Actors
+                {
+                    Id = 1,
+                    FirstName = "Robert",
+                    LastName = "Downey Jr.",
+                    Email = "robert.downeyjr@example.com",
+                    BirthDate = new DateTime(1965, 4, 4),
+                    Gender = Gender.Male,
+                    CreatedAt = dateTime,
+                    ModifiedAt = null
+                },
+                new Actors
+                {
+                    Id = 2,
+                    FirstName = "Scarlett",
+                    LastName = "Johansson",
+                    Email = "scarlett.johansson@example.com",
+                    BirthDate = new DateTime(1984, 11, 22),
+                    Gender = Gender.Female,
+                    CreatedAt = dateTime,
+                    ModifiedAt = null
+                },
+                new Actors
+                {
+                    Id = 3,
+                    FirstName = "Chris",
+                    LastName = "Evans",
+                    Email = "chris.evans@example.com",
+                    BirthDate = new DateTime(1981, 6, 13),
+                    Gender = Gender.Male,
+                    CreatedAt = dateTime,
+                    ModifiedAt = null
+                },
+                new Actors
+                {
+                    Id = 4,
+                    FirstName = "Natalie",
+                    LastName = "Portman",
+                    Email = "natalie.portman@example.com",
+                    BirthDate = new DateTime(1981, 6, 9),
+                    Gender = Gender.Female,
+                    CreatedAt = dateTime,
+                    ModifiedAt = null
+                },
+                new Actors
+                {
+                    Id = 5,
+                    FirstName = "Tom",
+                    LastName = "Holland",
+                    Email = "tom.holland@example.com",
+                    BirthDate = new DateTime(1996, 6, 1),
+                    Gender = Gender.Male,
+                    CreatedAt = dateTime,
+                    ModifiedAt = null
+                },
+                new Actors
+                {
+                    Id = 6,
+                    FirstName = "Emma",
+                    LastName = "Watson",
+                    Email = "emma.watson@example.com",
+                    BirthDate = new DateTime(1990, 4, 15),
+                    Gender = Gender.Female,
+                    CreatedAt = dateTime,
+                    ModifiedAt = null
+                },
+                new Actors
+                {
+                    Id = 7,
+                    FirstName = "Leonardo",
+                    LastName = "DiCaprio",
+                    Email = "leonardo.dicaprio@example.com",
+                    BirthDate = new DateTime(1974, 11, 11),
+                    Gender = Gender.Male,
+                    CreatedAt = dateTime,
+                    ModifiedAt = null
+                },
+                new Actors
+                {
+                    Id = 8,
+                    FirstName = "Jennifer",
+                    LastName = "Lawrence",
+                    Email = "jennifer.lawrence@example.com",
+                    BirthDate = new DateTime(1990, 8, 15),
+                    Gender = Gender.Female,
+                    CreatedAt = dateTime,
+                    ModifiedAt = null
+                },
+                new Actors
+                {
+                    Id = 9,
+                    FirstName = "Morgan",
+                    LastName = "Freeman",
+                    Email = "morgan.freeman@example.com",
+                    BirthDate = new DateTime(1937, 6, 1),
+                    Gender = Gender.Male,
+                    CreatedAt = dateTime,
+                    ModifiedAt = null
+                },
+                new Actors
+                {
+                    Id = 10,
+                    FirstName = "Angelina",
+                    LastName = "Jolie",
+                    Email = "angelina.jolie@example.com",
+                    BirthDate = new DateTime(1975, 6, 4),
+                    Gender = Gender.Female,
+                    CreatedAt = dateTime,
+                    ModifiedAt = null
+                }
+            );
+        }
+        private void SeedSeats(ModelBuilder modelBuilder)
+        {
+            var seats = new List<Seat>();
+            var rows = new[] { "A", "B", "C", "D", "E" };
+            var id = 1;
+
+            foreach (var row in rows)
+            {
+                for (int col = 1; col <= 10; col++)
+                {
+                    seats.Add(new Seat
+                    {
+                        Id = id++,
+                        Row = row,
+                        Column = col,
+                        IsDeleted = false,
+                        CreatedAt = _dateTime,
+                        ModifiedAt = null
+                    });
+                }
+            }
+
+            modelBuilder.Entity<Seat>().HasData(seats);
+        }
     }
 }

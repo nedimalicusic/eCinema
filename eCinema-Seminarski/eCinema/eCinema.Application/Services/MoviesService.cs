@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
 using FluentValidation;
+using Microsoft.ML;
+using Microsoft.ML.Trainers;
 
-using eCinema.Application.Interfaces;
 using eCinema.Core;
-using eCinema.Infrastructure;
-using eCinema.Infrastructure.Interfaces;
+using eCinema.Application.Interfaces;
 using eCinema.Common.Service;
 using eCinema.Core.Entities;
-using eCinema.Core.Dtos.Category;
-using eCinema.Infrastructure.Interfaces.SearchObjects;
+using eCinema.Infrastructure;
+using eCinema.Infrastructure.Interfaces;
 
 namespace eCinema.Application
 {
@@ -20,25 +20,6 @@ namespace eCinema.Application
         {
             _cryptoService = cryptoService;
         }
-
-        public async Task<List<CategoryMoviesDto>> GetCategoryAndMovies(CancellationToken cancellationToken)
-        {
-            var list = new List<CategoryMoviesDto>();
-            var search = new CategorySearchObject() { IsDisplayed = true };
-            var categories = await UnitOfWork.CategoryRepository.GetPagedAsync(search);
-
-            foreach (var category in categories.Items)
-            {
-                var movies = await UnitOfWork.MoviesRepository.GetMoviesByCategoryId(category.Id, cancellationToken);
-                var mapperMovies = await Task.Run(() => Mapper.Map<IEnumerable<MovieDto>>(movies));
-                var mapperCategory = Mapper.Map<CategoryDto>(category);
-
-                var item = new CategoryMoviesDto() { Category = mapperCategory, Movies = mapperMovies };
-                list.Add(item);
-            }
-            return list;
-        }
-
 
         public override async Task<MovieDto> AddAsync(MovieUpsertDto dto, CancellationToken cancellationToken = default)
         {
@@ -150,6 +131,162 @@ namespace eCinema.Application
 
             await UnitOfWork.SaveChangesAsync(cancellationToken);
             return Mapper.Map<MovieDto>(movie);
+        }
+
+        public async Task<List<MovieDto>> Recommendation(int userId, CancellationToken cancellationToken = default)
+        {
+            var user = await UnitOfWork.UsersRepository.GetUserReaction(userId, cancellationToken);
+
+            if (user == null)
+                throw new Exception("User does not exist!");
+
+            if (!user.MovieReactions.Any())
+            {
+                var mostWatched = await UnitOfWork.MoviesRepository.GetMostWatched(cancellationToken);
+                return Mapper.Map<List<MovieDto>>(mostWatched);
+            }
+
+            // ML.NET context
+            var mlContext = new MLContext();
+
+            var model = LoadModel(mlContext);
+
+            var shows = await UnitOfWork.ShowsRepository.GetActiveShows(cancellationToken);
+            var movieIds = shows.Select(mc => mc.MovieId).Distinct().ToList();
+
+            var recommendedMovieIds = GetMoviePredictions(mlContext, model, userId, movieIds);
+
+            var movies = await UnitOfWork.MoviesRepository.GetByIds(recommendedMovieIds, cancellationToken);
+
+            return Mapper.Map<List<MovieDto>>(movies);
+        }
+
+        ITransformer BuildAndTrainModel(MLContext mlContext, IDataView trainingData)
+        {
+            var options = new MatrixFactorizationTrainer.Options
+            {
+                MatrixColumnIndexColumnName = "UserIdEncoded",
+                MatrixRowIndexColumnName = "MovieIdEncoded",
+                LabelColumnName = "Rating",
+                NumberOfIterations = 20,
+                ApproximationRank = 100
+            };
+
+            // step 1: map userId and movieId to keys
+            var pipeline = mlContext.Transforms.Conversion.MapValueToKey(
+                    inputColumnName: "UserId",
+                    outputColumnName: "UserIdEncoded")
+                .Append(mlContext.Transforms.Conversion.MapValueToKey(
+                    inputColumnName: "MovieId",
+                    outputColumnName: "MovieIdEncoded")
+
+                // step 2: find recommendations using matrix factorization
+                .Append(mlContext.Recommendation().Trainers.MatrixFactorization(options)));
+
+            // train the model
+            Console.WriteLine("Training the model...");
+            var model = pipeline.Fit(trainingData);
+
+            return model;
+        }
+
+
+        void EvaluateModel(MLContext mlContext, IDataView testDataView, ITransformer model)
+        {
+            var prediction = model.Transform(testDataView);
+            var metrics = mlContext.Regression.Evaluate(prediction, labelColumnName: "Rating", scoreColumnName: "Score");
+
+            Console.WriteLine("Root Mean Squared Error : " + metrics.RootMeanSquaredError.ToString());
+            Console.WriteLine("RSquared: " + metrics.RSquared.ToString());
+        }
+        List<int> GetMoviePredictions(MLContext mlContext, ITransformer model, int userId, List<int> movieIds)
+        {
+            var predictionEngine = mlContext.Model.CreatePredictionEngine<MovieRating, MovieRatingPrediction>(model);
+            var predictionList = new List<MovieRatingPrediction>();
+
+            foreach (var movieId in movieIds)
+            {
+                var testInput = new MovieRating { UserId = userId, MovieId = movieId };
+
+                var prediction = predictionEngine.Predict(testInput);
+                prediction.MovieId = movieId;
+
+                Console.WriteLine($"User id {userId} movie prediction : Movie id {movieId}\nScore: {prediction.Score}");
+
+                predictionList.Add(prediction);
+            }
+
+            return predictionList
+                .OrderByDescending(p => p.Score)
+                .Take(3)
+                .Select(p => p.MovieId)
+                .ToList();
+        }
+
+        List<MovieRating> GetTestData()
+        {
+            return new List<MovieRating>
+            {
+              new MovieRating { UserId = 1, MovieId = 1, Rating = 5 },
+              new MovieRating { UserId = 2, MovieId = 1, Rating = 5 },
+              new MovieRating { UserId = 3, MovieId = 2, Rating = 5 },
+              new MovieRating { UserId = 4, MovieId = 3, Rating = 5 }
+            };
+        }
+
+        ITransformer LoadModel(MLContext mlContext)
+        {
+            DataViewSchema modelSchema;
+
+            var modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "MovieRecommenderModel.zip");
+            // Load trained model
+            ITransformer trainedModel = mlContext.Model.Load(modelPath, out modelSchema);
+
+            return trainedModel;
+        }
+
+        public async Task CreateModel(CancellationToken cancellationToken)
+        {
+            var mlContext = new MLContext();
+
+            var movieReactions = await UnitOfWork.MovieReactionsRepository.GetMovieReactions(cancellationToken);
+
+            var ratings = movieReactions.Select(x => new MovieRating
+            {
+                UserId = x.UserId,
+                MovieId = x.MovieId,
+                Rating = x.Rating
+            });
+
+            var trainingData = mlContext.Data.LoadFromEnumerable(ratings);
+            var testData = mlContext.Data.LoadFromEnumerable(GetTestData());
+
+            var model = BuildAndTrainModel(mlContext, trainingData);
+
+            EvaluateModel(mlContext, testData, model);
+
+            SaveModel(mlContext, trainingData.Schema, model);
+        }
+
+        void SaveModel(MLContext mlContext, DataViewSchema trainingDataViewSchema, ITransformer model)
+        {
+            var modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "MovieRecommenderModel.zip");
+
+            Console.WriteLine("=============== Saving the model to a file ===============");
+            mlContext.Model.Save(model, trainingDataViewSchema, modelPath);
+        }
+
+        public class MovieRating
+        {
+            public int UserId;
+            public int MovieId;
+            public float Rating;
+        }
+
+        public class MovieRatingPrediction
+        {
+            public float Score;
+            public int MovieId;
         }
     }
 }

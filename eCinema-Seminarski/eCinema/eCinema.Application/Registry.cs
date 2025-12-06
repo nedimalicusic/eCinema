@@ -36,6 +36,7 @@ namespace eCinema.Application
             services.AddScoped<IReccuringShowService, ReccuringShowService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IMovieCategoryService, MovieCategoryService>();
+            services.AddScoped<IMovieReactionsService, MovieReactionsService>();
         }
 
         public static void AddValidators(this IServiceCollection services)
@@ -62,6 +63,7 @@ namespace eCinema.Application
             services.AddScoped<IValidator<ReccuringShowUpsertDto>, ReccuringShowValidator>();
             services.AddScoped<IValidator<CategoryUpsertDto>, CategoryValidator>();
             services.AddScoped<IValidator<MovieCategoryUpsertDto>, MovieCategoryValidator>();
+            services.AddScoped<IValidator<MovieReactionUpsertDto>, MovieReactionValidator>();
         }
     }
 }

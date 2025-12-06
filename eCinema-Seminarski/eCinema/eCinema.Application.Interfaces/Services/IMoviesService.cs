@@ -6,6 +6,6 @@ namespace eCinema.Application.Interfaces
 {
     public interface IMoviesService : IBaseService<int, MovieDto, MovieUpsertDto, MovieSearchObject>
     {
-        Task<List<CategoryMoviesDto>> GetCategoryAndMovies(CancellationToken cancellationToken);
+        Task<List<MovieDto>> Recommendation(int userId, CancellationToken cancellationToken = default);
     }
 }

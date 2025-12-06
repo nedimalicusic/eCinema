@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
-using eCinema.Application;
-using eCinema.Application.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+
 using eCinema.Core;
 using eCinema.Core.Dtos.Movie;
 using eCinema.Core.Dtos.Photo;
 using eCinema.Infrastructure;
-using eCinema.Infrastructure.Interfaces;
-using Microsoft.AspNetCore.Mvc;
+using eCinema.Application.Interfaces;
 
 namespace eCinema.Api.Controllers
 {
@@ -20,20 +19,6 @@ namespace eCinema.Api.Controllers
             _photosService = photosService;
         }
 
-        [HttpGet("GetCategoryAndMovies")]
-        public async Task<IActionResult> GetCategoryAndMovies(CancellationToken cancellationToken = default)
-        {
-            try
-            {
-                var movies = await Service.GetCategoryAndMovies(cancellationToken);
-                return Ok(movies);
-            }
-            catch (Exception e)
-            {
-                Logger.LogError(e, "Error while trying to get movies");
-                return BadRequest();
-            }
-        }
 
         [HttpPost("insertMovie")]
         public async Task<IActionResult> InsertMovie([FromForm] MovieUpsertModel model, CancellationToken cancellationToken = default)
@@ -123,7 +108,11 @@ namespace eCinema.Api.Controllers
                 {
 
                     var movie = await Service.GetByIdAsync(model.Id, cancellationToken);
-                    upsertDto.PhotoId = (int)movie!.PhotoId;
+
+                    if (movie.PhotoId != null)
+                    {
+                        upsertDto.PhotoId = (int)movie!.PhotoId;
+                    }
                 }
 
                 await Service.UpdateAsync(upsertDto, cancellationToken);
@@ -137,5 +126,20 @@ namespace eCinema.Api.Controllers
             }
         }
 
+        [HttpGet("Recommendation/{userId}")]
+        public async Task<IActionResult> Recommendation(int userId, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var recommendations = await Service.Recommendation(userId, cancellationToken);
+
+                return Ok(recommendations);
+            }
+            catch (Exception e)
+                {
+                Logger.LogError(e, "Error while trying to get movies!");
+                return BadRequest();
+            }
+        }
     }
 }

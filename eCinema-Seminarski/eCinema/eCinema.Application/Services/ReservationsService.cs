@@ -28,8 +28,24 @@ namespace eCinema.Application
         {
             var reservations = await CurrentRepository.GetByUserId(userId, cancellationToken);
 
-            return Mapper.Map<IEnumerable<ReservationDto>>(reservations);
+            var mapped = Mapper.Map<IEnumerable<ReservationDto>>(reservations);
+
+            foreach (var reservation in mapped)
+            {
+                var movie = reservation.Show.Movie;
+
+                var lastReaction = movie.Reactions
+                    .Where(r => r.UserId == userId)
+                    .OrderByDescending(r => r.CreatedAt) 
+                    .FirstOrDefault();
+
+                movie.UserRating = lastReaction?.Rating;
+            }
+
+            return mapped;
         }
+
+
 
         public async Task<List<int>> GetCountByMonthAsync(BarChartSearchObject searchObject, CancellationToken cancellationToken = default)
         {

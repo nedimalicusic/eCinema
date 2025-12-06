@@ -12,6 +12,7 @@ namespace eCinema.Application
             CreateMap<Movie, MovieDto>()
                 .ForMember(x => x.Categories, options => options.MapFrom(y => y.MovieCategories.Select(z => z.Category)))
                 .ForMember(x => x.Genres, options => options.MapFrom(y => y.MovieGenres.Select(z => z.Genre)))
+                .ForMember(x => x.Reactions,opt => opt.MapFrom(y => y.MovieReactions))
                 .ForMember(x => x.Actors, options => options.MapFrom(y => y.MovieActors.Select(z => z.Actors)));
 
             CreateMap<MovieUpsertDto, Movie>();

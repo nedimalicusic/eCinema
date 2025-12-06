@@ -28,6 +28,7 @@ namespace eCinema.Infrastructure
         public DbSet<Category> Category { get; set; } = null!;
         public DbSet<MovieCategory> MovieCategory { get; set; } = null!;
         public DbSet<ReccuringShows> ReccuringShows { get; set; } = null!;
+        public DbSet<MovieReaction> MovieReactions { get; set; } = null!;
 
         public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
         {

@@ -1,5 +1,5 @@
-﻿using eCinema.Application.Interfaces;
-using eCinema.Core;
+﻿using eCinema.Core;
+using eCinema.Application.Interfaces;
 using eCinema.Infrastructure.Interfaces;
 
 namespace eCinema.Api.Controllers

@@ -60,5 +60,10 @@ namespace eCinema.Infrastructure
         {
             return await DbSet.Include(s => s.ProfilePhoto).FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
         }
+
+        public async Task<User> GetUserReaction(int userId, CancellationToken cancellationToken = default)
+        {
+            return await DbSet.Include(s => s.MovieReactions).FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
+        }
     }
 }

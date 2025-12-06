@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+
 using eCinema.Application.Interfaces;
 using eCinema.Core;
 using eCinema.Core.Dtos.Photo;
 using eCinema.Infrastructure.Interfaces.SearchObjects;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 
 namespace eCinema.Api.Controllers
 {

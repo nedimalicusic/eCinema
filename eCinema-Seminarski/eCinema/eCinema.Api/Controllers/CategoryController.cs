@@ -1,5 +1,6 @@
-﻿using eCinema.Application.Interfaces.Services;
-using eCinema.Core;
+﻿using eCinema.Core;
+
+using eCinema.Application.Interfaces.Services;
 using eCinema.Infrastructure.Interfaces.SearchObjects;
 
 namespace eCinema.Api.Controllers

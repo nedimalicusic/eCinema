@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using eCinema.Infrastructure;
 
@@ -11,9 +12,11 @@ using eCinema.Infrastructure;
 namespace eCinema.Infrastructure.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20251124140725_AddMovieReactionsTable")]
+    partial class AddMovieReactionsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,7 +71,7 @@ namespace eCinema.Infrastructure.Migrations
                         {
                             Id = 1,
                             BirthDate = new DateTime(1965, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2025, 11, 26, 9, 40, 42, 243, DateTimeKind.Utc).AddTicks(142),
+                            CreatedAt = new DateTime(2025, 11, 24, 14, 7, 25, 750, DateTimeKind.Utc).AddTicks(4476),
                             Email = "robert.downeyjr@example.com",
                             FirstName = "Robert",
                             Gender = 0,
@@ -79,7 +82,7 @@ namespace eCinema.Infrastructure.Migrations
                         {
                             Id = 2,
                             BirthDate = new DateTime(1984, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2025, 11, 26, 9, 40, 42, 243, DateTimeKind.Utc).AddTicks(142),
+                            CreatedAt = new DateTime(2025, 11, 24, 14, 7, 25, 750, DateTimeKind.Utc).AddTicks(4476),
                             Email = "scarlett.johansson@example.com",
                             FirstName = "Scarlett",
                             Gender = 1,
@@ -90,7 +93,7 @@ namespace eCinema.Infrastructure.Migrations
                         {
                             Id = 3,
                             BirthDate = new DateTime(1981, 6, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2025, 11, 26, 9, 40, 42, 243, DateTimeKind.Utc).AddTicks(142),
+                            CreatedAt = new DateTime(2025, 11, 24, 14, 7, 25, 750, DateTimeKind.Utc).AddTicks(4476),
                             Email = "chris.evans@example.com",
                             FirstName = "Chris",
                             Gender = 0,
@@ -101,7 +104,7 @@ namespace eCinema.Infrastructure.Migrations
                         {
                             Id = 4,
                             BirthDate = new DateTime(1981, 6, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2025, 11, 26, 9, 40, 42, 243, DateTimeKind.Utc).AddTicks(142),
+                            CreatedAt = new DateTime(2025, 11, 24, 14, 7, 25, 750, DateTimeKind.Utc).AddTicks(4476),
                             Email = "natalie.portman@example.com",
                             FirstName = "Natalie",
                             Gender = 1,
@@ -112,7 +115,7 @@ namespace eCinema.Infrastructure.Migrations
                         {
                             Id = 5,
                             BirthDate = new DateTime(1996, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2025, 11, 26, 9, 40, 42, 243, DateTimeKind.Utc).AddTicks(142),
+                            CreatedAt = new DateTime(2025, 11, 24, 14, 7, 25, 750, DateTimeKind.Utc).AddTicks(4476),
                             Email = "tom.holland@example.com",
                             FirstName = "Tom",
                             Gender = 0,
@@ -123,7 +126,7 @@ namespace eCinema.Infrastructure.Migrations
                         {
                             Id = 6,
                             BirthDate = new DateTime(1990, 4, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2025, 11, 26, 9, 40, 42, 243, DateTimeKind.Utc).AddTicks(142),
+                            CreatedAt = new DateTime(2025, 11, 24, 14, 7, 25, 750, DateTimeKind.Utc).AddTicks(4476),
                             Email = "emma.watson@example.com",
                             FirstName = "Emma",
                             Gender = 1,
@@ -134,7 +137,7 @@ namespace eCinema.Infrastructure.Migrations
                         {
                             Id = 7,
                             BirthDate = new DateTime(1974, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2025, 11, 26, 9, 40, 42, 243, DateTimeKind.Utc).AddTicks(142),
+                            CreatedAt = new DateTime(2025, 11, 24, 14, 7, 25, 750, DateTimeKind.Utc).AddTicks(4476),
                             Email = "leonardo.dicaprio@example.com",
                             FirstName = "Leonardo",
                             Gender = 0,
@@ -145,7 +148,7 @@ namespace eCinema.Infrastructure.Migrations
                         {
                             Id = 8,
                             BirthDate = new DateTime(1990, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2025, 11, 26, 9, 40, 42, 243, DateTimeKind.Utc).AddTicks(142),
+                            CreatedAt = new DateTime(2025, 11, 24, 14, 7, 25, 750, DateTimeKind.Utc).AddTicks(4476),
                             Email = "jennifer.lawrence@example.com",
                             FirstName = "Jennifer",
                             Gender = 1,
@@ -156,7 +159,7 @@ namespace eCinema.Infrastructure.Migrations
                         {
                             Id = 9,
                             BirthDate = new DateTime(1937, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2025, 11, 26, 9, 40, 42, 243, DateTimeKind.Utc).AddTicks(142),
+                            CreatedAt = new DateTime(2025, 11, 24, 14, 7, 25, 750, DateTimeKind.Utc).AddTicks(4476),
                             Email = "morgan.freeman@example.com",
                             FirstName = "Morgan",
                             Gender = 0,
@@ -167,7 +170,7 @@ namespace eCinema.Infrastructure.Migrations
                         {
                             Id = 10,
                             BirthDate = new DateTime(1975, 6, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2025, 11, 26, 9, 40, 42, 243, DateTimeKind.Utc).AddTicks(142),
+                            CreatedAt = new DateTime(2025, 11, 24, 14, 7, 25, 750, DateTimeKind.Utc).AddTicks(4476),
                             Email = "angelina.jolie@example.com",
                             FirstName = "Angelina",
                             Gender = 1,
@@ -1144,9 +1147,7 @@ namespace eCinema.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
@@ -2079,13 +2080,13 @@ namespace eCinema.Infrastructure.Migrations
             modelBuilder.Entity("eCinema.Core.MovieReaction", b =>
                 {
                     b.HasOne("eCinema.Core.Movie", "Movie")
-                        .WithMany("MovieReactions")
+                        .WithMany()
                         .HasForeignKey("MovieId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("eCinema.Core.User", "User")
-                        .WithMany("MovieReactions")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -2249,8 +2250,6 @@ namespace eCinema.Infrastructure.Migrations
 
                     b.Navigation("MovieGenres");
 
-                    b.Navigation("MovieReactions");
-
                     b.Navigation("Shows");
                 });
 
@@ -2280,8 +2279,6 @@ namespace eCinema.Infrastructure.Migrations
 
             modelBuilder.Entity("eCinema.Core.User", b =>
                 {
-                    b.Navigation("MovieReactions");
-
                     b.Navigation("Notifications");
 
                     b.Navigation("Reservations");

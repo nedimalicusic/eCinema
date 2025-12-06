@@ -1,11 +1,10 @@
-﻿using eCinema.Application.Interfaces;
-using eCinema.Infrastructure.Interfaces;
-using eCinema.Core;
-using eCinema.Infrastructure.Interfaces.SearchObjects;
-using eCinema.Application;
-using eCinema.Core.Dtos.Photo;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using AutoMapper;
+
+using eCinema.Core;
+using eCinema.Application.Interfaces;
+using eCinema.Infrastructure.Interfaces.SearchObjects;
+using eCinema.Core.Dtos.Photo;
 using eCinema.Core.Dtos.Employee;
 
 namespace eCinema.Api.Controllers
@@ -96,7 +95,10 @@ namespace eCinema.Api.Controllers
 
                     var user = await Service.GetByIdAsync(model.Id, cancellationToken);
 
-                    upsertDto.ProfilePhotoId = (int)user!.ProfilePhotoId;
+                    if (user?.ProfilePhotoId != null)
+                    {
+                        upsertDto.ProfilePhotoId = (int)user!.ProfilePhotoId;
+                    }
                 }
 
                 await Service.UpdateAsync(upsertDto, cancellationToken);

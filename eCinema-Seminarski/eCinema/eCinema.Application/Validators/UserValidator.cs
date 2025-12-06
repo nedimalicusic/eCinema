@@ -15,10 +15,9 @@ namespace eCinema.Application
             RuleFor(c => c.Password)
                 .NotNull()
                 .NotEmpty()
-                .MinimumLength(8)
+                .MinimumLength(6)
                 .Matches(@"[A-Z]+")
                 .Matches(@"[a-z]+")
-                .Matches(@"[0-9]+")
                 .WithErrorCode(ErrorCodes.InvalidValue)
                 .When(u => u.Id == null || u.Password != null);
 

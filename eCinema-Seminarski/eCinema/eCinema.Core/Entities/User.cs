@@ -19,6 +19,7 @@
         public Photo? ProfilePhoto { get; set; }
 
         public ICollection<Reservation> Reservations { get; set; } = null!;
+        public ICollection<MovieReaction> MovieReactions { get; set; } = null!;
         public ICollection<Notification> Notifications { get; set; } = null!;
     }
 }

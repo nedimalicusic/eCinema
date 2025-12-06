@@ -9,6 +9,7 @@ namespace eCinema.Infrastructure.Interfaces
         Task<IEnumerable<Show>> GetShowByGenreId(int? genreId,int cinemaId,CancellationToken cancellationToken);
         Task<IEnumerable<Show>> GetMostWatchedShows(int size,int cinemaId, CancellationToken cancellationToken);
         Task<IEnumerable<Show>> GetLastAddShows(int size,int cinemaId, CancellationToken cancellationToken);
+        Task<IEnumerable<Show>> GetActiveShows(CancellationToken cancellationToken);
 
     }
 }

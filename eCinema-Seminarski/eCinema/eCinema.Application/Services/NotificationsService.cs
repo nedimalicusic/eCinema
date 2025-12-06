@@ -20,5 +20,19 @@ namespace eCinema.Application
 
             return Mapper.Map<IEnumerable<NotificationDto>>(notifications);
         }
+
+        public async Task MarkAsReed(int notificationId, CancellationToken cancellationToken)
+        {
+            var notification = await CurrentRepository.GetByIdAsync(notificationId);
+
+            if (notification == null)
+                throw new Exception("Notification not found");
+
+            notification.Seen = true;
+            notification.DateRead = DateTime.Now;
+
+            CurrentRepository.Update(notification);
+            await UnitOfWork.SaveChangesAsync(cancellationToken);
+        }
     }
 }

@@ -31,6 +31,7 @@ namespace eCinema.Infrastructure
             services.AddScoped<IReccuringShowRepository, ReccuringShowRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IMovieCategoryRepository, MovieCategoryRepository>();
+            services.AddScoped<IMovieReactionsRepository, MovieReactionsRepository>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
         }

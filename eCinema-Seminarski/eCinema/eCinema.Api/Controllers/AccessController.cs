@@ -27,7 +27,7 @@ namespace eCinema.Api.Controllers
         }
 
         [HttpPost("SignUp")]
-        public async Task<IActionResult> SignUp([FromForm] AccessSignUpModel model, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> SignUp([FromBody] AccessSignUpModel model, CancellationToken cancellationToken = default)
         {
             try
             {

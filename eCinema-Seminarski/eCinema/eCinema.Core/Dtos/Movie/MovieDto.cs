@@ -23,6 +23,8 @@ namespace eCinema.Core
         public List<GenreDto> Genres { get; set; } = null!;
         public List<CategoryDto> Categories { get; set; } = null!;
         public List<ActorsDto> Actors { get; set; } = null!;
+        public List<MovieReactionDto> Reactions { get; set; } = null!;
 
+        public int? UserRating { get; set; }
     }
 }
