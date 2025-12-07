@@ -80,7 +80,10 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       fit: BoxFit.cover,
                     ),
                   )
-                : const Placeholder(),
+                : Image.asset(
+                    'assets/images/nophoto.jpg',
+                    fit: BoxFit.fill,
+                  ),
           ),
           Expanded(
             child: Column(
@@ -139,7 +142,9 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
   Widget _buildActors() {
     return _buildChipSection(
       title: "Actors",
-      items: widget.movie.actors.map((a) => '${a.firstName} ${a.lastName}').toList(),
+      items: widget.movie.actors
+          .map((a) => '${a.firstName} ${a.lastName}')
+          .toList(),
     );
   }
 
@@ -163,7 +168,8 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
     );
   }
 
-  Widget _buildChipSection({required String title, required List<String> items}) {
+  Widget _buildChipSection(
+      {required String title, required List<String> items}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 25.0),
       child: Column(
@@ -227,7 +233,8 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text("Country", style: TextStyle(color: Colors.white, fontSize: 12)),
+            const Text("Country",
+                style: TextStyle(color: Colors.white, fontSize: 12)),
             Text(
               country,
               style: const TextStyle(
@@ -237,7 +244,8 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
               ),
             ),
             const SizedBox(height: 4),
-            const Text("Year", style: TextStyle(color: Colors.white, fontSize: 12)),
+            const Text("Year",
+                style: TextStyle(color: Colors.white, fontSize: 12)),
             Text(
               year,
               style: const TextStyle(

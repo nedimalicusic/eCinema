@@ -68,7 +68,7 @@ namespace eCinema.Infrastructure.Migrations
                         {
                             Id = 1,
                             BirthDate = new DateTime(1965, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460),
+                            CreatedAt = new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5368),
                             Email = "robert.downeyjr@example.com",
                             FirstName = "Robert",
                             Gender = 0,
@@ -79,7 +79,7 @@ namespace eCinema.Infrastructure.Migrations
                         {
                             Id = 2,
                             BirthDate = new DateTime(1984, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460),
+                            CreatedAt = new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5368),
                             Email = "scarlett.johansson@example.com",
                             FirstName = "Scarlett",
                             Gender = 1,
@@ -90,7 +90,7 @@ namespace eCinema.Infrastructure.Migrations
                         {
                             Id = 3,
                             BirthDate = new DateTime(1981, 6, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460),
+                            CreatedAt = new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5368),
                             Email = "chris.evans@example.com",
                             FirstName = "Chris",
                             Gender = 0,
@@ -101,7 +101,7 @@ namespace eCinema.Infrastructure.Migrations
                         {
                             Id = 4,
                             BirthDate = new DateTime(1981, 6, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460),
+                            CreatedAt = new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5368),
                             Email = "natalie.portman@example.com",
                             FirstName = "Natalie",
                             Gender = 1,
@@ -112,7 +112,7 @@ namespace eCinema.Infrastructure.Migrations
                         {
                             Id = 5,
                             BirthDate = new DateTime(1996, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460),
+                            CreatedAt = new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5368),
                             Email = "tom.holland@example.com",
                             FirstName = "Tom",
                             Gender = 0,
@@ -123,7 +123,7 @@ namespace eCinema.Infrastructure.Migrations
                         {
                             Id = 6,
                             BirthDate = new DateTime(1990, 4, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460),
+                            CreatedAt = new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5368),
                             Email = "emma.watson@example.com",
                             FirstName = "Emma",
                             Gender = 1,
@@ -134,7 +134,7 @@ namespace eCinema.Infrastructure.Migrations
                         {
                             Id = 7,
                             BirthDate = new DateTime(1974, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460),
+                            CreatedAt = new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5368),
                             Email = "leonardo.dicaprio@example.com",
                             FirstName = "Leonardo",
                             Gender = 0,
@@ -145,7 +145,7 @@ namespace eCinema.Infrastructure.Migrations
                         {
                             Id = 8,
                             BirthDate = new DateTime(1990, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460),
+                            CreatedAt = new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5368),
                             Email = "jennifer.lawrence@example.com",
                             FirstName = "Jennifer",
                             Gender = 1,
@@ -156,7 +156,7 @@ namespace eCinema.Infrastructure.Migrations
                         {
                             Id = 9,
                             BirthDate = new DateTime(1937, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460),
+                            CreatedAt = new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5368),
                             Email = "morgan.freeman@example.com",
                             FirstName = "Morgan",
                             Gender = 0,
@@ -167,7 +167,7 @@ namespace eCinema.Infrastructure.Migrations
                         {
                             Id = 10,
                             BirthDate = new DateTime(1975, 6, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460),
+                            CreatedAt = new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5368),
                             Email = "angelina.jolie@example.com",
                             FirstName = "Angelina",
                             Gender = 1,
@@ -512,6 +512,21 @@ namespace eCinema.Infrastructure.Migrations
                     b.HasIndex("ProfilePhotoId");
 
                     b.ToTable("Employees");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BirthDate = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            CinemaId = 1,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            Email = "employee@gmail.com",
+                            FirstName = "Zaposlenik",
+                            Gender = 0,
+                            IsDeleted = false,
+                            LastName = "Test",
+                            isActive = true
+                        });
                 });
 
             modelBuilder.Entity("eCinema.Core.Entities.Category", b =>
@@ -1318,6 +1333,20 @@ namespace eCinema.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Notifications");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5647),
+                            DateRead = new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5647),
+                            Description = "Vaša rezervacija je uspješno kreirana.",
+                            IsDeleted = false,
+                            Seen = true,
+                            SendOnDate = new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5647),
+                            Title = "Rezervacija",
+                            UserId = 2
+                        });
                 });
 
             modelBuilder.Entity("eCinema.Core.Photo", b =>
@@ -1471,6 +1500,19 @@ namespace eCinema.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Reservations");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5629),
+                            IsDeleted = false,
+                            SeatId = 1,
+                            ShowId = 1,
+                            UserId = 2,
+                            isActive = true,
+                            isConfirm = true
+                        });
                 });
 
             modelBuilder.Entity("eCinema.Core.Seat", b =>
@@ -1957,6 +1999,44 @@ namespace eCinema.Infrastructure.Migrations
                     b.HasIndex("ShowTypeId");
 
                     b.ToTable("Shows");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CinemaId = 1,
+                            CreatedAt = new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5605),
+                            EndsAt = new DateTime(2023, 12, 29, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MovieId = 1,
+                            Price = 10.0,
+                            ShowTypeId = 1,
+                            StartsAt = new DateTime(2023, 12, 29, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CinemaId = 1,
+                            CreatedAt = new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5605),
+                            EndsAt = new DateTime(2023, 12, 30, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MovieId = 2,
+                            Price = 12.0,
+                            ShowTypeId = 1,
+                            StartsAt = new DateTime(2023, 12, 30, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CinemaId = 1,
+                            CreatedAt = new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5605),
+                            EndsAt = new DateTime(2023, 12, 31, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MovieId = 3,
+                            Price = 15.0,
+                            ShowTypeId = 1,
+                            StartsAt = new DateTime(2023, 12, 31, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
                 });
 
             modelBuilder.Entity("eCinema.Core.User", b =>
@@ -2035,13 +2115,13 @@ namespace eCinema.Infrastructure.Migrations
                             Id = 1,
                             BirthDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
-                            Email = "admin@eCinema.com",
-                            FirstName = "Nedim",
+                            Email = "admin@gmail.com",
+                            FirstName = "Admin",
                             Gender = 0,
                             IsActive = true,
                             IsDeleted = false,
                             IsVerified = true,
-                            LastName = "Admin",
+                            LastName = "Test",
                             PasswordHash = "b4I5yA4Mp+0Pg1C3EsKU17sS13eDExGtBjjI07Vh/JM=",
                             PasswordSalt = "1wQEjdSFeZttx6dlvEDjOg==",
                             PhoneNumber = "38761123456",
@@ -2052,8 +2132,8 @@ namespace eCinema.Infrastructure.Migrations
                             Id = 2,
                             BirthDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
-                            Email = "korisnik@gmail.com",
-                            FirstName = "Korisnik",
+                            Email = "user@gmail.com",
+                            FirstName = "User",
                             Gender = 0,
                             IsActive = true,
                             IsDeleted = false,

@@ -6,7 +6,10 @@ WORKDIR /src
 COPY . .
 
 FROM build AS publish
-RUN dotnet publish "eCinema.Api\eCinema.Api.csproj" -c Release -o /app
+RUN dotnet publish "eCinema.Api/eCinema.Api.csproj" -c Release -o /app
+
+COPY eCinema.Api/Data /app/Data
+
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .

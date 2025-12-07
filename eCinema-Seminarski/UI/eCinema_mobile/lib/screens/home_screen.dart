@@ -44,13 +44,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void loadData() async {
     try {
-      var allMovies = await _movieProvider.getPaged(searchObject: MovieSearchObject(name: null));
+      var allMovies = await _movieProvider.getPaged(
+          searchObject: MovieSearchObject(name: null));
       if (!mounted) return;
 
       movies = allMovies;
 
       if (_userLoginProvider.user != null) {
-        recommendedMovies = await _movieProvider.recommend(int.parse(_userLoginProvider.user!.id));
+        recommendedMovies = await _movieProvider
+            .recommend(int.parse(_userLoginProvider.user!.id));
       }
 
       futureCategories = fetchCategoriesMovies();
@@ -71,7 +73,10 @@ class _HomeScreenState extends State<HomeScreen> {
     var categories = await _categoryProvider.get(null);
 
     for (var category in categories) {
-      var moviesForCategory = movies.where((m) => m.categories.any((c) => c.id == category.id)).take(3).toList();
+      var moviesForCategory = movies
+          .where((m) => m.categories.any((c) => c.id == category.id))
+          .take(3)
+          .toList();
 
       if (moviesForCategory.isNotEmpty) {
         result.add(CategoryMovies(
@@ -110,7 +115,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         );
                       }
-                      return const Center(child: CircularProgressIndicator(color: Colors.teal));
+                      return const Center(
+                          child: CircularProgressIndicator(color: Colors.teal));
                     },
                   ),
                 ],
@@ -163,7 +169,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               fit: BoxFit.cover,
                             )
-                          : const Placeholder(),
+                          : Image.asset(
+                              'assets/images/nophoto.jpg',
+                              fit: BoxFit.fill,
+                            ),
                     ),
                   ),
                 ),
@@ -195,11 +204,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     Expanded(
                       child: Text(
                         c.category.name,
-                        style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                              fontStyle: FontStyle.italic,
-                            ),
+                        style:
+                            Theme.of(context).textTheme.titleMedium!.copyWith(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.bold,
+                                  fontStyle: FontStyle.italic,
+                                ),
                       ),
                     ),
                     TextButton(
@@ -232,14 +242,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                 width: 120,
                                 child: m.photo?.guidId != null
                                     ? FadeInImage(
-                                        placeholder: MemoryImage(kTransparentImage),
+                                        placeholder:
+                                            MemoryImage(kTransparentImage),
                                         image: NetworkImage(
                                           '$apiUrl/Photo/GetById?id=${m.photo?.guidId}&original=true',
-                                          headers: Authorization.createHeaders(),
+                                          headers:
+                                              Authorization.createHeaders(),
                                         ),
                                         fit: BoxFit.cover,
                                       )
-                                    : const Placeholder(),
+                                    : Image.asset(
+                                        'assets/images/nophoto.jpg',
+                                        fit: BoxFit.fill,
+                                      ),
                               ),
                             ),
                           ),

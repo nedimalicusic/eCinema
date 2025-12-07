@@ -357,7 +357,10 @@ class _MoviesScreenState extends State<MoviesScreen> {
                     fit: BoxFit.fill,
                   ),
                 )
-              : const Placeholder(),
+              : Image.asset(
+                  'assets/images/nophoto.jpg',
+                  fit: BoxFit.fill,
+                ),
         ),
       ),
     );
@@ -433,31 +436,38 @@ class MovieSearchDelegate extends SearchDelegate {
             padding: const EdgeInsets.all(4.0),
             itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
+              final movie = snapshot.data![index];
+
+              final hasPhoto = movie.photo?.guidId != null;
+
               return GestureDetector(
                 onTap: () => Navigator.pushNamed(
                   context,
                   MovieDetailScreen.routeName,
-                  arguments: snapshot.data![index],
+                  arguments: movie,
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(8),
                   child: SizedBox(
                     width: 80,
                     height: 90,
-                    child: snapshot.data![index].photo?.guidId != null
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(12.0),
-                            child: FadeInImage(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12.0),
+                      child: hasPhoto
+                          ? FadeInImage(
                               placeholder: MemoryImage(kTransparentImage),
                               image: NetworkImage(
-                                '$apiUrl/Photo/GetById?id=${snapshot.data![index].photo?.guidId}&original=true',
+                                '$apiUrl/Photo/GetById?id=${movie.photo!.guidId}&original=true',
                                 headers: Authorization.createHeaders(),
                               ),
                               fadeInDuration: const Duration(milliseconds: 300),
                               fit: BoxFit.fill,
+                            )
+                          : Image.asset(
+                              'assets/images/nophoto.jpg',
+                              fit: BoxFit.fill,
                             ),
-                          )
-                        : const Placeholder(),
+                    ),
                   ),
                 ),
               );

@@ -22,6 +22,7 @@ namespace eCinema.Infrastructure
             SeedUsers(modelBuilder);
             SeedProduction(modelBuilder);
             SeedCinema(modelBuilder);
+            SeedEmployes(modelBuilder);
             SeedGenre(modelBuilder);
             SeedWeekDay(modelBuilder);
             SeedShowType(modelBuilder);
@@ -32,9 +33,11 @@ namespace eCinema.Infrastructure
             SeedMovieCategories(modelBuilder);
             SeedMovieActors(modelBuilder);
             SeedSeats(modelBuilder);
+            SeedProjections(modelBuilder);
+            SeedReservations(modelBuilder);
+            SeedNotifications(modelBuilder);
         }
 
-    
 
         private void SeedCategory(ModelBuilder modelBuilder)
         {
@@ -333,15 +336,55 @@ namespace eCinema.Infrastructure
                     ModifiedAt = null
                 });
         }
+
+        private void SeedPhoto(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Photo>().HasData(
+                new Photo
+                {
+                    Id = 1,
+                    GuidId = Guid.Parse("463DE3B6-461C-49B2-A6EC-B8EBD7BE8F4E"),
+                    Data = new byte[] { 0x01, 0x02, 0x03 },
+                    ContentType = "image/jpeg",
+                    ThumbnailContent = new byte[] { 0x01, 0x02 },
+                    IsDeleted = false,
+                    CreatedAt = new DateTime(2023, 02, 01),
+                    ModifiedAt = null
+                },
+                new Photo
+                {
+                    Id = 2,
+                    GuidId = Guid.Parse("360F31CE-C68B-4CB9-8D9B-B5CA79F46E14"),
+                    Data = new byte[] { 0x0A, 0x0B, 0x0C },
+                    ContentType = "image/png",
+                    ThumbnailContent = new byte[] { 0x0A, 0x0B },
+                    IsDeleted = false,
+                    CreatedAt = new DateTime(2023, 02, 01),
+                    ModifiedAt = null
+                },
+                new Photo
+                {
+                    Id = 3,
+                    GuidId = Guid.Parse("28249C54-1EF1-4E93-8A61-DA692E4EE9DE"),
+                    Data = new byte[] { 0x0A, 0x0B, 0x0C },
+                    ContentType = "image/webp",
+                    ThumbnailContent = new byte[] { 0x0A, 0x0B },
+                    IsDeleted = false,
+                    CreatedAt = new DateTime(2023, 02, 01),
+                    ModifiedAt = null
+                }
+            );
+        }
+
         private void SeedUsers(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().HasData(
                 new User
                 {
                     Id = 1,
-                    FirstName = "Nedim",
-                    LastName = "Admin",
-                    Email = "admin@eCinema.com",
+                    FirstName = "Admin",
+                    LastName = "Test",
+                    Email = "admin@gmail.com",
                     Role = Role.Administrator,
                     Gender = Gender.Male,
                     PasswordHash = "b4I5yA4Mp+0Pg1C3EsKU17sS13eDExGtBjjI07Vh/JM=", //Plain text: test
@@ -355,9 +398,9 @@ namespace eCinema.Infrastructure
                 new User
                 {
                     Id = 2,
-                    FirstName = "Korisnik",
+                    FirstName = "User",
                     LastName = "Test",
-                    Email = "korisnik@gmail.com",
+                    Email = "user@gmail.com",
                     Role = Role.User,
                     Gender = Gender.Male,
                     PasswordHash = "b4I5yA4Mp+0Pg1C3EsKU17sS13eDExGtBjjI07Vh/JM=", //Plain text: test
@@ -369,6 +412,26 @@ namespace eCinema.Infrastructure
                     ModifiedAt = null
                 });
         }
+
+        private void SeedEmployes(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Employee>().HasData(
+                 new Employee
+                 {
+                     Id = 1,
+                     FirstName = "Zaposlenik",
+                     LastName = "Test",
+                     Email = "employee@gmail.com",
+                     Gender = Gender.Male,
+                     CreatedAt = _dateTime,
+                     isActive = true,
+                     BirthDate = _dateTime,
+                     ModifiedAt = null,
+                     CinemaId = 1,
+                 }
+                );
+        }
+
         private void SeedProduction(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Production>().HasData(
@@ -511,7 +574,7 @@ namespace eCinema.Infrastructure
                     NumberOfViews = null,
                     LanguageId = 1,
                     ProductionId = 1,
-                    PhotoId = null
+                    PhotoId = null,
 
                 }, new Movie
                 {
@@ -526,8 +589,7 @@ namespace eCinema.Infrastructure
                     NumberOfViews = null,
                     LanguageId = 1,
                     ProductionId = 1,
-                    PhotoId = null
-
+                    PhotoId = null,
                 }, new Movie
                 {
                     Id = 3,
@@ -541,7 +603,7 @@ namespace eCinema.Infrastructure
                     NumberOfViews = null,
                     LanguageId = 1,
                     ProductionId = 2,
-                    PhotoId = null
+                    PhotoId = null,
                 }
 
             );
@@ -799,6 +861,90 @@ namespace eCinema.Infrastructure
                 }
             );
         }
+
+        private void SeedProjections(ModelBuilder modelBuilder)
+        {
+            var dateTime = DateTime.UtcNow;
+
+            modelBuilder.Entity<Show>().HasData(
+               new Show
+               {
+                   Id = 1,
+                   StartsAt = new DateTime(2023, 12, 29, 8, 0, 0),
+                   EndsAt = new DateTime(2023, 12, 29, 10, 0, 0),
+                   ShowTypeId = 1,
+                   CinemaId = 1,
+                   MovieId = 1,
+                   Price = 10,
+                   CreatedAt = dateTime,
+                   ModifiedAt = null
+               },
+               new Show
+               {
+                   Id = 2,
+                   StartsAt = new DateTime(2023, 12, 30, 8, 0, 0),
+                   EndsAt = new DateTime(2023, 12, 30, 10, 0, 0),
+                   ShowTypeId = 1,
+                   CinemaId = 1,
+                   MovieId = 2,
+                   Price = 12,
+                   CreatedAt = dateTime,
+                   ModifiedAt = null
+               },
+               new Show
+               {
+                   Id = 3,
+                   StartsAt = new DateTime(2023, 12, 31, 8, 0, 0),
+                   EndsAt = new DateTime(2023, 12, 31, 10, 0, 0),
+                   ShowTypeId = 1,
+                   CinemaId = 1,
+                   MovieId = 3,
+                   Price = 15,
+                   CreatedAt = dateTime,
+                   ModifiedAt = null
+               }
+           );
+        }
+
+        private void SeedReservations(ModelBuilder modelBuilder)
+        {
+            var dateTime = DateTime.UtcNow;
+
+            modelBuilder.Entity<Reservation>().HasData(
+               new Reservation
+               {
+                   Id = 1,
+                   CreatedAt = dateTime,
+                   isActive = true,
+                   isConfirm = true,
+                   SeatId = 1,
+                   ShowId = 1,
+                   UserId = 2,
+                   ModifiedAt = null
+               }
+           );
+        }
+
+        private void SeedNotifications(ModelBuilder modelBuilder)
+        {
+            var dateTime = DateTime.UtcNow;
+
+            modelBuilder.Entity<Notification>().HasData(
+               new Notification
+               {
+                   Id = 1,
+                   CreatedAt = dateTime,
+                   Title = "Rezervacija",
+                   Description = "Vaša rezervacija je uspješno kreirana.",
+                   DateRead = dateTime,
+                   SendOnDate = dateTime,
+                   UserId = 2,
+                   Seen = true,
+                   ModifiedAt = null
+               }
+           );
+        }
+
         private void SeedSeats(ModelBuilder modelBuilder)
         {
             var seats = new List<Seat>();

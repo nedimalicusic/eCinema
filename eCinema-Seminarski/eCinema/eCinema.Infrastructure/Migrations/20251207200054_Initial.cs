@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace eCinema.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Inital : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -606,16 +606,16 @@ namespace eCinema.Infrastructure.Migrations
                 columns: new[] { "Id", "BirthDate", "CreatedAt", "Email", "FirstName", "Gender", "LastName", "ModifiedAt" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(1965, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460), "robert.downeyjr@example.com", "Robert", 0, "Downey Jr.", null },
-                    { 2, new DateTime(1984, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460), "scarlett.johansson@example.com", "Scarlett", 1, "Johansson", null },
-                    { 3, new DateTime(1981, 6, 13, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460), "chris.evans@example.com", "Chris", 0, "Evans", null },
-                    { 4, new DateTime(1981, 6, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460), "natalie.portman@example.com", "Natalie", 1, "Portman", null },
-                    { 5, new DateTime(1996, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460), "tom.holland@example.com", "Tom", 0, "Holland", null },
-                    { 6, new DateTime(1990, 4, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460), "emma.watson@example.com", "Emma", 1, "Watson", null },
-                    { 7, new DateTime(1974, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460), "leonardo.dicaprio@example.com", "Leonardo", 0, "DiCaprio", null },
-                    { 8, new DateTime(1990, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460), "jennifer.lawrence@example.com", "Jennifer", 1, "Lawrence", null },
-                    { 9, new DateTime(1937, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460), "morgan.freeman@example.com", "Morgan", 0, "Freeman", null },
-                    { 10, new DateTime(1975, 6, 4, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460), "angelina.jolie@example.com", "Angelina", 1, "Jolie", null }
+                    { 1, new DateTime(1965, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5368), "robert.downeyjr@example.com", "Robert", 0, "Downey Jr.", null },
+                    { 2, new DateTime(1984, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5368), "scarlett.johansson@example.com", "Scarlett", 1, "Johansson", null },
+                    { 3, new DateTime(1981, 6, 13, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5368), "chris.evans@example.com", "Chris", 0, "Evans", null },
+                    { 4, new DateTime(1981, 6, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5368), "natalie.portman@example.com", "Natalie", 1, "Portman", null },
+                    { 5, new DateTime(1996, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5368), "tom.holland@example.com", "Tom", 0, "Holland", null },
+                    { 6, new DateTime(1990, 4, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5368), "emma.watson@example.com", "Emma", 1, "Watson", null },
+                    { 7, new DateTime(1974, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5368), "leonardo.dicaprio@example.com", "Leonardo", 0, "DiCaprio", null },
+                    { 8, new DateTime(1990, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5368), "jennifer.lawrence@example.com", "Jennifer", 1, "Lawrence", null },
+                    { 9, new DateTime(1937, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5368), "morgan.freeman@example.com", "Morgan", 0, "Freeman", null },
+                    { 10, new DateTime(1975, 6, 4, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5368), "angelina.jolie@example.com", "Angelina", 1, "Jolie", null }
                 });
 
             migrationBuilder.InsertData(
@@ -744,8 +744,8 @@ namespace eCinema.Infrastructure.Migrations
                 columns: new[] { "Id", "BirthDate", "CreatedAt", "Email", "FirstName", "Gender", "IsActive", "IsVerified", "LastName", "LastSignInAt", "ModifiedAt", "PasswordHash", "PasswordSalt", "PhoneNumber", "ProfilePhotoId", "Role" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), "admin@eCinema.com", "Nedim", 0, true, true, "Admin", null, null, "b4I5yA4Mp+0Pg1C3EsKU17sS13eDExGtBjjI07Vh/JM=", "1wQEjdSFeZttx6dlvEDjOg==", "38761123456", null, 0 },
-                    { 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), "korisnik@gmail.com", "Korisnik", 0, true, true, "Test", null, null, "b4I5yA4Mp+0Pg1C3EsKU17sS13eDExGtBjjI07Vh/JM=", "1wQEjdSFeZttx6dlvEDjOg==", "38761123456", null, 1 }
+                    { 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), "admin@gmail.com", "Admin", 0, true, true, "Test", null, null, "b4I5yA4Mp+0Pg1C3EsKU17sS13eDExGtBjjI07Vh/JM=", "1wQEjdSFeZttx6dlvEDjOg==", "38761123456", null, 0 },
+                    { 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), "user@gmail.com", "User", 0, true, true, "Test", null, null, "b4I5yA4Mp+0Pg1C3EsKU17sS13eDExGtBjjI07Vh/JM=", "1wQEjdSFeZttx6dlvEDjOg==", "38761123456", null, 1 }
                 });
 
             migrationBuilder.InsertData(
@@ -772,6 +772,11 @@ namespace eCinema.Infrastructure.Migrations
                     { 3, 1, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), true, null, "Tuzla", "75000" },
                     { 4, 1, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), true, null, "Zenica", "72000" }
                 });
+
+            migrationBuilder.InsertData(
+                table: "Notifications",
+                columns: new[] { "Id", "CreatedAt", "DateRead", "Description", "ModifiedAt", "Seen", "SendOnDate", "Title", "UserId" },
+                values: new object[] { 1, new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5647), new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5647), "Vaša rezervacija je uspješno kreirana.", null, true, new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5647), "Rezervacija", 2 });
 
             migrationBuilder.InsertData(
                 table: "Productions",
@@ -803,6 +808,11 @@ namespace eCinema.Infrastructure.Migrations
                     { 2, "Name", new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), "A teaser for an upcoming movie.", 120, 1, null, null, null, 1, 2024, "Venom 3" },
                     { 3, "Name", new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), "A teaser for an upcoming movie.", 130, 1, null, null, null, 2, 2025, "Creed" }
                 });
+
+            migrationBuilder.InsertData(
+                table: "Employees",
+                columns: new[] { "Id", "BirthDate", "CinemaId", "CreatedAt", "Email", "FirstName", "Gender", "LastName", "ModifiedAt", "ProfilePhotoId", "isActive" },
+                values: new object[] { 1, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), 1, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), "employee@gmail.com", "Zaposlenik", 0, "Test", null, null, true });
 
             migrationBuilder.InsertData(
                 table: "MovieActors",
@@ -839,6 +849,21 @@ namespace eCinema.Infrastructure.Migrations
                     { 4, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), 3, null, 2 },
                     { 5, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), 1, null, 3 }
                 });
+
+            migrationBuilder.InsertData(
+                table: "Shows",
+                columns: new[] { "Id", "CinemaId", "CreatedAt", "EndsAt", "ModifiedAt", "MovieId", "Price", "RecurringShowId", "ShowTypeId", "StartsAt" },
+                values: new object[,]
+                {
+                    { 1, 1, new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5605), new DateTime(2023, 12, 29, 10, 0, 0, 0, DateTimeKind.Unspecified), null, 1, 10.0, null, 1, new DateTime(2023, 12, 29, 8, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2, 1, new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5605), new DateTime(2023, 12, 30, 10, 0, 0, 0, DateTimeKind.Unspecified), null, 2, 12.0, null, 1, new DateTime(2023, 12, 30, 8, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 3, 1, new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5605), new DateTime(2023, 12, 31, 10, 0, 0, 0, DateTimeKind.Unspecified), null, 3, 15.0, null, 1, new DateTime(2023, 12, 31, 8, 0, 0, 0, DateTimeKind.Unspecified) }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Reservations",
+                columns: new[] { "Id", "CreatedAt", "ModifiedAt", "SeatId", "ShowId", "UserId", "isActive", "isConfirm" },
+                values: new object[] { 1, new DateTime(2025, 12, 7, 20, 0, 54, 231, DateTimeKind.Utc).AddTicks(5629), null, 1, 1, 2, true, true });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Cinemas_CityId",
