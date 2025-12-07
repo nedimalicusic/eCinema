@@ -75,10 +75,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         selectedGender = fetchedUser.gender;
         selectedRole = fetchedUser.role;
 
-        if (fetchedUser.birthDate != null && fetchedUser.birthDate!.isNotEmpty) {
-          final parsedDate = DateTime.tryParse(fetchedUser.birthDate!)?.toLocal();
+        if (fetchedUser.birthDate != null &&
+            fetchedUser.birthDate!.isNotEmpty) {
+          final parsedDate =
+              DateTime.tryParse(fetchedUser.birthDate!)?.toLocal();
           if (parsedDate != null) {
-            _birthDateController.text = DateFormat('yyyy-MM-dd').format(parsedDate);
+            _birthDateController.text =
+                DateFormat('yyyy-MM-dd').format(parsedDate);
             selectedDate = parsedDate;
           }
         }
@@ -93,7 +96,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> _pickImage() async {
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       _pickedFileNotifier.value = File(pickedFile.path);
       _pickedFile = File(pickedFile.path);
@@ -111,7 +115,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         'Password': _passwordController.text,
         'PhoneNumber': _phoneNumberController.text,
         'Gender': selectedGender.toString(),
-        'BirthDate': DateTime.parse(_birthDateController.text).toUtc().toIso8601String(),
+        'BirthDate':
+            DateTime.parse(_birthDateController.text).toUtc().toIso8601String(),
         'Role': user!.role.toString(),
         'IsVerified': true.toString(),
         'IsActive': true.toString(),
@@ -126,7 +131,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       }
 
       if (_pickedFile == null && user!.profilePhoto == null) {
-        final ByteData data = await rootBundle.load('assets/images/notFound.png');
+        final ByteData data =
+            await rootBundle.load('assets/images/notFound.png');
         List<int> bytes = data.buffer.asUint8List();
 
         userData['ProfilePhoto'] = http.MultipartFile.fromBytes(
@@ -196,19 +202,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       );
                     }
 
-                    if (user?.profilePhoto?.guidId == null || user!.profilePhoto!.guidId!.isEmpty) {
-                      return Image.asset('assets/images/user2.jpg', width: 110, height: 110);
+                    if (user?.profilePhoto?.guidId == null ||
+                        user!.profilePhoto!.guidId!.isEmpty) {
+                      return Image.asset('assets/images/user.png',
+                          width: 110, height: 110);
                     }
 
                     return FutureBuilder<String>(
                       future: loadPhoto(user!.profilePhoto!.guidId!),
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
                           return const CircularProgressIndicator();
-                        } else if (snapshot.hasError || snapshot.data!.isEmpty) {
-                          return Image.asset('assets/images/user2.jpg', width: 110, height: 110);
+                        } else if (snapshot.hasError ||
+                            snapshot.data!.isEmpty) {
+                          return Image.asset('assets/images/user.png',
+                              width: 110, height: 110);
                         } else {
-                          final imageUrl = '${snapshot.data}?v=${DateTime.now().millisecondsSinceEpoch}';
+                          final imageUrl =
+                              '${snapshot.data}?v=${DateTime.now().millisecondsSinceEpoch}';
                           return ClipOval(
                             child: FadeInImage(
                               placeholder: MemoryImage(kTransparentImage),
@@ -239,7 +251,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           borderRadius: BorderRadius.circular(20.0),
                         ),
                       ),
-                      child: const Text('Select An Image', style: TextStyle(fontSize: 11, color: Colors.white)),
+                      child: const Text('Select An Image',
+                          style: TextStyle(fontSize: 11, color: Colors.white)),
                     ),
                   ),
                 ),
@@ -321,7 +334,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           onTap: () async {
             FocusScope.of(context).requestFocus(FocusNode());
 
-            final safeInitialDate = selectedDate.isBefore(DateTime(1950)) ? DateTime(2000) : selectedDate;
+            final safeInitialDate = selectedDate.isBefore(DateTime(1950))
+                ? DateTime(2000)
+                : selectedDate;
 
             final date = await showDatePicker(
               context: context,
@@ -333,7 +348,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             if (date != null) {
               setState(() {
                 selectedDate = date;
-                _birthDateController.text = DateFormat('yyyy-MM-dd').format(date);
+                _birthDateController.text =
+                    DateFormat('yyyy-MM-dd').format(date);
               });
             }
           },
@@ -369,7 +385,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.teal,
             minimumSize: const Size.fromHeight(50),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
           child: const Padding(
             padding: EdgeInsets.all(2.0),

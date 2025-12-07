@@ -156,7 +156,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           : ClipRRect(
               borderRadius: BorderRadius.circular(100),
               child: Image.asset(
-                'assets/images/user2.png',
+                'assets/images/user.png',
                 fit: BoxFit.cover,
               ),
             ),
@@ -176,7 +176,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _buildInfoItem("Phone Number", user!.phoneNumber.toString()),
           _buildInfoItem(
             "Birth Date",
-            user!.birthDate != null && user!.birthDate!.isNotEmpty ? DateFormat('d.M.yyyy.').format(DateTime.parse(user!.birthDate!).toLocal()) : '-',
+            user!.birthDate != null && user!.birthDate!.isNotEmpty
+                ? DateFormat('d.M.yyyy.')
+                    .format(DateTime.parse(user!.birthDate!).toLocal())
+                : '-',
           ),
           const SizedBox(height: 20),
           Row(
