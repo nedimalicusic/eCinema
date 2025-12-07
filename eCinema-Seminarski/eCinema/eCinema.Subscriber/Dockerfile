@@ -6,9 +6,9 @@ WORKDIR /src
 COPY . .
 
 FROM build AS publish
-RUN dotnet publish "eCinema.Api\eCinema.Api.csproj" -c Release -o /app
+RUN dotnet publish "eCinema.Subscriber\eCinema.Subscriber.csproj" -c Release -o /app
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
 
-ENTRYPOINT ["dotnet", "eCinema.Api.dll", "--urls", "http://0.0.0.0:80"]
+ENTRYPOINT ["dotnet", "eCinema.Subscriber.dll"]

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace eCinema.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class Inital : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -492,6 +492,36 @@ namespace eCinema.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MovieReactions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    MovieId = table.Column<int>(type: "int", nullable: false),
+                    Rating = table.Column<int>(type: "int", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MovieReactions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MovieReactions_Movies_MovieId",
+                        column: x => x.MovieId,
+                        principalTable: "Movies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MovieReactions_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Shows",
                 columns: table => new
                 {
@@ -572,6 +602,23 @@ namespace eCinema.Infrastructure.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Actors",
+                columns: new[] { "Id", "BirthDate", "CreatedAt", "Email", "FirstName", "Gender", "LastName", "ModifiedAt" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(1965, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460), "robert.downeyjr@example.com", "Robert", 0, "Downey Jr.", null },
+                    { 2, new DateTime(1984, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460), "scarlett.johansson@example.com", "Scarlett", 1, "Johansson", null },
+                    { 3, new DateTime(1981, 6, 13, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460), "chris.evans@example.com", "Chris", 0, "Evans", null },
+                    { 4, new DateTime(1981, 6, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460), "natalie.portman@example.com", "Natalie", 1, "Portman", null },
+                    { 5, new DateTime(1996, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460), "tom.holland@example.com", "Tom", 0, "Holland", null },
+                    { 6, new DateTime(1990, 4, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460), "emma.watson@example.com", "Emma", 1, "Watson", null },
+                    { 7, new DateTime(1974, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460), "leonardo.dicaprio@example.com", "Leonardo", 0, "DiCaprio", null },
+                    { 8, new DateTime(1990, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460), "jennifer.lawrence@example.com", "Jennifer", 1, "Lawrence", null },
+                    { 9, new DateTime(1937, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460), "morgan.freeman@example.com", "Morgan", 0, "Freeman", null },
+                    { 10, new DateTime(1975, 6, 4, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460), "angelina.jolie@example.com", "Angelina", 1, "Jolie", null }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Category",
                 columns: new[] { "Id", "CreatedAt", "IsDisplayed", "ModifiedAt", "Name" },
                 values: new object[,]
@@ -624,6 +671,63 @@ namespace eCinema.Infrastructure.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Seats",
+                columns: new[] { "Id", "Column", "CreatedAt", "ModifiedAt", "Row" },
+                values: new object[,]
+                {
+                    { 1, 1, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "A" },
+                    { 2, 2, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "A" },
+                    { 3, 3, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "A" },
+                    { 4, 4, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "A" },
+                    { 5, 5, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "A" },
+                    { 6, 6, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "A" },
+                    { 7, 7, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "A" },
+                    { 8, 8, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "A" },
+                    { 9, 9, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "A" },
+                    { 10, 10, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "A" },
+                    { 11, 1, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "B" },
+                    { 12, 2, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "B" },
+                    { 13, 3, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "B" },
+                    { 14, 4, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "B" },
+                    { 15, 5, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "B" },
+                    { 16, 6, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "B" },
+                    { 17, 7, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "B" },
+                    { 18, 8, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "B" },
+                    { 19, 9, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "B" },
+                    { 20, 10, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "B" },
+                    { 21, 1, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "C" },
+                    { 22, 2, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "C" },
+                    { 23, 3, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "C" },
+                    { 24, 4, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "C" },
+                    { 25, 5, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "C" },
+                    { 26, 6, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "C" },
+                    { 27, 7, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "C" },
+                    { 28, 8, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "C" },
+                    { 29, 9, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "C" },
+                    { 30, 10, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "C" },
+                    { 31, 1, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "D" },
+                    { 32, 2, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "D" },
+                    { 33, 3, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "D" },
+                    { 34, 4, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "D" },
+                    { 35, 5, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "D" },
+                    { 36, 6, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "D" },
+                    { 37, 7, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "D" },
+                    { 38, 8, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "D" },
+                    { 39, 9, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "D" },
+                    { 40, 10, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "D" },
+                    { 41, 1, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "E" },
+                    { 42, 2, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "E" },
+                    { 43, 3, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "E" },
+                    { 44, 4, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "E" },
+                    { 45, 5, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "E" },
+                    { 46, 6, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "E" },
+                    { 47, 7, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "E" },
+                    { 48, 8, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "E" },
+                    { 49, 9, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "E" },
+                    { 50, 10, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, "E" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "ShowType",
                 columns: new[] { "Id", "CreatedAt", "ModifiedAt", "Name" },
                 values: new object[,]
@@ -638,7 +742,11 @@ namespace eCinema.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "BirthDate", "CreatedAt", "Email", "FirstName", "Gender", "IsActive", "IsVerified", "LastName", "LastSignInAt", "ModifiedAt", "PasswordHash", "PasswordSalt", "PhoneNumber", "ProfilePhotoId", "Role" },
-                values: new object[] { 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), "admin@eCinema.com", "Nedim", 0, true, true, "Admin", null, null, "b4I5yA4Mp+0Pg1C3EsKU17sS13eDExGtBjjI07Vh/JM=", "1wQEjdSFeZttx6dlvEDjOg==", "38761123456", null, 0 });
+                values: new object[,]
+                {
+                    { 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), "admin@eCinema.com", "Nedim", 0, true, true, "Admin", null, null, "b4I5yA4Mp+0Pg1C3EsKU17sS13eDExGtBjjI07Vh/JM=", "1wQEjdSFeZttx6dlvEDjOg==", "38761123456", null, 0 },
+                    { 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), "korisnik@gmail.com", "Korisnik", 0, true, true, "Test", null, null, "b4I5yA4Mp+0Pg1C3EsKU17sS13eDExGtBjjI07Vh/JM=", "1wQEjdSFeZttx6dlvEDjOg==", "38761123456", null, 1 }
+                });
 
             migrationBuilder.InsertData(
                 table: "WeekDay",
@@ -692,7 +800,32 @@ namespace eCinema.Infrastructure.Migrations
                 values: new object[,]
                 {
                     { 1, "Director Name", new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), "A teaser for an upcoming movie.", 120, 1, null, null, null, 1, 2024, "Coming Soon" },
-                    { 2, "Name", new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), "A teaser for an upcoming movie.", 120, 1, null, null, null, 1, 2024, "Venom 3" }
+                    { 2, "Name", new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), "A teaser for an upcoming movie.", 120, 1, null, null, null, 1, 2024, "Venom 3" },
+                    { 3, "Name", new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), "A teaser for an upcoming movie.", 130, 1, null, null, null, 2, 2025, "Creed" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "MovieActors",
+                columns: new[] { "Id", "ActorId", "CreatedAt", "ModifiedAt", "MovieId" },
+                values: new object[,]
+                {
+                    { 1, 1, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, 1 },
+                    { 2, 2, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, 1 },
+                    { 3, 1, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, 2 },
+                    { 4, 3, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, 2 },
+                    { 5, 4, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, 3 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "MovieCategory",
+                columns: new[] { "Id", "CategoryId", "CreatedAt", "ModifiedAt", "MovieId" },
+                values: new object[,]
+                {
+                    { 1, 1, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, 1 },
+                    { 2, 2, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, 1 },
+                    { 3, 1, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, 2 },
+                    { 4, 3, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, 2 },
+                    { 5, 4, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), null, 3 }
                 });
 
             migrationBuilder.InsertData(
@@ -703,7 +836,8 @@ namespace eCinema.Infrastructure.Migrations
                     { 1, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), 1, null, 1 },
                     { 2, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), 2, null, 1 },
                     { 3, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), 1, null, 2 },
-                    { 4, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), 3, null, 2 }
+                    { 4, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), 3, null, 2 },
+                    { 5, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local), 1, null, 3 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -755,6 +889,16 @@ namespace eCinema.Infrastructure.Migrations
                 name: "IX_MovieGenres_MovieId",
                 table: "MovieGenres",
                 column: "MovieId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MovieReactions_MovieId",
+                table: "MovieReactions",
+                column: "MovieId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MovieReactions_UserId",
+                table: "MovieReactions",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Movies_LanguageId",
@@ -841,6 +985,9 @@ namespace eCinema.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "MovieGenres");
+
+            migrationBuilder.DropTable(
+                name: "MovieReactions");
 
             migrationBuilder.DropTable(
                 name: "Notifications");

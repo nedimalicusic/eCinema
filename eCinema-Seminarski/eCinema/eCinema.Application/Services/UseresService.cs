@@ -7,15 +7,18 @@ using eCinema.Infrastructure;
 using eCinema.Infrastructure.Interfaces;
 using eCinema.Common.Service;
 using eCinema.Infrastructure.Interfaces.SearchObjects;
+using eCinema.Application.Interfaces.Services;
 
 namespace eCinema.Application
 {
     public class UseresService : BaseService<User, UserDto, UserUpsertDto, UserSearchObject, IUsersRepository>, IUsersService
     {
+        private readonly IRabbitMQProducer _rabbitMQProducer;
         private readonly ICryptoService _cryptoService;
 
-        public UseresService(ICryptoService cryptoService,IMapper mapper, IUnitOfWork unitOfWork, IValidator<UserUpsertDto> validator) : base(mapper, unitOfWork, validator)
+        public UseresService(IRabbitMQProducer rabbitMQProducer, ICryptoService cryptoService, IMapper mapper, IUnitOfWork unitOfWork, IValidator<UserUpsertDto> validator) : base(mapper, unitOfWork, validator)
         {
+            _rabbitMQProducer = rabbitMQProducer;
             _cryptoService = cryptoService;
         }
 
@@ -34,7 +37,7 @@ namespace eCinema.Application
             entity.PasswordSalt = _cryptoService.GenerateSalt();
             entity.PasswordHash = _cryptoService.GenerateHash(dto.Password!, entity.PasswordSalt);
 
-
+            _rabbitMQProducer.SendMessage("Test rabbit message. Simualation send email for create user.");
             await CurrentRepository.AddAsync(entity, cancellationToken);
             await UnitOfWork.SaveChangesAsync(cancellationToken);
             return Mapper.Map<UserDto>(entity);

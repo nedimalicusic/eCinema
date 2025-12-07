@@ -54,7 +54,8 @@ class _MoviesScreenState extends State<MoviesScreen> {
   void loadData() async {
     await loadGenres();
     await loadCategories();
-    loadMovies(MovieSearchObject(name: null, genreId: selectedGenreId, categoryId: selectedCategoryId));
+    loadMovies(MovieSearchObject(
+        name: null, genreId: selectedGenreId, categoryId: selectedCategoryId));
   }
 
   void loadMovies(MovieSearchObject searchObject) async {
@@ -104,7 +105,12 @@ class _MoviesScreenState extends State<MoviesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Filmovi'),
-        actions: [IconButton(onPressed: () => showSearch(context: context, delegate: MovieSearchDelegate()), icon: const Icon(Icons.search))],
+        actions: [
+          IconButton(
+              onPressed: () =>
+                  showSearch(context: context, delegate: MovieSearchDelegate()),
+              icon: const Icon(Icons.search))
+        ],
       ),
       body: Column(
         children: [
@@ -120,7 +126,8 @@ class _MoviesScreenState extends State<MoviesScreen> {
   Widget _buildFilterList() {
     List<Widget> filters = [];
     if (selectedCategoryId != null) {
-      final category = categories.firstWhere((c) => c.id == selectedCategoryId, orElse: () => const Category(id: 0, name: ''));
+      final category = categories.firstWhere((c) => c.id == selectedCategoryId,
+          orElse: () => const Category(id: 0, name: ''));
       if (category.id != 0) {
         filters.add(Container(
           padding: const EdgeInsets.all(8),
@@ -134,7 +141,8 @@ class _MoviesScreenState extends State<MoviesScreen> {
       }
     }
     if (selectedGenreId != null) {
-      final genre = genres.firstWhere((g) => g.id == selectedGenreId, orElse: () => const Genre(id: 0, name: ''));
+      final genre = genres.firstWhere((g) => g.id == selectedGenreId,
+          orElse: () => const Genre(id: 0, name: ''));
       if (genre.id != 0) {
         filters.add(Container(
           padding: const EdgeInsets.all(8),
@@ -168,7 +176,10 @@ class _MoviesScreenState extends State<MoviesScreen> {
                 children: [
                   Text(
                     'Filtriraj rezultate',
-                    style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.white),
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium!
+                        .copyWith(color: Colors.white),
                   ),
                 ],
               )),
@@ -206,7 +217,8 @@ class _MoviesScreenState extends State<MoviesScreen> {
                         selectedCategoryId = null;
                         selectedGenreId = null;
                       });
-                      loadMovies(MovieSearchObject(name: null, genreId: null, categoryId: null));
+                      loadMovies(MovieSearchObject(
+                          name: null, genreId: null, categoryId: null));
                     },
                     child: const Text(
                       'Poništi',
@@ -242,12 +254,16 @@ class _MoviesScreenState extends State<MoviesScreen> {
           ? DropdownButton<int>(
               isExpanded: true,
               value: selectedCategoryId,
-              hint: const Text('Odaberi kategoriju...', style: TextStyle(color: Colors.grey)),
+              hint: const Text('Odaberi kategoriju...',
+                  style: TextStyle(color: Colors.grey)),
               onChanged: (int? value) {
                 setState(() {
                   selectedCategoryId = value;
                 });
-                loadMovies(MovieSearchObject(name: null, genreId: selectedGenreId, categoryId: selectedCategoryId));
+                loadMovies(MovieSearchObject(
+                    name: null,
+                    genreId: selectedGenreId,
+                    categoryId: selectedCategoryId));
               },
               items: categories
                   .map((c) => DropdownMenuItem<int>(
@@ -267,12 +283,16 @@ class _MoviesScreenState extends State<MoviesScreen> {
           ? DropdownButton<int>(
               isExpanded: true,
               value: selectedGenreId,
-              hint: const Text('Odaberi žanr...', style: TextStyle(color: Colors.grey)),
+              hint: const Text('Odaberi žanr...',
+                  style: TextStyle(color: Colors.grey)),
               onChanged: (int? value) {
                 setState(() {
                   selectedGenreId = value;
                 });
-                loadMovies(MovieSearchObject(name: null, genreId: selectedGenreId, categoryId: selectedCategoryId));
+                loadMovies(MovieSearchObject(
+                    name: null,
+                    genreId: selectedGenreId,
+                    categoryId: selectedCategoryId));
               },
               items: genres
                   .map((g) => DropdownMenuItem<int>(
@@ -396,8 +416,10 @@ class MovieSearchDelegate extends SearchDelegate {
 
   Widget getMovieResults(BuildContext context) {
     var movieProvider = Provider.of<MovieProvider>(context);
-    var search = MovieSearchObject(name: query, categoryId: null, genreId: null);
-    Future<List<Movie>> moviesFuture = movieProvider.getPaged(searchObject: search);
+    var search =
+        MovieSearchObject(name: query, categoryId: null, genreId: null);
+    Future<List<Movie>> moviesFuture =
+        movieProvider.getPaged(searchObject: search);
 
     return FutureBuilder(
       future: moviesFuture,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-const apiUrl = String.fromEnvironment('baseUrl',
-    defaultValue: 'https://localhost:44320/api');
+//const apiUrl = String.fromEnvironment('baseUrl', defaultValue: 'https://localhost:7019/api'); //USE LOCALHOST
+const apiUrl = String.fromEnvironment('baseUrl', defaultValue: 'http://localhost:5100/api'); //USE DOCKER
 
 const primaryColor = Colors.teal;
 const secondaryColor = Color.fromARGB(255, 17, 18, 28);

@@ -1,0 +1,66 @@
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    restart: unless-stopped
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=StrongPwd!2025
+    ports:
+      - "1433:1433"
+    networks:
+      - ecinemanet
+
+  rabbitMQ:
+    image: rabbitmq:3-management
+    container_name: "rabbitmqcontainer"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - ecinemanet
+
+  rabbitmq-service:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: eCinema.Subscriber/Dockerfile
+    environment:
+      - RABBITMQ_HOST=rabbitMQ
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=guest
+      - RABBITMQ_PASSWORD=guest
+    depends_on:
+      - rabbitMQ
+      - mssql
+    networks:
+      - ecinemanet
+
+  api:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: eCinema.Api/Dockerfile
+    environment:
+      - ConnectionStrings__Main=Server=mssql,1433;Database=eCinema;User Id=sa;Password=StrongPwd!2025;Encrypt=False;TrustServerCertificate=True;
+      - JwtToken__Audience=https://eCinema.com
+      - JwtToken__Issuer=https://eCinema.com
+      - JwtToken__SecretKey=R75XJrag]~vxm+2S$@(P)qqA!ct[OCx^BE:'~tD`T~;IxMjjO)!mFEpDnESIdWe
+      - JwtToken__Duration=30
+      - RABBITMQ_HOST=rabbitMQ
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=guest
+      - RABBITMQ_PASSWORD=guest
+    ports:
+      - "5100:80"
+    networks:
+      - ecinemanet
+    depends_on:
+      - mssql
+
+networks:
+  ecinemanet:
+    driver: bridge

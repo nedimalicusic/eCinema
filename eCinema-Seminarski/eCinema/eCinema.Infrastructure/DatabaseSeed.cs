@@ -6,6 +6,12 @@ namespace eCinema.Infrastructure
 {
     public partial class DatabaseContext
     {
+        public void Initialize()
+        {
+            if (Database.GetAppliedMigrations()?.Count() == 0)
+                Database.Migrate();
+        }
+
         private readonly DateTime _dateTime = new(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local);
 
         private void SeedData(ModelBuilder modelBuilder)
@@ -20,11 +26,15 @@ namespace eCinema.Infrastructure
             SeedWeekDay(modelBuilder);
             SeedShowType(modelBuilder);
             SeedCategory(modelBuilder);
+            SeedActors(modelBuilder);
             SeedMovies(modelBuilder);
             SeedMovieGenres(modelBuilder);
-            SeedActors(modelBuilder);
+            SeedMovieCategories(modelBuilder);
+            SeedMovieActors(modelBuilder);
             SeedSeats(modelBuilder);
         }
+
+    
 
         private void SeedCategory(ModelBuilder modelBuilder)
         {
@@ -341,6 +351,22 @@ namespace eCinema.Infrastructure
                     IsActive = true,
                     CreatedAt = _dateTime,
                     ModifiedAt = null
+                },
+                new User
+                {
+                    Id = 2,
+                    FirstName = "Korisnik",
+                    LastName = "Test",
+                    Email = "korisnik@gmail.com",
+                    Role = Role.User,
+                    Gender = Gender.Male,
+                    PasswordHash = "b4I5yA4Mp+0Pg1C3EsKU17sS13eDExGtBjjI07Vh/JM=", //Plain text: test
+                    PasswordSalt = "1wQEjdSFeZttx6dlvEDjOg==",
+                    PhoneNumber = "38761123456",
+                    IsVerified = true,
+                    IsActive = true,
+                    CreatedAt = _dateTime,
+                    ModifiedAt = null
                 });
         }
         private void SeedProduction(ModelBuilder modelBuilder)
@@ -468,6 +494,7 @@ namespace eCinema.Infrastructure
                    ModifiedAt = null
                });
         }
+
         private void SeedMovies(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Movie>().HasData(
@@ -486,9 +513,6 @@ namespace eCinema.Infrastructure
                     ProductionId = 1,
                     PhotoId = null
 
-
-
-
                 }, new Movie
                 {
                     Id = 2,
@@ -502,6 +526,21 @@ namespace eCinema.Infrastructure
                     NumberOfViews = null,
                     LanguageId = 1,
                     ProductionId = 1,
+                    PhotoId = null
+
+                }, new Movie
+                {
+                    Id = 3,
+                    CreatedAt = _dateTime,
+                    ModifiedAt = null,
+                    Title = "Creed",
+                    Description = "A teaser for an upcoming movie.",
+                    Author = "Name",
+                    ReleaseYear = 2025,
+                    Duration = 130,
+                    NumberOfViews = null,
+                    LanguageId = 1,
+                    ProductionId = 2,
                     PhotoId = null
                 }
 
@@ -541,6 +580,105 @@ namespace eCinema.Infrastructure
                    ModifiedAt = null,
                    MovieId = 2,
                    GenreId = 3
+               },
+               new MovieGenre
+               {
+                   Id = 5,
+                   CreatedAt = _dateTime,
+                   ModifiedAt = null,
+                   MovieId = 3,
+                   GenreId = 1
+               }
+               );
+        }
+        private void SeedMovieActors(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<MovieActors>().HasData(
+               new MovieActors
+               {
+                   Id = 1,
+                   CreatedAt = _dateTime,
+                   ModifiedAt = null,
+                   MovieId = 1,
+                   ActorId = 1
+               },
+               new MovieActors
+               {
+                   Id = 2,
+                   CreatedAt = _dateTime,
+                   ModifiedAt = null,
+                   MovieId = 1,
+                   ActorId = 2
+               },
+               new MovieActors
+               {
+                   Id = 3,
+                   CreatedAt = _dateTime,
+                   ModifiedAt = null,
+                   MovieId = 2,
+                   ActorId = 1
+               },
+               new MovieActors
+               {
+                   Id = 4,
+                   CreatedAt = _dateTime,
+                   ModifiedAt = null,
+                   MovieId = 2,
+                   ActorId = 3
+               },
+               new MovieActors
+               {
+                   Id = 5,
+                   CreatedAt = _dateTime,
+                   ModifiedAt = null,
+                   MovieId = 3,
+                   ActorId = 4
+               }
+               );
+        }
+
+        private void SeedMovieCategories(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<MovieCategory>().HasData(
+               new MovieCategory
+               {
+                   Id = 1,
+                   CreatedAt = _dateTime,
+                   ModifiedAt = null,
+                   MovieId = 1,
+                   CategoryId = 1
+               },
+               new MovieCategory
+               {
+                   Id = 2,
+                   CreatedAt = _dateTime,
+                   ModifiedAt = null,
+                   MovieId = 1,
+                   CategoryId = 2
+               },
+               new MovieCategory
+               {
+                   Id = 3,
+                   CreatedAt = _dateTime,
+                   ModifiedAt = null,
+                   MovieId = 2,
+                   CategoryId = 1
+               },
+               new MovieCategory
+               {
+                   Id = 4,
+                   CreatedAt = _dateTime,
+                   ModifiedAt = null,
+                   MovieId = 2,
+                   CategoryId = 3
+               },
+               new MovieCategory
+               {
+                   Id = 5,
+                   CreatedAt = _dateTime,
+                   ModifiedAt = null,
+                   MovieId = 3,
+                   CategoryId = 4
                }
                );
         }

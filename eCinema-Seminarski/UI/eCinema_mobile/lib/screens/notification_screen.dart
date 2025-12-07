@@ -29,7 +29,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   Future loadNotifications() async {
     try {
-      var data = await _notificationProvider.getByUserId(int.parse(userProvider.user!.id));
+      var data = await _notificationProvider
+          .getByUserId(int.parse(userProvider.user!.id));
       setState(() {
         notifications = data;
         isLoading = false;
@@ -48,7 +49,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
           notification.seen = true;
         });
       } on Exception catch (e) {
-        showErrorDialog(context, "Greška prilikom označavanja notifikacije kao pročitane: ${e.toString().substring(11)}");
+        showErrorDialog(context,
+            "Greška prilikom označavanja notifikacije kao pročitane: ${e.toString().substring(11)}");
       }
     }
   }
@@ -68,7 +70,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   child: Text(
                     "Nemate notifikacija.",
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 15,
                       color: Colors.teal,
                       fontWeight: FontWeight.w600,
                     ),

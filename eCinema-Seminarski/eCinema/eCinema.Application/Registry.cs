@@ -37,6 +37,7 @@ namespace eCinema.Application
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IMovieCategoryService, MovieCategoryService>();
             services.AddScoped<IMovieReactionsService, MovieReactionsService>();
+            services.AddScoped<IRabbitMQProducer, RabbitMQProducer>();
         }
 
         public static void AddValidators(this IServiceCollection services)

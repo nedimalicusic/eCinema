@@ -12,8 +12,8 @@ using eCinema.Infrastructure;
 namespace eCinema.Infrastructure.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20241015194109_initial")]
-    partial class initial
+    [Migration("20251207141558_Inital")]
+    partial class Inital
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -65,6 +65,118 @@ namespace eCinema.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Actors");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BirthDate = new DateTime(1965, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460),
+                            Email = "robert.downeyjr@example.com",
+                            FirstName = "Robert",
+                            Gender = 0,
+                            IsDeleted = false,
+                            LastName = "Downey Jr."
+                        },
+                        new
+                        {
+                            Id = 2,
+                            BirthDate = new DateTime(1984, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460),
+                            Email = "scarlett.johansson@example.com",
+                            FirstName = "Scarlett",
+                            Gender = 1,
+                            IsDeleted = false,
+                            LastName = "Johansson"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            BirthDate = new DateTime(1981, 6, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460),
+                            Email = "chris.evans@example.com",
+                            FirstName = "Chris",
+                            Gender = 0,
+                            IsDeleted = false,
+                            LastName = "Evans"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            BirthDate = new DateTime(1981, 6, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460),
+                            Email = "natalie.portman@example.com",
+                            FirstName = "Natalie",
+                            Gender = 1,
+                            IsDeleted = false,
+                            LastName = "Portman"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            BirthDate = new DateTime(1996, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460),
+                            Email = "tom.holland@example.com",
+                            FirstName = "Tom",
+                            Gender = 0,
+                            IsDeleted = false,
+                            LastName = "Holland"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            BirthDate = new DateTime(1990, 4, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460),
+                            Email = "emma.watson@example.com",
+                            FirstName = "Emma",
+                            Gender = 1,
+                            IsDeleted = false,
+                            LastName = "Watson"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            BirthDate = new DateTime(1974, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460),
+                            Email = "leonardo.dicaprio@example.com",
+                            FirstName = "Leonardo",
+                            Gender = 0,
+                            IsDeleted = false,
+                            LastName = "DiCaprio"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            BirthDate = new DateTime(1990, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460),
+                            Email = "jennifer.lawrence@example.com",
+                            FirstName = "Jennifer",
+                            Gender = 1,
+                            IsDeleted = false,
+                            LastName = "Lawrence"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            BirthDate = new DateTime(1937, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460),
+                            Email = "morgan.freeman@example.com",
+                            FirstName = "Morgan",
+                            Gender = 0,
+                            IsDeleted = false,
+                            LastName = "Freeman"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            BirthDate = new DateTime(1975, 6, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2025, 12, 7, 14, 15, 58, 111, DateTimeKind.Utc).AddTicks(5460),
+                            Email = "angelina.jolie@example.com",
+                            FirstName = "Angelina",
+                            Gender = 1,
+                            IsDeleted = false,
+                            LastName = "Jolie"
+                        });
                 });
 
             modelBuilder.Entity("eCinema.Core.Cinema", b =>
@@ -526,6 +638,48 @@ namespace eCinema.Infrastructure.Migrations
                     b.HasIndex("MovieId");
 
                     b.ToTable("MovieCategory");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CategoryId = 1,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            MovieId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CategoryId = 2,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            MovieId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CategoryId = 1,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            MovieId = 2
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CategoryId = 3,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            MovieId = 2
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CategoryId = 4,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            MovieId = 3
+                        });
                 });
 
             modelBuilder.Entity("eCinema.Core.Entities.ReccuringShows", b =>
@@ -918,6 +1072,19 @@ namespace eCinema.Infrastructure.Migrations
                             ProductionId = 1,
                             ReleaseYear = 2024,
                             Title = "Venom 3"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Author = "Name",
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            Description = "A teaser for an upcoming movie.",
+                            Duration = 130,
+                            IsDeleted = false,
+                            LanguageId = 1,
+                            ProductionId = 2,
+                            ReleaseYear = 2025,
+                            Title = "Creed"
                         });
                 });
 
@@ -953,6 +1120,48 @@ namespace eCinema.Infrastructure.Migrations
                     b.HasIndex("MovieId");
 
                     b.ToTable("MovieActors");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ActorId = 1,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            MovieId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ActorId = 2,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            MovieId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ActorId = 1,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            MovieId = 2
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ActorId = 3,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            MovieId = 2
+                        },
+                        new
+                        {
+                            Id = 5,
+                            ActorId = 4,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            MovieId = 3
+                        });
                 });
 
             modelBuilder.Entity("eCinema.Core.MovieGenre", b =>
@@ -1020,7 +1229,52 @@ namespace eCinema.Infrastructure.Migrations
                             GenreId = 3,
                             IsDeleted = false,
                             MovieId = 2
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            GenreId = 1,
+                            IsDeleted = false,
+                            MovieId = 3
                         });
+                });
+
+            modelBuilder.Entity("eCinema.Core.MovieReaction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MovieId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MovieId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("MovieReactions");
                 });
 
             modelBuilder.Entity("eCinema.Core.Notification", b =>
@@ -1251,6 +1505,408 @@ namespace eCinema.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Seats");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Column = 1,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "A"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Column = 2,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "A"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Column = 3,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "A"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Column = 4,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "A"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Column = 5,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "A"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Column = 6,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "A"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Column = 7,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "A"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Column = 8,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "A"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Column = 9,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "A"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Column = 10,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "A"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Column = 1,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "B"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Column = 2,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "B"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Column = 3,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "B"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Column = 4,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "B"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Column = 5,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "B"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Column = 6,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "B"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Column = 7,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "B"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Column = 8,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "B"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Column = 9,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "B"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            Column = 10,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "B"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            Column = 1,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "C"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            Column = 2,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "C"
+                        },
+                        new
+                        {
+                            Id = 23,
+                            Column = 3,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "C"
+                        },
+                        new
+                        {
+                            Id = 24,
+                            Column = 4,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "C"
+                        },
+                        new
+                        {
+                            Id = 25,
+                            Column = 5,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "C"
+                        },
+                        new
+                        {
+                            Id = 26,
+                            Column = 6,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "C"
+                        },
+                        new
+                        {
+                            Id = 27,
+                            Column = 7,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "C"
+                        },
+                        new
+                        {
+                            Id = 28,
+                            Column = 8,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "C"
+                        },
+                        new
+                        {
+                            Id = 29,
+                            Column = 9,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "C"
+                        },
+                        new
+                        {
+                            Id = 30,
+                            Column = 10,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "C"
+                        },
+                        new
+                        {
+                            Id = 31,
+                            Column = 1,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "D"
+                        },
+                        new
+                        {
+                            Id = 32,
+                            Column = 2,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "D"
+                        },
+                        new
+                        {
+                            Id = 33,
+                            Column = 3,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "D"
+                        },
+                        new
+                        {
+                            Id = 34,
+                            Column = 4,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "D"
+                        },
+                        new
+                        {
+                            Id = 35,
+                            Column = 5,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "D"
+                        },
+                        new
+                        {
+                            Id = 36,
+                            Column = 6,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "D"
+                        },
+                        new
+                        {
+                            Id = 37,
+                            Column = 7,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "D"
+                        },
+                        new
+                        {
+                            Id = 38,
+                            Column = 8,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "D"
+                        },
+                        new
+                        {
+                            Id = 39,
+                            Column = 9,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "D"
+                        },
+                        new
+                        {
+                            Id = 40,
+                            Column = 10,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "D"
+                        },
+                        new
+                        {
+                            Id = 41,
+                            Column = 1,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "E"
+                        },
+                        new
+                        {
+                            Id = 42,
+                            Column = 2,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "E"
+                        },
+                        new
+                        {
+                            Id = 43,
+                            Column = 3,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "E"
+                        },
+                        new
+                        {
+                            Id = 44,
+                            Column = 4,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "E"
+                        },
+                        new
+                        {
+                            Id = 45,
+                            Column = 5,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "E"
+                        },
+                        new
+                        {
+                            Id = 46,
+                            Column = 6,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "E"
+                        },
+                        new
+                        {
+                            Id = 47,
+                            Column = 7,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "E"
+                        },
+                        new
+                        {
+                            Id = 48,
+                            Column = 8,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "E"
+                        },
+                        new
+                        {
+                            Id = 49,
+                            Column = 9,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "E"
+                        },
+                        new
+                        {
+                            Id = 50,
+                            Column = 10,
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            IsDeleted = false,
+                            Row = "E"
+                        });
                 });
 
             modelBuilder.Entity("eCinema.Core.Show", b =>
@@ -1393,6 +2049,23 @@ namespace eCinema.Infrastructure.Migrations
                             PasswordSalt = "1wQEjdSFeZttx6dlvEDjOg==",
                             PhoneNumber = "38761123456",
                             Role = 0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            BirthDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                            Email = "korisnik@gmail.com",
+                            FirstName = "Korisnik",
+                            Gender = 0,
+                            IsActive = true,
+                            IsDeleted = false,
+                            IsVerified = true,
+                            LastName = "Test",
+                            PasswordHash = "b4I5yA4Mp+0Pg1C3EsKU17sS13eDExGtBjjI07Vh/JM=",
+                            PasswordSalt = "1wQEjdSFeZttx6dlvEDjOg==",
+                            PhoneNumber = "38761123456",
+                            Role = 1
                         });
                 });
 
@@ -1526,6 +2199,25 @@ namespace eCinema.Infrastructure.Migrations
                     b.Navigation("Genre");
 
                     b.Navigation("Movie");
+                });
+
+            modelBuilder.Entity("eCinema.Core.MovieReaction", b =>
+                {
+                    b.HasOne("eCinema.Core.Movie", "Movie")
+                        .WithMany("MovieReactions")
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("eCinema.Core.User", "User")
+                        .WithMany("MovieReactions")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Movie");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("eCinema.Core.Notification", b =>
@@ -1682,6 +2374,8 @@ namespace eCinema.Infrastructure.Migrations
 
                     b.Navigation("MovieGenres");
 
+                    b.Navigation("MovieReactions");
+
                     b.Navigation("Shows");
                 });
 
@@ -1711,6 +2405,8 @@ namespace eCinema.Infrastructure.Migrations
 
             modelBuilder.Entity("eCinema.Core.User", b =>
                 {
+                    b.Navigation("MovieReactions");
+
                     b.Navigation("Notifications");
 
                     b.Navigation("Reservations");

@@ -43,15 +43,18 @@ if (builder.Environment.IsDevelopment())
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseCors("CorsPolicy");
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-app.Run();
+
+using var scope = app.Services.CreateScope();
+
+var ctx = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+ctx.Initialize();
+
+await app.RunAsync();
