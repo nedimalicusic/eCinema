@@ -870,8 +870,8 @@ namespace eCinema.Infrastructure
                new Show
                {
                    Id = 1,
-                   StartsAt = new DateTime(2023, 12, 29, 8, 0, 0),
-                   EndsAt = new DateTime(2023, 12, 29, 10, 0, 0),
+                   StartsAt = new DateTime(2025, 12, 29, 8, 0, 0),
+                   EndsAt = new DateTime(2025, 12, 29, 10, 0, 0),
                    ShowTypeId = 1,
                    CinemaId = 1,
                    MovieId = 1,
@@ -882,11 +882,11 @@ namespace eCinema.Infrastructure
                new Show
                {
                    Id = 2,
-                   StartsAt = new DateTime(2023, 12, 30, 8, 0, 0),
-                   EndsAt = new DateTime(2023, 12, 30, 10, 0, 0),
+                   StartsAt = new DateTime(2025, 12, 30, 8, 0, 0),
+                   EndsAt = new DateTime(2025, 12, 30, 10, 0, 0),
                    ShowTypeId = 1,
                    CinemaId = 1,
-                   MovieId = 2,
+                   MovieId = 1,
                    Price = 12,
                    CreatedAt = dateTime,
                    ModifiedAt = null
@@ -894,12 +894,24 @@ namespace eCinema.Infrastructure
                new Show
                {
                    Id = 3,
-                   StartsAt = new DateTime(2023, 12, 31, 8, 0, 0),
-                   EndsAt = new DateTime(2023, 12, 31, 10, 0, 0),
+                   StartsAt = new DateTime(2025, 12, 31, 8, 0, 0),
+                   EndsAt = new DateTime(2025, 12, 31, 10, 0, 0),
                    ShowTypeId = 1,
                    CinemaId = 1,
-                   MovieId = 3,
+                   MovieId = 1,
                    Price = 15,
+                   CreatedAt = dateTime,
+                   ModifiedAt = null
+               },
+               new Show
+               {
+                   Id = 4,
+                   StartsAt = new DateTime(2026, 01, 05, 8, 0, 0),
+                   EndsAt = new DateTime(2026, 01, 05, 10, 0, 0),
+                   ShowTypeId = 1,
+                   CinemaId = 1,
+                   MovieId = 1,
+                   Price = 20,
                    CreatedAt = dateTime,
                    ModifiedAt = null
                }
