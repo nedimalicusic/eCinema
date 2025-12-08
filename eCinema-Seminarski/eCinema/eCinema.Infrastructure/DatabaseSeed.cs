@@ -34,8 +34,6 @@ namespace eCinema.Infrastructure
             SeedMovieActors(modelBuilder);
             SeedSeats(modelBuilder);
             SeedProjections(modelBuilder);
-            SeedReservations(modelBuilder);
-            SeedNotifications(modelBuilder);
         }
 
 
@@ -913,45 +911,6 @@ namespace eCinema.Infrastructure
                    MovieId = 1,
                    Price = 20,
                    CreatedAt = dateTime,
-                   ModifiedAt = null
-               }
-           );
-        }
-
-        private void SeedReservations(ModelBuilder modelBuilder)
-        {
-            var dateTime = DateTime.UtcNow;
-
-            modelBuilder.Entity<Reservation>().HasData(
-               new Reservation
-               {
-                   Id = 1,
-                   CreatedAt = dateTime,
-                   isActive = true,
-                   isConfirm = true,
-                   SeatId = 1,
-                   ShowId = 1,
-                   UserId = 2,
-                   ModifiedAt = null
-               }
-           );
-        }
-
-        private void SeedNotifications(ModelBuilder modelBuilder)
-        {
-            var dateTime = DateTime.UtcNow;
-
-            modelBuilder.Entity<Notification>().HasData(
-               new Notification
-               {
-                   Id = 1,
-                   CreatedAt = dateTime,
-                   Title = "Rezervacija",
-                   Description = "Vaša rezervacija je uspješno kreirana.",
-                   DateRead = dateTime,
-                   SendOnDate = dateTime,
-                   UserId = 2,
-                   Seen = true,
                    ModifiedAt = null
                }
            );
