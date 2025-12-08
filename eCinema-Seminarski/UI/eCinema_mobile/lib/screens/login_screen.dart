@@ -19,8 +19,10 @@ class _LoginScreenState extends State<LoginScreen> {
   late UserLoginProvider userProvider;
 
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailController = TextEditingController(text: "admin@eCinema.com");
-  final TextEditingController _passwordController = TextEditingController(text: "test");
+  final TextEditingController _emailController =
+      TextEditingController(text: "");
+  final TextEditingController _passwordController =
+      TextEditingController(text: "");
   bool _obscurePassword = true;
   bool _isLoading = false;
 
@@ -36,7 +38,8 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      await userProvider.loginAsync(_emailController.text, _passwordController.text);
+      await userProvider.loginAsync(
+          _emailController.text, _passwordController.text);
 
       if (context.mounted) {
         Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
@@ -79,7 +82,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     Text(
                       "eCinema",
-                      style: TextStyle(color: Colors.teal, fontSize: 32, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: Colors.teal,
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold),
                     )
                   ],
                 ),
@@ -88,7 +94,10 @@ class _LoginScreenState extends State<LoginScreen> {
               const Center(
                 child: Text(
                   "Sign In",
-                  style: TextStyle(color: Colors.teal, fontSize: 26, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      color: Colors.teal,
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
               const SizedBox(height: 40),
@@ -130,7 +139,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       });
                     },
                     icon: Icon(
-                      !_obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                      !_obscurePassword
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
                     ),
                   ),
                   border: OutlineInputBorder(

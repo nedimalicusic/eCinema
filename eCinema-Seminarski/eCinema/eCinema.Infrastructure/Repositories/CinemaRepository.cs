@@ -10,12 +10,20 @@ namespace eCinema.Infrastructure
         public CinemaRepository(DatabaseContext databaseContext) : base(databaseContext)
         {
         }
-        public override  async Task<PagedList<Cinema>> GetPagedAsync(CinemaSearchObject searchObject, CancellationToken cancellationToken = default)
+        public override async Task<PagedList<Cinema>> GetPagedAsync(CinemaSearchObject searchObject,CancellationToken cancellationToken = default)
         {
-
-            return await DbSet.Include(s=>s.City).ThenInclude(s=>s.Country).
-                Where(s => searchObject.name == null || s.Name.ToLower().Contains(searchObject.name.ToLower())
-                && searchObject.cinemaId == s.Id || searchObject.cinemaId == null).ToPagedListAsync(searchObject, cancellationToken);
+            return await DbSet
+                .Include(s => s.City)
+                .ThenInclude(s => s.Country)
+                .Where(s =>
+                    (searchObject.name == null ||
+                     s.Name.ToLower().Contains(searchObject.name.ToLower()))
+                    &&
+                    (searchObject.cinemaId == null ||
+                     s.Id == searchObject.cinemaId)
+                )
+                .ToPagedListAsync(searchObject, cancellationToken);
         }
+
     }
 }

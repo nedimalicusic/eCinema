@@ -104,7 +104,8 @@ class _SeatsScreenState extends State<SeatsScreen> {
                   children: [
                     Container(
                       constraints: const BoxConstraints(minHeight: 30),
-                      margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 30, vertical: 20),
                       child: seats.isNotEmpty
                           ? GridView.count(
                               shrinkWrap: true,
@@ -192,7 +193,10 @@ class _SeatsScreenState extends State<SeatsScreen> {
                       fit: BoxFit.fill,
                     ),
                   )
-                : const Placeholder(),
+                : Image.asset(
+                    'assets/images/nophoto.jpg',
+                    fit: BoxFit.fill,
+                  ),
           ),
           const SizedBox(
             width: 10,
@@ -203,7 +207,8 @@ class _SeatsScreenState extends State<SeatsScreen> {
               children: [
                 Text(
                   widget.shows.movie.title,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.w600),
                 ),
                 Text(
                   '${DateFormat.Hm().format(widget.shows.startsAt)} - ${DateFormat.Hm().format(widget.shows.endsAt)}  |  ${DateFormat.MMMMEEEEd('bs').format(widget.shows.startsAt)}',
@@ -362,7 +367,8 @@ class _SeatsScreenState extends State<SeatsScreen> {
                       builder: (BuildContext context) {
                         return AlertDialog(
                           title: const Text("Upozorenje"),
-                          content: const Text("Molimo odaberite minimalno jedno sjedalo prije plaćanja."),
+                          content: const Text(
+                              "Molimo odaberite minimalno jedno sjedalo prije plaćanja."),
                           actions: [
                             TextButton(
                               onPressed: () {

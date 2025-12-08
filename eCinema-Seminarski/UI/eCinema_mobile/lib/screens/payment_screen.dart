@@ -44,7 +44,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   showPaymentSheet() async {
     try {
-      var paymentIntentData = await createPaymentIntent((reservationProvider.selectedTicketTotalPrice * 100).round().toString(), 'BAM');
+      var paymentIntentData = await createPaymentIntent(
+          (reservationProvider.selectedTicketTotalPrice * 100)
+              .round()
+              .toString(),
+          'BAM');
 
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
@@ -52,7 +56,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
           merchantDisplayName: 'eCinema',
           appearance: const PaymentSheetAppearance(
             primaryButton: PaymentSheetPrimaryButtonAppearance(
-              colors: PaymentSheetPrimaryButtonTheme(light: PaymentSheetPrimaryButtonThemeColors(background: Colors.teal)),
+              colors: PaymentSheetPrimaryButtonTheme(
+                  light: PaymentSheetPrimaryButtonThemeColors(
+                      background: Colors.teal)),
             ),
           ),
         ),
@@ -75,12 +81,19 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   createPaymentIntent(String amount, String currency) async {
     try {
-      Map<String, dynamic> body = {'amount': amount, 'currency': currency, 'payment_method_types[]': 'card'};
+      Map<String, dynamic> body = {
+        'amount': amount,
+        'currency': currency,
+        'payment_method_types[]': 'card'
+      };
 
-      var response = await http.post(Uri.parse('https://api.stripe.com/v1/payment_intents'), body: body, headers: {
-        'Authorization': 'Bearer $stripeSecretKey',
-        'Content-Type': 'application/x-www-form-urlencoded',
-      });
+      var response = await http.post(
+          Uri.parse('https://api.stripe.com/v1/payment_intents'),
+          body: body,
+          headers: {
+            'Authorization': 'Bearer $stripeSecretKey',
+            'Content-Type': 'application/x-www-form-urlencoded',
+          });
       return jsonDecode(response.body);
     } catch (err) {
       throw Exception(err.toString());
@@ -95,7 +108,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
     try {
       final reservations = <Map>[];
       for (var seat in reservationProvider.selectedSeats) {
-        reservations.add({'userId': userProvider.user!.id, 'showId': reservationProvider.shows!.id, 'seatId': seat.id});
+        reservations.add({
+          'userId': userProvider.user!.id,
+          'showId': reservationProvider.shows!.id,
+          'seatId': seat.id
+        });
       }
       var response = await reservationProvider.insert(reservations);
       if (response == "OK") {
@@ -107,7 +124,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
           seen: false,
         ));
         if (mounted) {
-          Navigator.pushNamedAndRemoveUntil(context, ReservationSuccessScreen.routeName, (route) => false);
+          Navigator.pushNamedAndRemoveUntil(
+              context, ReservationSuccessScreen.routeName, (route) => false);
         }
       } else {
         throw Exception("Greska prilikom kreiranja rezervacije");
@@ -131,26 +149,37 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 alignment: Alignment.topCenter,
                 child: Container(
                     padding: const EdgeInsets.all(16),
-                    margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
-                    decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(6))),
+                    margin: const EdgeInsets.symmetric(
+                        vertical: 15, horizontal: 12),
+                    decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(6))),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(
                           width: 120,
                           height: 170,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(6),
-                            child: FadeInImage(
-                              placeholder: MemoryImage(kTransparentImage),
-                              image: NetworkImage(
-                                '$apiUrl/Photo/GetById?id=${reservationProvider.shows!.movie.photo?.guidId}&original=true',
-                                headers: Authorization.createHeaders(),
-                              ),
-                              fadeInDuration: const Duration(milliseconds: 300),
-                              fit: BoxFit.fill,
-                            ),
-                          ),
+                          child: reservationProvider
+                                      .shows?.movie.photo?.guidId !=
+                                  null
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(6),
+                                  child: FadeInImage(
+                                    placeholder: MemoryImage(kTransparentImage),
+                                    image: NetworkImage(
+                                      '$apiUrl/Photo/GetById?id=${reservationProvider.shows!.movie.photo?.guidId}&original=true',
+                                      headers: Authorization.createHeaders(),
+                                    ),
+                                    fadeInDuration:
+                                        const Duration(milliseconds: 300),
+                                    fit: BoxFit.fill,
+                                  ),
+                                )
+                              : Image.asset(
+                                  'assets/images/nophoto.jpg',
+                                  fit: BoxFit.fill,
+                                ),
                         ),
                         const SizedBox(
                           width: 20,
@@ -164,7 +193,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               children: [
                                 Text(
                                   reservationProvider.shows!.movie.title,
-                                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                  style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600),
                                 ),
                                 const SizedBox(
                                   height: 12,
@@ -197,7 +228,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                   height: 6,
                                 ),
                                 Text(
-                                  DateFormat.MMMMEEEEd('bs').format(reservationProvider.shows!.startsAt),
+                                  DateFormat.MMMMEEEEd('bs').format(
+                                      reservationProvider.shows!.startsAt),
                                   style: const TextStyle(
                                     color: Colors.grey,
                                   ),
@@ -233,8 +265,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     ),
                   ),
                   Text(
-                    NumberFormat.currency(locale: 'bs').format(reservationProvider.selectedTicketTotalPrice),
-                    style: const TextStyle(color: Colors.teal, fontWeight: FontWeight.bold, fontSize: 18),
+                    NumberFormat.currency(locale: 'bs')
+                        .format(reservationProvider.selectedTicketTotalPrice),
+                    style: const TextStyle(
+                        color: Colors.teal,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18),
                   ),
                 ],
               ),

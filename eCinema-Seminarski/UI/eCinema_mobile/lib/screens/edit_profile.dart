@@ -204,7 +204,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
                     if (user?.profilePhoto?.guidId == null ||
                         user!.profilePhoto!.guidId!.isEmpty) {
-                      return Image.asset('assets/images/user.png',
+                      return Image.asset('assets/images/notFound.png',
                           width: 110, height: 110);
                     }
 
@@ -216,7 +216,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           return const CircularProgressIndicator();
                         } else if (snapshot.hasError ||
                             snapshot.data!.isEmpty) {
-                          return Image.asset('assets/images/user.png',
+                          return Image.asset('assets/images/notFound.png',
                               width: 110, height: 110);
                         } else {
                           final imageUrl =
